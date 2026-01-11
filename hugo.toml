@@ -1,0 +1,4 @@
+baseURL = "/"
+languageCode = "en-us"
+title = "Practical SRE & DevOps guides. Linux debugging."
+theme = "hugo-bearblog"
