@@ -2,10 +2,32 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Practical SRE &amp; DevOps guides. Linux debugging.</title>
-    <link>//localhost:1313/tags/</link>
+    <link>//localhost:36935/tags/</link>
     <description>Recent content in Tags on Practical SRE &amp; DevOps guides. Linux debugging.</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="//localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 10 Jan 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:36935/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Debug</title>
+      <link>//localhost:36935/tags/debug/</link>
+      <pubDate>Sat, 10 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:36935/tags/debug/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Linux</title>
+      <link>//localhost:36935/tags/linux/</link>
+      <pubDate>Sat, 10 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:36935/tags/linux/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Sre</title>
+      <link>//localhost:36935/tags/sre/</link>
+      <pubDate>Sat, 10 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:36935/tags/sre/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>

@@ -1,8 +1,10 @@
 ---
 title: "Top commands to diagnose Linux system load"
-date: 2026-01-10T01:54:37+02:00
+date: 2026-01-10
 draft: false
+tags: ["linux", "sre", "debug"]
 ---
+
 Top commands to diagnose Linux system load
 
 ```
