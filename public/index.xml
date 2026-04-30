@@ -6,8 +6,15 @@
     <description>Recent content on Practical SRE &amp; DevOps guides. Linux debugging.</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 10 Jan 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 01 Feb 2026 00:27:57 +0300</lastBuildDate>
     <atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Top Linux Commands</title>
+      <link>//localhost:1313/blog/top-linux-commands/</link>
+      <pubDate>Sun, 01 Feb 2026 00:27:57 +0300</pubDate>
+      <guid>//localhost:1313/blog/top-linux-commands/</guid>
+      <description>Linux Commands Cheatsheet&#xA;Особистий довідник по адмініструванню Linux-серверів&#xA;📦 Диски та файлова система # Огляд дисків та розділів lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID fdisk -l smartctl --scan # Визначити фізичні диски (якщо /dev/sda — залізний сервер) # Місце на диску df -h # Файлові системи df -hi # По inode du -h --max-depth=1 /var/virtualizor/ | sort -h du -sh /home # Вага директорії du -sch .[!.]* * | sort -h # З прихованими директоріями sudo du -h -d1 /root/ | sort -nr ncdu -e # Інтерактивно + приховані директорії inode vs файловий дескриптор</description>
+    </item>
     <item>
       <title>Top commands to diagnose Linux system load</title>
       <link>//localhost:1313/blog/linux-load/</link>
