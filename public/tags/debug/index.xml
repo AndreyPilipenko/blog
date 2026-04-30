@@ -6,8 +6,15 @@
     <description>Recent content in Debug on Practical SRE &amp; DevOps guides. Linux debugging.</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 10 Jan 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 01 May 2026 00:00:00 +0300</lastBuildDate>
     <atom:link href="//localhost:1313/tags/debug/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kubernetes Cheatsheet</title>
+      <link>//localhost:1313/blog/kubernetes-cheatsheet/</link>
+      <pubDate>Fri, 01 May 2026 00:00:00 +0300</pubDate>
+      <guid>//localhost:1313/blog/kubernetes-cheatsheet/</guid>
+      <description>This is a page about »Kubernetes Cheatsheet«.</description>
+    </item>
     <item>
       <title>Top commands to diagnose Linux system load</title>
       <link>//localhost:1313/blog/linux-load/</link>
