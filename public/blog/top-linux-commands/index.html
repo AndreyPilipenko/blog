@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Top Linux Commands | Practical SRE &amp; DevOps guides. Linux debugging.</title>
+<meta name="title" content="Top Linux Commands" />
+<meta name="description" content="Linux Commands Cheatsheet
+Особистий довідник по адмініструванню Linux-серверів
+📦 Диски та файлова система bash# Огляд дисків та розділів lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID fdisk -l smartctl &ndash;scan # Визначити фізичні диски (якщо /dev/sda — залізний сервер)
+Місце на диску df -h # Файлові системи df -hi # По inode du -h &ndash;max-depth=1 /var/virtualizor/ | sort -h du -sh /home # Вага директорії du -sch .[!.]* * | sort -h # З прихованими директоріями sudo du -h -d1 /root/ | sort -nr ncdu -e # Інтерактивно &#43; приховані директорії" />
+<meta name="keywords" content="" />
+
+
+<meta property="og:title" content="Top Linux Commands" />
+<meta property="og:description" content="Linux Commands Cheatsheet
+Особистий довідник по адмініструванню Linux-серверів
+📦 Диски та файлова система bash# Огляд дисків та розділів lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID fdisk -l smartctl &ndash;scan # Визначити фізичні диски (якщо /dev/sda — залізний сервер)
+Місце на диску df -h # Файлові системи df -hi # По inode du -h &ndash;max-depth=1 /var/virtualizor/ | sort -h du -sh /home # Вага директорії du -sch .[!.]* * | sort -h # З прихованими директоріями sudo du -h -d1 /root/ | sort -nr ncdu -e # Інтерактивно &#43; приховані директорії" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/blog/top-linux-commands/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2026-02-01T00:27:57+03:00" />
+<meta property="article:modified_time" content="2026-02-01T00:27:57+03:00" />
+
+
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Top Linux Commands"/>
+<meta name="twitter:description" content="Linux Commands Cheatsheet
+Особистий довідник по адмініструванню Linux-серверів
+📦 Диски та файлова система bash# Огляд дисків та розділів lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID fdisk -l smartctl &ndash;scan # Визначити фізичні диски (якщо /dev/sda — залізний сервер)
+Місце на диску df -h # Файлові системи df -hi # По inode du -h &ndash;max-depth=1 /var/virtualizor/ | sort -h du -sh /home # Вага директорії du -sch .[!.]* * | sort -h # З прихованими директоріями sudo du -h -d1 /root/ | sort -nr ncdu -e # Інтерактивно &#43; приховані директорії"/>
+
+
+
+<meta itemprop="name" content="Top Linux Commands">
+<meta itemprop="description" content="Linux Commands Cheatsheet
+Особистий довідник по адмініструванню Linux-серверів
+📦 Диски та файлова система bash# Огляд дисків та розділів lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID fdisk -l smartctl &ndash;scan # Визначити фізичні диски (якщо /dev/sda — залізний сервер)
+Місце на диску df -h # Файлові системи df -hi # По inode du -h &ndash;max-depth=1 /var/virtualizor/ | sort -h du -sh /home # Вага директорії du -sch .[!.]* * | sort -h # З прихованими директоріями sudo du -h -d1 /root/ | sort -nr ncdu -e # Інтерактивно &#43; приховані директорії"><meta itemprop="datePublished" content="2026-02-01T00:27:57+03:00" />
+<meta itemprop="dateModified" content="2026-02-01T00:27:57+03:00" />
+<meta itemprop="wordCount" content="788">
+<meta itemprop="keywords" content="" />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>Practical SRE &amp; DevOps guides. Linux debugging.</h2>
+</a>
+<nav>
+<a href="/">Home</a>
+
+<a href="/blog/">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Top Linux Commands</h1>
+<p>
+  <i>
+    <time datetime='2026-02-01'>
+      01 Feb, 2026
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>Linux Commands Cheatsheet</p>
+<p>Особистий довідник по адмініструванню Linux-серверів</p>
+<p>📦 Диски та файлова система
+bash# Огляд дисків та розділів
+lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID
+fdisk -l
+smartctl &ndash;scan                        # Визначити фізичні диски (якщо /dev/sda — залізний сервер)</p>
+<h1 id="місце-на-диску">Місце на диску</h1>
+<p>df -h                                  # Файлові системи
+df -hi                                 # По inode
+du -h &ndash;max-depth=1 /var/virtualizor/ | sort -h
+du -sh /home                           # Вага директорії
+du -sch .[!.]* * | sort -h            # З прихованими директоріями
+sudo du -h -d1 /root/ | sort -nr
+ncdu -e                                # Інтерактивно + приховані директорії</p>
+<h1 id="inode-vs-файловий-дескриптор">inode vs файловий дескриптор</h1>
+<h1 id="inode--структура-фс-описує-файл-тип-власник-права-лічильник-посилань">inode — структура ФС, описує файл (тип, власник, права, лічильник посилань)</h1>
+<h1 id="fd-file-descriptor--ціле-число-що-повертає-syscall-open-індекс-у-таблиці-відкритих-файлів-ядра">FD (file descriptor) — ціле число, що повертає syscall open(); індекс у таблиці відкритих файлів ядра</h1>
+<h1 id="прямого-доступу-до-файлів-у-процесу-немає--лише-через-ядро-за-fd">Прямого доступу до файлів у процесу немає — лише через ядро за FD</h1>
+<h1 id="файлові-дескриптори">Файлові дескриптори</h1>
+<p>sysctl fs.file-nr                      # [allocated, unused, max] дескрипторів у системі
+lsof | awk &lsquo;{print $1}&rsquo; | sort | uniq -c | sort -r | head   # Топ-10 процесів за FD</p>
+<h1 id="розмір-блоку">Розмір блоку</h1>
+<p>lockdev &ndash;getpbsz /dev/sdb</p>
+<h1 id="коли-створена-фс">Коли створена ФС</h1>
+<p>dumpe2fs $(mount | grep &lsquo;on / &rsquo; | awk &lsquo;{print $1}&rsquo;) | grep &lsquo;Filesystem created:&rsquo;</p>
+<p>💿 S.M.A.R.T. та здоров&rsquo;я дисків
+bashsmartctl &ndash;info /dev/sda               # Базова інформація
+smartctl -a /dev/sda                   # Повний звіт
+smartctl -x /dev/sda                   # Розширений звіт
+smartctl -t long /dev/sdb              # Запустити тривалий self-test
+smartctl -A /dev/sda | grep -i temp    # Температура диску</p>
+<h1 id="диски-в-raid-megaraid">Диски в RAID (MegaRAID)</h1>
+<p>smartctl -a -d megaraid,5 /dev/sda</p>
+<h1 id="ключові-атрибути">Ключові атрибути</h1>
+<h1 id="used_rsvd_blk_cnt_tot--використані-блоки-з-резервного-пулу-remapped-blocks">Used_Rsvd_Blk_Cnt_Tot — використані блоки з резервного пулу (remapped blocks)</h1>
+<h1 id="runtime_bad_block------бед-блоки-в-основному-пулі">Runtime_Bad_Block     — бед-блоки в основному пулі</h1>
+<h1 id="uncorrectable_error_cnt--помилки-які-не-вдалось-виправити">Uncorrectable_Error_Cnt — помилки, які не вдалось виправити</h1>
+<h1 id="ecc_error_rate---------помилки-читання-з-перезаписом-через-ecc">ECC_Error_Rate        — помилки читання з перезаписом через ECC</h1>
+<h1 id="raid">RAID</h1>
+<p>cat /proc/mdstat
+vim /etc/mdadm.conf</p>
+<h1 id="перезаписати-диск">Перезаписати диск</h1>
+<p>dd if=/dev/urandom of=/dev/sda bs=1M status=progress</p>
+<p>🌐 Мережа
+bash# Інтерфейси
+ip link ls up
+ip -4 a
+ip addr show dev eth0</p>
+<h1 id="швидкість-інтерфейсу">Швидкість інтерфейсу</h1>
+<p>sudo ethtool eth0 | grep Speed:
+cat /sys/class/net/eth0/speed
+dmesg | grep eth                       # Історія інтерфейсів</p>
+<h1 id="перевірка-зєднання">Перевірка з&rsquo;єднання</h1>
+<p>nc -vz google.com 80                   # telnet-аналог
+mtr -rc 50 8.8.8.8                     # Трасування з 50 пакетами</p>
+<h1 id="bgp-lookup-asn-prefix-origin">BGP lookup (ASN, prefix, origin)</h1>
+<p>echo -e &ldquo;130.254.117.4&rdquo; | nc bgp.tools 43</p>
+<h1 id="трафік">Трафік</h1>
+<p>iftop                                  # Real-time мережева активність
+vnstat -m &ndash;config &lt;(cat /etc/vnstat.conf; echo &ldquo;UnitMode 2&rdquo;)   # Статистика по місяцях</p>
+<h1 id="conntrack-nat--state-таблиця">conntrack (NAT / state таблиця)</h1>
+<p>cat /proc/sys/net/netfilter/nf_conntrack_max
+cat /proc/sys/net/netfilter/nf_conntrack_count
+conntrack -C                           # Поточна кількість сесій</p>
+<p>⚙️ Процеси та сервіси
+bash# Огляд процесів
+ps axf                                 # Дерево з аргументами
+ps aux | grep defunct                  # Зомбі-процеси
+cat /proc/<!-- raw HTML omitted -->/cmdline                # Командний рядок процесу
+ll /proc/<!-- raw HTML omitted -->/exe                     # Де живе бінарник</p>
+<h1 id="пошук-команди">Пошук команди</h1>
+<p>which top</p>
+<h1 id="вбити-процеси-користувача">Вбити процеси користувача</h1>
+<p>pkill -u username</p>
+<h1 id="завантаження-системи">Завантаження системи</h1>
+<p>vmstat 1</p>
+<h1 id="дивитись-wa-io-wait-має-бути-0-id-idle-siso-swap-inout">Дивитись: wa (I/O wait, має бути ~0), id (idle), si/so (swap in/out)</h1>
+<h1 id="файлові-дескриптори-процесів">Файлові дескриптори процесів</h1>
+<p>lsof | awk &lsquo;{print $1}&rsquo; | sort | uniq -c | sort -r | head</p>
+<p>🖥️ Залізо та середовище
+bash# Тип віртуалізації
+systemd-detect-virt
+dmesg | grep -i hypervisor
+dmidecode -s system-manufacturer</p>
+<h1 id="параметри-ядра-при-завантаженні">Параметри ядра при завантаженні</h1>
+<p>cat /proc/cmdline</p>
+<h1 id="ram">RAM</h1>
+<p>dmidecode -t 17                        # Деталі по планках пам&rsquo;яті (тип, частота, слот)
+dmidecode &ndash;type 17                    # Аналог
+memtester 100M 2                       # Тест пам&rsquo;яті</p>
+<h1 id="температура">Температура</h1>
+<p>sensors                                # Ядра CPU
+smartctl -A /dev/sda | grep -i temp   # Диск</p>
+<h1 id="відеокарта">Відеокарта</h1>
+<p>lshw -c video | grep driver
+glxinfo -B</p>
+<p>📁 Архіви
+bash# tar
+tar -czvf archive.tar.gz /path/to/dir   # Запакувати
+tar -xzvf archive.tar.gz                # Розпакувати
+tar -tf archive.tar.gz                  # Переглянути вміст без розпакування</p>
+<h1 id="xz">xz</h1>
+<p>xz -z file.txt                          # Запакувати
+unxz file.txt.xz                        # Розпакувати</p>
+<p>🔗 Символічні посилання та пакети
+bash# Символьне посилання
+ln -s /full/path/to/file /usr/local/bin/alias_name</p>
+<h1 id="пакети">Пакети</h1>
+<p>apt-cache show nginx                    # Версія в репозиторії
+apt-mark hold nginx                     # Заморозити версію (не оновлювати)</p>
+<h1 id="php">PHP</h1>
+<p>php -v
+php -i</p>
+<p>📊 Швидкі однострочники
+bash# SSH в циклі (автоперепідключення)
+while true; do date; ssh user@host; done</p>
+<h1 id="скільки-зєднань-до-конкретного-порту">Скільки з&rsquo;єднань до конкретного порту</h1>
+<p>ss -tnp | grep &lsquo;:80&rsquo; | wc -l</p>
+<h1 id="топ-процесів-за-cpu-один-знімок">Топ процесів за CPU (один знімок)</h1>
+<p>ps aux &ndash;sort=-%cpu | head -10</p>
+<h1 id="топ-процесів-за-ram">Топ процесів за RAM</h1>
+<p>ps aux &ndash;sort=-%mem | head -10</p>
+<h1 id="хто-залогінений">Хто залогінений</h1>
+<p>who -a</p>
+<h1 id="останні-логіни">Останні логіни</h1>
+<p>last -20</p>
+<h1 id="перевірити-відкриті-порти-локально">Перевірити відкриті порти локально</h1>
+<p>ss -tlnp</p>
+<h1 id="або">або</h1>
+<p>netstat -tlnp</p>
+<p>🔐 Безпека та аудит
+bash# Перевірити відкриті файли / сокети процесу
+lsof -p <!-- raw HTML omitted --></p>
+<h1 id="переглянути-всі-listen-порти">Переглянути всі LISTEN-порти</h1>
+<p>ss -tlnp</p>
+<h1 id="хто-і-що-робить-на-сервері">Хто і що робить на сервері</h1>
+<p>w</p>
+<h1 id="sudo-активність">Sudo-активність</h1>
+<p>grep sudo /var/log/auth.log | tail -30</p>
+<h1 id="перевірити-crontab-всіх-користувачів">Перевірити crontab всіх користувачів</h1>
+<p>for u in $(cut -f1 -d: /etc/passwd); do crontab -l -u $u 2&gt;/dev/null &amp;&amp; echo &ldquo;&mdash; $u&rdquo;; done</p>
+<p>🛠️ Налагодження
+bash# Трасування syscall процесу
+strace -p <!-- raw HTML omitted -->
+strace -e trace=network -p <!-- raw HTML omitted -->       # Тільки мережеві syscall</p>
+<h1 id="дампінг-мережі">Дампінг мережі</h1>
+<p>tcpdump -i eth0 -nn port 80
+tcpdump -i any -nn -w /tmp/dump.pcap   # Зберегти в файл</p>
+<h1 id="перевірити-journald">Перевірити journald</h1>
+<p>journalctl -u nginx &ndash;since &ldquo;1 hour ago&rdquo;
+journalctl -f                          # Follow (як tail -f)
+journalctl -xe                         # Останні помилки з контекстом</p>
+<h1 id="активні-зєднання">Активні з&rsquo;єднання</h1>
+<p>ss -s                                  # Статистика по протоколах
+ss -tnp state established              # Всі встановлені TCP</p>
+<p>tags = [&ldquo;debug&rdquo;,&ldquo;linux&rdquo;]</p>
+<p>This is a page about »Top Linux Commands«.</p>
+
+</content>
+
+
+
+<p>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>
