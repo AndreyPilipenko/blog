@@ -1,6 +1,6 @@
 baseURL = "/"
 languageCode = "en-us"
-title = "Practical SRE & DevOps guides. Linux debugging."
+title = "Practical SRE & DevOps guides. Linux debugging. Lifestyle"
 theme = "hugo-bearblog"
 
 [menu]

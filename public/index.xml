@@ -6,8 +6,15 @@
     <description>Recent content on Practical SRE &amp; DevOps guides. Linux debugging.</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 01 May 2026 00:00:00 +0300</lastBuildDate>
+    <lastBuildDate>Sat, 02 May 2026 00:00:00 +0300</lastBuildDate>
     <atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Four Golden Signals</title>
+      <link>//localhost:1313/blog/four-golden-signals/</link>
+      <pubDate>Sat, 02 May 2026 00:00:00 +0300</pubDate>
+      <guid>//localhost:1313/blog/four-golden-signals/</guid>
+      <description>Це концепція з книги &amp;ldquo;Site Reliability Engineering&amp;rdquo; (Google SRE Book).&#xA;Основна ідея: замість того щоб моніторити все підряд (сотні метрик), фокусуйся лише на тому, що безпосередньо відображає досвід користувача.&#xA;1. Latency — час відповіді Час обробки запиту від отримання до відповіді.&#xA;Важливо розділяти успішні запити від помилкових — помилка за 1ms не означає що система швидка.&#xA;Треба трекати перцентилі, а не середнє — середнє приховує аномалії:&#xA;Перцентиль Що показує p50 Медіана — &amp;ldquo;типовий&amp;rdquo; користувач p95 95% запитів вкладаються в цей час p99 Найгірший досвід 1% користувачів 2.</description>
+    </item>
     <item>
       <title>Kubernetes Cheatsheet</title>
       <link>//localhost:1313/blog/kubernetes-cheatsheet/</link>
