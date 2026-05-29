@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Practical SRE &amp; DevOps guides. Linux debugging.</title>
+    <title>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
     <link>//localhost:1313/</link>
-    <description>Recent content on Practical SRE &amp; DevOps guides. Linux debugging.</description>
+    <description>Recent content on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 02 May 2026 00:00:00 +0300</lastBuildDate>
+    <lastBuildDate>Fri, 29 May 2026 22:26:41 +0300</lastBuildDate>
     <atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux Distros Comparison</title>
+      <link>//localhost:1313/blog/linux-distros-comparison/</link>
+      <pubDate>Fri, 29 May 2026 22:26:41 +0300</pubDate>
+      <guid>//localhost:1313/blog/linux-distros-comparison/</guid>
+      <description>Вибір дистрибутива Linux для корпоративної інфраструктури чи власного проєкту — це не питання звички чи смаку. За кожним рішенням великих компаній стоїть чітка інженерна та бізнес-логіка.&#xA;У цій статті розберемо анатомію сучасного ринку серверних ОС: архітектурне дерево сімейств, конкретні технічні відмінності між ними, підводні камені, які безпосередньо впливають на автоматизацію, безпеку та довгострокову підтримку інфраструктури.&#xA;Архітектурне дерево: два з половиною сімейства Весь сучасний світ серверного Linux тримається на двох великих сімействах, які беруть початок на початку 90-х.</description>
+    </item>
     <item>
       <title>Four Golden Signals</title>
       <link>//localhost:1313/blog/four-golden-signals/</link>

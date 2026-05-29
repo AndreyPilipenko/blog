@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Linux Distros Comparison | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="Linux Distros Comparison" />
+<meta name="description" content="Вибір дистрибутива Linux для корпоративної інфраструктури чи власного проєкту — це не питання звички чи смаку. За кожним рішенням великих компаній стоїть чітка інженерна та бізнес-логіка.
+У цій статті розберемо анатомію сучасного ринку серверних ОС: архітектурне дерево сімейств, конкретні технічні відмінності між ними, підводні камені, які безпосередньо впливають на автоматизацію, безпеку та довгострокову підтримку інфраструктури.
+Архітектурне дерево: два з половиною сімейства Весь сучасний світ серверного Linux тримається на двох великих сімействах, які беруть початок на початку 90-х." />
+<meta name="keywords" content="" />
+
+
+<meta property="og:title" content="Linux Distros Comparison" />
+<meta property="og:description" content="Вибір дистрибутива Linux для корпоративної інфраструктури чи власного проєкту — це не питання звички чи смаку. За кожним рішенням великих компаній стоїть чітка інженерна та бізнес-логіка.
+У цій статті розберемо анатомію сучасного ринку серверних ОС: архітектурне дерево сімейств, конкретні технічні відмінності між ними, підводні камені, які безпосередньо впливають на автоматизацію, безпеку та довгострокову підтримку інфраструктури.
+Архітектурне дерево: два з половиною сімейства Весь сучасний світ серверного Linux тримається на двох великих сімействах, які беруть початок на початку 90-х." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/blog/linux-distros-comparison/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2026-05-29T22:26:41+03:00" />
+<meta property="article:modified_time" content="2026-05-29T22:26:41+03:00" />
+
+
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Linux Distros Comparison"/>
+<meta name="twitter:description" content="Вибір дистрибутива Linux для корпоративної інфраструктури чи власного проєкту — це не питання звички чи смаку. За кожним рішенням великих компаній стоїть чітка інженерна та бізнес-логіка.
+У цій статті розберемо анатомію сучасного ринку серверних ОС: архітектурне дерево сімейств, конкретні технічні відмінності між ними, підводні камені, які безпосередньо впливають на автоматизацію, безпеку та довгострокову підтримку інфраструктури.
+Архітектурне дерево: два з половиною сімейства Весь сучасний світ серверного Linux тримається на двох великих сімействах, які беруть початок на початку 90-х."/>
+
+
+
+<meta itemprop="name" content="Linux Distros Comparison">
+<meta itemprop="description" content="Вибір дистрибутива Linux для корпоративної інфраструктури чи власного проєкту — це не питання звички чи смаку. За кожним рішенням великих компаній стоїть чітка інженерна та бізнес-логіка.
+У цій статті розберемо анатомію сучасного ринку серверних ОС: архітектурне дерево сімейств, конкретні технічні відмінності між ними, підводні камені, які безпосередньо впливають на автоматизацію, безпеку та довгострокову підтримку інфраструктури.
+Архітектурне дерево: два з половиною сімейства Весь сучасний світ серверного Linux тримається на двох великих сімействах, які беруть початок на початку 90-х."><meta itemprop="datePublished" content="2026-05-29T22:26:41+03:00" />
+<meta itemprop="dateModified" content="2026-05-29T22:26:41+03:00" />
+<meta itemprop="wordCount" content="2086">
+<meta itemprop="keywords" content="" />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</h2>
+</a>
+<nav>
+<a href="/">Home</a>
+
+<a href="/blog/">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Linux Distros Comparison</h1>
+<p>
+  <i>
+    <time datetime='2026-05-29'>
+      29 May, 2026
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>Вибір дистрибутива Linux для корпоративної інфраструктури чи власного проєкту — це не питання звички чи смаку. За кожним рішенням великих компаній стоїть чітка інженерна та бізнес-логіка.</p>
+<p>У цій статті розберемо анатомію сучасного ринку серверних ОС: архітектурне дерево сімейств, конкретні технічні відмінності між ними, підводні камені, які безпосередньо впливають на автоматизацію, безпеку та довгострокову підтримку інфраструктури.</p>
+<hr>
+<h2 id="архітектурне-дерево-два-з-половиною-сімейства">Архітектурне дерево: два з половиною сімейства</h2>
+<p>Весь сучасний світ серверного Linux тримається на <strong>двох великих сімействах</strong>, які беруть початок на початку 90-х.</p>
+<h3 id="коріння-debian">Коріння Debian</h3>
+<ul>
+<li><strong>Debian</strong> — з&rsquo;явився у 1993 році як суто незалежний від комерції проєкт спільноти. Філософія: повна свобода, передбачуваність та залізобетонна стабільність. Мінімум пакетів з коробки, максимум контролю.</li>
+<li><strong>Ubuntu</strong> — найвідоміший нащадок Debian, розвивається компанією Canonical. Поєднує стабільну базу з новими пакетами, хмарними оптимізаціями та комерційною підтримкою (корпоративний план через Ubuntu Pro).</li>
+</ul>
+<h3 id="коріння-red-hat">Коріння Red Hat</h3>
+<ul>
+<li><strong>RHEL</strong> — комерційний гігант, який першим почав продавати не сам код, а технічну підтримку з SLA та сертифікацію для Enterprise-сегмента. Стандарт де-факто для банків, телеком і великих корпорацій.</li>
+<li><strong>Трагедія CentOS</strong> — тривалий час CentOS був безкоштовним бінарним клоном RHEL, який використовували скрізь. Після поглинання Red Hat (потім IBM) вектор змінився на <em>CentOS Stream</em> — тестовий полігон для майбутніх релізів RHEL. Використовувати CentOS Stream на продакшені небезпечно: він йде <em>попереду</em> RHEL, а не слідує за ним.</li>
+<li><strong>Нові спадкоємці</strong> — спільнота відреагувала двома повноцінними бінарно сумісними клонами RHEL:
+<ul>
+<li><strong>AlmaLinux</strong> — підтримується некомерційною організацією, фінансується CloudLinux.</li>
+<li><strong>Rocky Linux</strong> — повністю ком&rsquo;юніті-проєкт, заснований творцем оригінального CentOS Грегорі Курцером.</li>
+</ul>
+</li>
+</ul>
+<p>Обидва є дроп-ін заміною RHEL і слідують за його релізами 1-в-1.</p>
+<hr>
+<h2 id="lifecycle-та-eol-планування-на-роки-вперед">Lifecycle та EOL: планування на роки вперед</h2>
+<p>Це перше, що варто перевіряти перед вибором дистрибутива. Поставити сервер на ОС з коротким терміном підтримки — значить планувати міграцію заздалегідь.</p>
+<table>
+<thead>
+<tr>
+<th>Дистрибутив</th>
+<th>Версія</th>
+<th>Full Support</th>
+<th>Extended/Security</th>
+<th>Примітка</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ubuntu LTS</td>
+<td>24.04</td>
+<td>2029</td>
+<td>2034 (ESM)</td>
+<td>ESM платний поза Pro-планом</td>
+</tr>
+<tr>
+<td>Debian</td>
+<td>12 (Bookworm)</td>
+<td>~2028</td>
+<td>~2030 (LTS)</td>
+<td>Безкоштовно</td>
+</tr>
+<tr>
+<td>RHEL</td>
+<td>9</td>
+<td>2032</td>
+<td>2034 (Maintenance)</td>
+<td>Платна підписка</td>
+</tr>
+<tr>
+<td>AlmaLinux</td>
+<td>9</td>
+<td>2032</td>
+<td>2034</td>
+<td>Безкоштовно</td>
+</tr>
+<tr>
+<td>Rocky Linux</td>
+<td>9</td>
+<td>2032</td>
+<td>2034</td>
+<td>Безкоштовно</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Важливий нюанс щодо Ubuntu ESM:</strong> перші 5 років безкоштовні навіть для серверів. Але Extended Security Maintenance (роки 6–10) входить до платного <strong>Ubuntu Pro</strong> або потребує реєстрації на ubuntu.com (безкоштовно для до 5 машин). Для великого парку без Pro — через 5 років ви отримуєте сервери без security-патчів.</p>
+<hr>
+<h2 id="головні-технічні-відмінності">Головні технічні відмінності</h2>
+<h3 id="1-пакетні-менеджери-та-назви-пакетів">1. Пакетні менеджери та назви пакетів</h3>
+<p>Скрипти автоматизації (Dockerfile, Ansible-ролі, cloud-init), написані під одне сімейство, без адаптації не працюватимуть на іншому.</p>
+<p><strong>Менеджери:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Сімейство</th>
+<th>Менеджер</th>
+<th>Формат</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Debian / Ubuntu</td>
+<td><code>apt</code></td>
+<td><code>.deb</code></td>
+</tr>
+<tr>
+<td>RHEL / Alma / Rocky</td>
+<td><code>dnf</code> (раніше <code>yum</code>)</td>
+<td><code>.rpm</code></td>
+</tr>
+<tr>
+<td>Alpine</td>
+<td><code>apk</code></td>
+<td><code>.apk</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Різниця в іменуванні пакетів — щоденний біль:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Пакет</th>
+<th>Debian/Ubuntu</th>
+<th>RHEL/Alma/Rocky</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Веб-сервер Apache</td>
+<td><code>apache2</code></td>
+<td><code>httpd</code></td>
+</tr>
+<tr>
+<td>Заголовки Python</td>
+<td><code>python3-dev</code></td>
+<td><code>python3-devel</code></td>
+</tr>
+<tr>
+<td>Заголовки OpenSSL</td>
+<td><code>libssl-dev</code></td>
+<td><code>openssl-devel</code></td>
+</tr>
+<tr>
+<td>Конфіги Apache</td>
+<td><code>/etc/apache2/</code></td>
+<td><code>/etc/httpd/</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>EPEL — обов&rsquo;язковий репозиторій для RHEL-сімейства:</strong></p>
+<p>Базовий RHEL вкрай бідний на пакети. <code>htop</code>, <code>screen</code>, <code>ncdu</code>, <code>iotop</code> — нічого цього немає в базі. Для отримання сучасних утиліт обов&rsquo;язково підключати <strong>EPEL</strong> (Extra Packages for Enterprise Linux):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># AlmaLinux / Rocky / RHEL</span>
+</span></span><span style="display:flex;"><span>dnf install -y epel-release
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Або напряму для RHEL</span>
+</span></span><span style="display:flex;"><span>dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+</span></span></code></pre></div><p>У Debian/Ubuntu майже все необхідне є в дефолтних репозиторіях.</p>
+<p><strong>Debconf — інтерактивна конфігурація при встановленні:</strong></p>
+<p>Особливість Debian/Ubuntu: під час встановлення пакета <code>debconf</code> може запитати параметри конфігурації (пароль для БД, порт, TLS-сертифікат). У RHEL нічого подібного немає — всі налаштування постфактум. При автоматизації через Ansible або CI це треба враховувати: змінну <code>DEBIAN_FRONTEND=noninteractive</code> потрібно виставляти явно, інакше пайплайн зависне на очікуванні введення.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>DEBIAN_FRONTEND<span style="color:#f92672">=</span>noninteractive apt-get install -y postfix
+</span></span></code></pre></div><hr>
+<h3 id="2-snap-у-ubuntu-реальний-біль-на-серверах">2. Snap у Ubuntu: реальний біль на серверах</h3>
+<p>У пості часто про це говорять побіжно. Насправді починаючи з Ubuntu 22.04 ряд пакетів <strong>примусово перейшов у snap-only</strong>: <code>certbot</code>, <code>lxd</code>, у 24.04 — <code>firefox</code>. Для серверів це створює конкретні проблеми:</p>
+<p><strong>Проблема 1 — засмічення <code>loop</code>-пристроїв:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ df -h
+</span></span><span style="display:flex;"><span>/dev/loop0   55M   55M     <span style="color:#ae81ff">0</span> 100% /snap/core18/...
+</span></span><span style="display:flex;"><span>/dev/loop1   92M   92M     <span style="color:#ae81ff">0</span> 100% /snap/lxd/...
+</span></span><span style="display:flex;"><span>/dev/loop2   44M   44M     <span style="color:#ae81ff">0</span> 100% /snap/snapd/...
+</span></span></code></pre></div><p>Кожен snap-пакет монтується як окремий loop-пристрій. Prometheus <code>node_exporter</code> за замовчуванням збирає метрики <code>node_filesystem_*</code> для <strong>всіх</strong> точок монтування, включаючи ці. Результат — кардинальне збільшення cardinality у TSDB та шум на дашбордах.</p>
+<p><strong>Рішення для node_exporter:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># docker-compose або systemd unit</span>
+</span></span><span style="display:flex;"><span>--<span style="color:#ae81ff">collector.filesystem.mount-points-exclude=^/(dev|proc|sys|snap/.+)($|/)</span>
+</span></span></code></pre></div><p><strong>Проблема 2 — автооновлення без попередження:</strong></p>
+<p>Snap оновлює пакети автоматично вночі. Для стабільних прод-серверів це неприйнятно. Вимкнути:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>snap set system refresh.hold<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>date --date<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;today + 60 days&#39;</span> +%Y-%m-%dT%H:%M:%S%:z<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span></code></pre></div><p><strong>Проблема 3 — зайвий демон <code>snapd</code></strong> з власним мережевим overhead і memory footprint.</p>
+<p><strong>Висновок:</strong> на серверах де потрібна максимальна передбачуваність — Debian, де Snap немає взагалі.</p>
+<hr>
+<h3 id="3-безпека-selinux-проти-apparmor">3. Безпека: SELinux проти AppArmor</h3>
+<p><strong>RHEL / Alma / Rocky → SELinux (Mandatory Access Control):</strong></p>
+<p>SELinux працює на рівні міток (labels) в файловій системі. Кожен процес і файл мають контекстну мітку. Навіть якщо права доступу <code>755</code> і власник правильний — якщо контекст безпеки SELinux це не дозволяє, процес отримає <code>Permission Denied</code>.</p>
+<p>Типова пастка при деплої нового сервісу:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Nginx не може читати файли зі свого кастомного шляху</span>
+</span></span><span style="display:flex;"><span>$ tail /var/log/audit/audit.log | grep denied
+</span></span><span style="display:flex;"><span>type<span style="color:#f92672">=</span>AVC msg<span style="color:#f92672">=</span>audit: avc: denied <span style="color:#f92672">{</span> read <span style="color:#f92672">}</span> <span style="color:#66d9ef">for</span> pid<span style="color:#f92672">=</span><span style="color:#ae81ff">1234</span> comm<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;nginx&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;app.conf&#34;</span> scontext<span style="color:#f92672">=</span>system_u:system_r:httpd_t <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  tcontext<span style="color:#f92672">=</span>unconfined_u:object_r:default_t
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Фікс: виставити правильний контекст</span>
+</span></span><span style="display:flex;"><span>$ semanage fcontext -a -t httpd_config_t <span style="color:#e6db74">&#34;/opt/myapp/nginx(/.*)?&#34;</span>
+</span></span><span style="display:flex;"><span>$ restorecon -Rv /opt/myapp/nginx/
+</span></span></code></pre></div><p>Більшість туторіалів радять <code>setenforce 0</code> — в продакшені це моветон. Правильний підхід: <code>audit2allow</code> для аналізу відмов і генерації мінімального policy.</p>
+<p><strong>Debian / Ubuntu → AppArmor:</strong></p>
+<p>Значно простіший: прив&rsquo;язується до профілів конкретних бінарників і шляхів. Зазвичай працює тихо у фоні. Профілі лежать у <code>/etc/apparmor.d/</code>. Перевірити статус:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>aa-status
+</span></span></code></pre></div><hr>
+<h3 id="4-мережа-та-файрволи">4. Мережа та файрволи</h3>
+<p><strong>Управління мережею:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Дистрибутив</th>
+<th>Інструмент</th>
+<th>Конфіг</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ubuntu</td>
+<td>Netplan</td>
+<td><code>/etc/netplan/*.yaml</code></td>
+</tr>
+<tr>
+<td>Debian</td>
+<td>ifupdown</td>
+<td><code>/etc/network/interfaces</code></td>
+</tr>
+<tr>
+<td>RHEL/Alma/Rocky</td>
+<td>NetworkManager</td>
+<td><code>nmcli</code> / <code>/etc/NetworkManager/</code></td>
+</tr>
+</tbody>
+</table>
+<p>Netplan в Ubuntu — зручний YAML, але є нюанс: він є лише фронтендом над NetworkManager або systemd-networkd. Бекенд важливий при налаштуванні складних схем (bonding, VLAN, policy routing).</p>
+<p><strong>Файрволи:</strong></p>
+<ul>
+<li><strong>UFW</strong> (Ubuntu/Debian) — проста обгортка над iptables: <code>ufw allow 22/tcp</code>. Зручно для ручного управління, але при автоматизації через Ansible краще працювати напряму з <code>iptables</code>/<code>nftables</code>.</li>
+<li><strong>Firewalld</strong> (RHEL-сімейство) — концепція зон (<code>public</code>, <code>internal</code>, <code>trusted</code>). Інтерфейси розподіляються по зонах. Складніше писати Ansible-плейбуки, але гнучкіше для мультімережевих серверів:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>firewall-cmd --zone<span style="color:#f92672">=</span>internal --add-service<span style="color:#f92672">=</span>http --permanent
+</span></span><span style="display:flex;"><span>firewall-cmd --reload
+</span></span></code></pre></div><hr>
+<h3 id="5-ядра-ebpf-та-io_uring--чому-версія-ядра-критична">5. Ядра, eBPF та IO_uring — чому версія ядра критична</h3>
+<p>У пості згадується HWE Ubuntu, але без пояснення чому це важливо на практиці.</p>
+<p><strong>RHEL 9 вийшов з ядром 5.14 і залишиться на ньому до 2032 року</strong> — бекпортуються лише security-патчі. Ubuntu LTS через HWE (Hardware Enablement) дозволяє опціонально оновлювати ядро на свіжіші версії.</p>
+<p><strong>Чому це важливо для DevOps:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Технологія</th>
+<th>Мінімальне ядро</th>
+<th>Де використовується</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>eBPF (базовий)</td>
+<td>4.9</td>
+<td>Cilium, Falco</td>
+</tr>
+<tr>
+<td>eBPF (повний функціонал)</td>
+<td>5.8+</td>
+<td>Tetragon, Pixie, Hubble</td>
+</tr>
+<tr>
+<td>eBPF BTF (CO-RE)</td>
+<td>5.2+</td>
+<td>libbpf-based tools</td>
+</tr>
+<tr>
+<td>io_uring</td>
+<td>5.1+</td>
+<td>PostgreSQL async I/O, Scylla</td>
+</tr>
+<tr>
+<td>WireGuard (in-tree)</td>
+<td>5.6</td>
+<td>VPN без DKMS</td>
+</tr>
+<tr>
+<td>cgroups v2 (повна підтримка)</td>
+<td>5.2+</td>
+<td>containerd, Kubernetes</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Важливо:</strong> Alpine у контейнерах використовує ядро <strong>хост-машини</strong>. Тобто якщо нода Kubernetes на RHEL 8 (ядро 4.18) — eBPF-фічі не будуть доступні у жодному контейнері, незалежно від базового образу.</p>
+<p><strong>Перевірити версію ядра і підтримку BTF:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>uname -r
+</span></span><span style="display:flex;"><span>ls /sys/kernel/btf/vmlinux <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;BTF supported&#34;</span>
+</span></span></code></pre></div><hr>
+<h3 id="6-логування-де-шукати-системні-логи">6. Логування: де шукати системні логи</h3>
+<p>Дрібниця, яка стає проблемою при налаштуванні Promtail/Vector/Fluentd:</p>
+<table>
+<thead>
+<tr>
+<th>Дистрибутив</th>
+<th>Системний лог</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RHEL / Alma / Rocky</td>
+<td><code>/var/log/messages</code></td>
+</tr>
+<tr>
+<td>Debian / Ubuntu</td>
+<td><code>/var/log/syslog</code></td>
+</tr>
+<tr>
+<td>Всі (через journald)</td>
+<td><code>journalctl -u &lt;service&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>При написанні конфігів для Loki Promtail або Vector враховуйте це в <code>path</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># Promtail scrape config — враховуємо обидва шляхи</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">job_name</span>: <span style="color:#ae81ff">syslog</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">static_configs</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">targets</span>: [<span style="color:#ae81ff">localhost]</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">job</span>: <span style="color:#ae81ff">syslog</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">__path__</span>: <span style="color:#ae81ff">/var/log/{messages,syslog}</span>
+</span></span></code></pre></div><hr>
+<h3 id="7-systemd-resolved-та-dns-пастка-в-контейнерах">7. systemd-resolved та DNS-пастка в контейнерах</h3>
+<p>Ubuntu 22.04+ використовує <code>systemd-resolved</code> з symlink:</p>
+<pre tabindex="0"><code>/etc/resolv.conf → /run/systemd/resolve/stub-resolv.conf
+</code></pre><p>DNS-сервер там <code>127.0.0.53</code> (loopback). При збірці Docker-образу або монтуванні хостового <code>/etc/resolv.conf</code> в контейнер — DNS <strong>не працює</strong>, бо <code>127.0.0.53</code> недоступний зсередини контейнера.</p>
+<p><strong>Діагностика:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Всередині контейнера</span>
+</span></span><span style="display:flex;"><span>cat /etc/resolv.conf
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Якщо бачите nameserver 127.0.0.53 — це і є проблема</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># На хості перевірити реальний DNS</span>
+</span></span><span style="display:flex;"><span>resolvectl status
+</span></span></code></pre></div><p><strong>Рішення:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># На хості Ubuntu — переключити на статичний resolv.conf</span>
+</span></span><span style="display:flex;"><span>sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Тепер там будуть реальні upstream DNS-сервери</span>
+</span></span></code></pre></div><p>У Debian та RHEL цієї проблеми немає за замовчуванням.</p>
+<hr>
+<h3 id="8-alpine-linux-стандарт-для-контейнерів-з-підводними-каменями">8. Alpine Linux: стандарт для контейнерів з підводними каменями</h3>
+<p>Alpine стоїть окремо від усіх. Базовий Docker-образ важить <strong>~5 МБ</strong> завдяки двом радикальним рішенням:</p>
+<ol>
+<li>Заміна <code>glibc</code> → <strong>musl libc</strong> (мінімалістична, POSIX-сумісна).</li>
+<li>Заміна GNU utils → <strong>BusyBox</strong> (всі базові команди в одному бінарнику).</li>
+</ol>
+<p><strong>Система ініціалізації:</strong> OpenRC (не SystemD).</p>
+<p><strong>Підводні камені на практиці:</strong></p>
+<p><strong>Проблема 1 — несумісність musl з glibc:</strong></p>
+<p>Будь-який <strong>statically linked binary скомпільований під glibc</strong> не запуститься в Alpine без перекомпіляції. Часто зустрічається в корпоративних інструментах: агенти моніторингу, VPN-клієнти, комерційні СУБД-клієнти.</p>
+<p>Python/Node пакети з C-розширеннями (native extensions) можуть збиратися годинами або взагалі ламатися. Якщо потрібні <code>numpy</code>, <code>cryptography</code>, <code>lxml</code> — часто простіше взяти <code>python:3.12-slim-bookworm</code> (~50MB) замість <code>python:3.12-alpine</code>.</p>
+<p>Правильний патерн multistage build:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#75715e"># Build stage — debian для компіляції з glibc</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> ubuntu:24.04 AS builder</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> apt-get update <span style="color:#f92672">&amp;&amp;</span> apt-get install -y build-essential<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> /app</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> . .<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> make static  <span style="color:#75715e"># компілюємо статично</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Runtime stage — alpine тільки якщо binary статично зліновано</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> alpine:3.20</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> --from<span style="color:#f92672">=</span>builder /app/bin /app/bin<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ENTRYPOINT</span> [<span style="color:#e6db74">&#34;/app/bin&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p><strong>Проблема 2 — DNS у Kubernetes:</strong></p>
+<p>Alpine інакше обробляє <code>search</code> та <code>ndots</code> у <code>resolv.conf</code>. У K8s-кластері це іноді призводить до загадкових мережевих таймаутів при резолвінгу внутрішніх сервісів. Симптом: сервіс резолвиться повільно або з першого разу не відповідає.</p>
+<p><strong>Фікс у Pod spec:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">dnsConfig</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">options</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ndots</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#34;1&#34;</span>  <span style="color:#75715e"># замість дефолтних 5</span>
+</span></span></code></pre></div><p><strong>Висновок:</strong> Alpine — стандарт де-факто для Docker-контейнерів де важливий розмір образу і мінімальна surface attack. Для хост-нод Kubernetes — залишайте Ubuntu або RHEL-клони.</p>
+<hr>
+<h3 id="9-ansible-та-крос-дистрибутивна-автоматизація">9. Ansible та крос-дистрибутивна автоматизація</h3>
+<p>Це щоденний біль при гетерогенному парку серверів.</p>
+<p><strong>Неправильно</strong> — ламається на RHEL:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Install nginx</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">apt</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">state</span>: <span style="color:#ae81ff">present</span>
+</span></span></code></pre></div><p><strong>Правильно</strong> — через абстрактний модуль <code>package</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Install nginx</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">package</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">state</span>: <span style="color:#ae81ff">present</span>
+</span></span></code></pre></div><p>Але навіть <code>package</code> не вирішує проблему <strong>різних назв пакетів</strong> між сімействами. Для цього використовуйте <code>ansible_os_family</code> або <code>ansible_distribution</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Install Python dev headers</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">package</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#34;{{ python_dev_pkg[ansible_os_family] }}&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">state</span>: <span style="color:#ae81ff">present</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">vars</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">python_dev_pkg</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">Debian</span>: <span style="color:#ae81ff">python3-dev</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">RedHat</span>: <span style="color:#ae81ff">python3-devel</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Enable EPEL (RedHat only)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">package</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">epel-release</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">state</span>: <span style="color:#ae81ff">present</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">when</span>: <span style="color:#ae81ff">ansible_os_family == &#34;RedHat&#34;</span>
+</span></span></code></pre></div><p><strong>Файрвол у Ansible — теж різний:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># UFW для Debian/Ubuntu</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">community.general.ufw</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">rule</span>: <span style="color:#ae81ff">allow</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">port</span>: <span style="color:#e6db74">&#34;443&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">when</span>: <span style="color:#ae81ff">ansible_os_family == &#34;Debian&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Firewalld для RHEL</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">ansible.posix.firewalld</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">service</span>: <span style="color:#ae81ff">https</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">permanent</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">state</span>: <span style="color:#ae81ff">enabled</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">when</span>: <span style="color:#ae81ff">ansible_os_family == &#34;RedHat&#34;</span>
+</span></span></code></pre></div><hr>
+<h3 id="10-атомарні-ос--наступний-крок-для-kubernetes-нод">10. Атомарні ОС — наступний крок для Kubernetes-нод</h3>
+<p>Стаття не буде повною без згадки нової хвилі: <strong>immutable/atomic Linux</strong> спеціально для хмарних та K8s-середовищ.</p>
+<p><strong>Принцип:</strong> ОС оновлюється цілим образом за схемою A/B partition. Немає <code>apt upgrade</code> або <code>dnf update</code> — є атомарне перемикання між версіями образу. Відкат у разі проблем — одна команда.</p>
+<table>
+<thead>
+<tr>
+<th>Дистрибутив</th>
+<th>Основа</th>
+<th>Призначення</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Talos Linux</strong></td>
+<td>—</td>
+<td>Kubernetes-ноди (тільки K8s, без SSH)</td>
+</tr>
+<tr>
+<td><strong>Fedora CoreOS</strong></td>
+<td>RHEL</td>
+<td>Контейнерні workloads</td>
+</tr>
+<tr>
+<td><strong>Flatcar Linux</strong></td>
+<td>CoreOS</td>
+<td>Замінник CoreOS від Kinvolk/Microsoft</td>
+</tr>
+<tr>
+<td><strong>Bottlerocket</strong></td>
+<td>—</td>
+<td>AWS EKS ноди від Amazon</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Talos Linux</strong> — найрадикальніший: там немає shell доступу взагалі. Управління виключно через API (<code>talosctl</code>). Мінімальна surface attack, максимальна відтворюваність. Якщо будуєте новий K8s-кластер з нуля — варто розглянути.</p>
+<hr>
+<h2 id="що-обрати-під-конкретну-задачу">Що обрати під конкретну задачу</h2>
+<table>
+<thead>
+<tr>
+<th>Критерій</th>
+<th>Ubuntu Server</th>
+<th>Debian</th>
+<th>RHEL / Alma / Rocky</th>
+<th>Alpine</th>
+<th>Talos</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Пакетний менеджер</td>
+<td>APT</td>
+<td>APT</td>
+<td>DNF</td>
+<td>APK</td>
+<td>— (немає)</td>
+</tr>
+<tr>
+<td>Init-система</td>
+<td>SystemD</td>
+<td>SystemD</td>
+<td>SystemD</td>
+<td>OpenRC</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Підтримка заліза</td>
+<td>Відмінна (HWE)</td>
+<td>Консервативна</td>
+<td>Стабільна</td>
+<td>Мінімальна</td>
+<td>—</td>
+</tr>
+<tr>
+<td>SELinux/AppArmor</td>
+<td>AppArmor</td>
+<td>AppArmor</td>
+<td>SELinux</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Основна сфера</td>
+<td>Хмари, стартапи</td>
+<td>Власні сервери</td>
+<td>Enterprise</td>
+<td>Контейнери</td>
+<td>K8s-ноди</td>
+</tr>
+<tr>
+<td>Snap</td>
+<td>Так ⚠️</td>
+<td>Ні</td>
+<td>Ні</td>
+<td>Ні</td>
+<td>Ні</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Кейс 1: Стартап, хмара, швидкий старт</strong>
+→ <strong>Ubuntu Server LTS</strong>. Дефолтний образ у всіх хмарах (AWS, GCP, Azure, Hetzner), найбільша база знань у мережі, ідеальна інтеграція з <code>cloud-init</code>. Canonical дає 5 років підтримки безкоштовно. Зверніть увагу на Snap-проблеми при налаштуванні моніторингу.</p>
+<p><strong>Кейс 2: Enterprise, банк, SAP, Oracle</strong>
+→ <strong>RHEL</strong>. Комерційний soft від великих вендорів сертифікований виключно під RHEL. Якщо бюджету на підписку немає — <strong>AlmaLinux</strong> або <strong>Rocky Linux</strong> як безкоштовна дроп-ін заміна.</p>
+<p><strong>Кейс 3: Інфраструктура &ldquo;поставив і забув&rdquo;</strong>
+→ <strong>Debian</strong>. Повністю некомерційний проєкт, не залежить від настроїв ради директорів корпорацій. Без Snap, без surprises, максимально передбачуваний. Ідеал для Proxmox-нод, bare-metal серверів, довгоживучих VPS.</p>
+<p><strong>Кейс 4: Docker-контейнери, мікросервіси</strong>
+→ <strong>Alpine Linux</strong> (всередині контейнерів). Для хост-машин Kubernetes-нод — Ubuntu або RHEL-клони через кращу сумісність із системними демонами, eBPF та мережевими драйверами.</p>
+<p><strong>Кейс 5: Kubernetes-кластер з нуля, максимальна безпека</strong>
+→ <strong>Talos Linux</strong>. Immutable ОС без shell, управління через API. Мінімальна surface attack, ідеальна відтворюваність нод.</p>
+<hr>
+<h2 id="резюме">Резюме</h2>
+<p>Якщо перед вами завдання розгорнути нову інфраструктуру і ви вагаєтесь у виборі — <strong>обирайте Ubuntu</strong>. Вона покриває 90% серверних потреб сучасного IT і прощає найбільше помилок.</p>
+<p>Але пам&rsquo;ятайте кілька речей, які відрізняють досвідченого інженера від початківця:</p>
+<ul>
+<li><strong>EOL — перше, що перевіряють</strong> перед вибором дистрибутива. Поставити сервер на ОС без підтримки через 2 роки — це технічний борг з відомою датою вибуху.</li>
+<li><strong>Snap</strong> — вимикайте або враховуйте в моніторингу на Ubuntu-серверах.</li>
+<li><strong>SELinux не вимикають</strong> на RHEL-продакшені. Його вчать і налаштовують.</li>
+<li><strong>Alpine</strong> — для контейнерів, не для нод. musl несумісний з glibc-бінарниками.</li>
+<li><strong>eBPF-фічі</strong> залежать від версії ядра хост-машини, а не контейнера.</li>
+<li><strong>Ansible-ролі</strong> пишіть одразу з урахуванням <code>ansible_os_family</code> — навіть якщо зараз у вас тільки один дистрибутив.</li>
+</ul>
+<p>Принципова різниця між дистрибутивами — це зовнішня &ldquo;обгортка&rdquo;. Якщо ви розумієте як працює Linux на рівні ядра, як функціонують системні виклики та мережевий стек — адаптація до будь-якої системи займе максимум кілька днів.</p>
+
+</content>
+
+
+
+<p>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>
