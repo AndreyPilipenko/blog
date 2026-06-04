@@ -1,6 +1,6 @@
 +++
 title = "Kubernetes Cheatsheet"
-date = "2026-05-01T00:00:00+03:00"
+date = "2026-01-04T00:00:00+03:00"
 draft = false
 
 tags = ["debug","linux","sre",]

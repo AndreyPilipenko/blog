@@ -1,6 +1,6 @@
 +++
 title = "Top Linux Commands"
-date = "2026-02-01T00:27:57+03:00"
+date = "2025-02-01T00:27:57+03:00"
 draft = false
 +++
 
