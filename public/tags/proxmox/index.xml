@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Proxmox on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+    <link>//localhost:1313/tags/proxmox/</link>
+    <description>Recent content in Proxmox on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 04 Jun 2026 00:00:00 +0300</lastBuildDate>
+    <atom:link href="//localhost:1313/tags/proxmox/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Proxmox VE Cluster: від теорії до продакшену</title>
+      <link>//localhost:1313/blog/proxmox-cluster-guide/</link>
+      <pubDate>Thu, 04 Jun 2026 00:00:00 +0300</pubDate>
+      <guid>//localhost:1313/blog/proxmox-cluster-guide/</guid>
+      <description>Proxmox Virtual Environment — це платформа на базі Debian Linux, що поєднує KVM-віртуалізацію та LXC-контейнеризацію в єдиному веб-інтерфейсі. Поодинокий гіпервізор — це завжди single point of failure. Кластер вирішує цю проблему, але за умови що ти розумієш як він реально працює всередині.&#xA;Як Proxmox влаштований на низькому рівні Перед тим як говорити про кластер — треба зрозуміти що відбувається на одній ноді.&#xA;Шар 1 — Залізо і ядро Proxmox встановлюється прямо на bare metal.</description>
+    </item>
+  </channel>
+</rss>

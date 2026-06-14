@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Interview-Prep on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+    <link>//localhost:1313/categories/interview-prep/</link>
+    <description>Recent content in Interview-Prep on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 14 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/categories/interview-prep/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Підготовка до співбесід: глибоке розуміння алгоритмів, структур даних та архітектури</title>
+      <link>//localhost:1313/blog/interview/</link>
+      <pubDate>Sat, 14 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/interview/</guid>
+      <description>Як читати цю статтю: Можна по порядку, можна стрибати до потрібного розділу. Кожна тема самодостатня. Але читаючи все разом — побачиш, як теми з&amp;rsquo;єднані між собою.&#xA;Зміст Heap і Priority Queue Binary Search: один шаблон для всього Рекурсія і Leap of Faith Doubly Linked List і Memory Leak LRU Cache LFU Cache Хеш-таблиці зсередини Memory Model: як компілятор і CPU можуть тебе здивувати Транзакції: ACID і BASE Рівні ізоляції транзакцій і аномалії Concurrency Control: як синхронізувати доступ до даних Dynamic Programming: мислення, а не заучування Чистий код і архітектура Golang Scheduler зсередини Як вчити алгоритми ефективно Критичне мислення для розробника Heap і Priority Queue Що це таке і навіщо Priority Queue (черга з пріоритетом) — абстракція: черга, де кожен елемент має пріоритет.</description>
+    </item>
+  </channel>
+</rss>

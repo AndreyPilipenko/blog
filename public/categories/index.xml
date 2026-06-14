@@ -6,6 +6,21 @@
     <description>Recent content in Categories on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Sun, 14 Jun 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:1313/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Career</title>
+      <link>//localhost:1313/categories/career/</link>
+      <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/categories/career/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Interview-Prep</title>
+      <link>//localhost:1313/categories/interview-prep/</link>
+      <pubDate>Sat, 14 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/categories/interview-prep/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>

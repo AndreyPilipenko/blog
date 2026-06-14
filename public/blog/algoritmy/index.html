@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Алгоритми та структури даних | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="Алгоритми та структури даних" />
+<meta name="description" content="Повний гайд по базі алгоритмів і структур даних для підготовки до технічного інтервʼю: Big O, патерни, порядок вивчення та підхід до задач." />
+<meta name="keywords" content="алгоритми,leetcode," />
+
+
+<meta property="og:title" content="Алгоритми та структури даних" />
+<meta property="og:description" content="Повний гайд по базі алгоритмів і структур даних для підготовки до технічного інтервʼю: Big O, патерни, порядок вивчення та підхід до задач." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/blog/algoritmy/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2026-06-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-06-14T00:00:00+00:00" />
+
+
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Алгоритми та структури даних"/>
+<meta name="twitter:description" content="Повний гайд по базі алгоритмів і структур даних для підготовки до технічного інтервʼю: Big O, патерни, порядок вивчення та підхід до задач."/>
+
+
+
+<meta itemprop="name" content="Алгоритми та структури даних">
+<meta itemprop="description" content="Повний гайд по базі алгоритмів і структур даних для підготовки до технічного інтервʼю: Big O, патерни, порядок вивчення та підхід до задач."><meta itemprop="datePublished" content="2026-06-14T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2026-06-14T00:00:00+00:00" />
+<meta itemprop="wordCount" content="559">
+<meta itemprop="keywords" content="алгоритми,leetcode," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</h2>
+</a>
+<nav>
+<a href="/">Home</a>
+
+<a href="/blog/">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Алгоритми та структури даних</h1>
+<p>
+  <i>
+    <time datetime='2026-06-14'>
+      14 Jun, 2026
+    </time>
+  </i>
+</p>
+
+<content>
+  <h2 id="big-o--перше-що-треба-засвоїти">Big O — перше, що треба засвоїти</h2>
+<p>Перш ніж писати будь-який код на інтервʼю, потрібно вміти оцінювати його ефективність. Big O нотація описує, як зростає час виконання або споживання памʼяті залежно від розміру вхідних даних.</p>
+<table>
+<thead>
+<tr>
+<th>Нотація</th>
+<th>Назва</th>
+<th>Приклад</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>O(1)</td>
+<td>константна</td>
+<td>звернення до масиву за індексом</td>
+</tr>
+<tr>
+<td>O(log n)</td>
+<td>логарифмічна</td>
+<td>бінарний пошук</td>
+</tr>
+<tr>
+<td>O(n)</td>
+<td>лінійна</td>
+<td>прохід по масиву</td>
+</tr>
+<tr>
+<td>O(n log n)</td>
+<td>лінійно-логарифмічна</td>
+<td>злиттєве сортування</td>
+</tr>
+<tr>
+<td>O(n²)</td>
+<td>квадратична</td>
+<td>вкладені цикли</td>
+</tr>
+<tr>
+<td>O(2ⁿ)</td>
+<td>експоненційна</td>
+<td>рекурсія без мемоізації</td>
+</tr>
+</tbody>
+</table>
+<h2 id="структури-даних--обовʼязковий-мінімум">Структури даних — обовʼязковий мінімум</h2>
+<h3 id="лінійні-структури">Лінійні структури</h3>
+<p><strong>Array / Slice</strong> — основа всього. Потрібно знати: звернення за індексом O(1), вставка в кінець O(1) амортизовано, вставка на початок O(n).</p>
+<p><strong>Hash Map (словник)</strong> — найчастіше використовувана структура на інтервʼю. Середній час пошуку, вставки і видалення — O(1). Більшість задач на підрахунок, пошук дублікатів і групування вирішуються через хеш-таблицю.</p>
+<p><strong>Stack</strong> — структура LIFO (last in, first out). Використовується в задачах на дужки, монотонні стеки, DFS ітеративно.</p>
+<p><strong>Queue / Deque</strong> — структура FIFO. Основа для BFS і задач типу sliding window з видаленням з обох кінців.</p>
+<h3 id="нелінійні-структури">Нелінійні структури</h3>
+<p><strong>Linked List</strong> — рідше зустрічається на практиці, але популярна тема на інтервʼю. Важливо вміти: reverse list, знайти цикл (алгоритм Флойда), знайти середину.</p>
+<p><strong>Binary Tree / BST</strong> — обовʼязково. Обходи (inorder, preorder, postorder), пошук в BST за O(log n), перевірка збалансованості.</p>
+<p><strong>Heap (Min/Max Heap)</strong> — використовується в задачах типу &ldquo;знайти K найбільших елементів&rdquo;. Вставка і видалення — O(log n), отримання мін/макс — O(1).</p>
+<p><strong>Graph</strong> — орієнтовані та неорієнтовані, зважені та незважені. Представлення через список суміжності або матрицю. Основні алгоритми: BFS, DFS, Dijkstra, топологічне сортування.</p>
+<h2 id="алгоритмічні-патерни--важливіше-за-зубріння-задач">Алгоритмічні патерни — важливіше за зубріння задач</h2>
+<p>Замість того щоб заучувати сотні задач, варто засвоїти <strong>15 патернів</strong>. Тоді нові задачі починають впізнаватись за структурою, а не за умовою.</p>
+<table>
+<thead>
+<tr>
+<th>Патерн</th>
+<th>Де застосовується</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Two Pointers</td>
+<td>відсортовані масиви, паліндроми, пошук пар</td>
+</tr>
+<tr>
+<td>Sliding Window</td>
+<td>підрядки, підмасиви фіксованого або змінного розміру</td>
+</tr>
+<tr>
+<td>Binary Search</td>
+<td>відсортовані дані, задачі &ldquo;мінімальний максимум&rdquo;</td>
+</tr>
+<tr>
+<td>BFS / DFS</td>
+<td>дерева, графи, задачі на острови та компоненти</td>
+</tr>
+<tr>
+<td>Dynamic Programming</td>
+<td>&ldquo;скільки способів&rdquo;, задачі на оптимум</td>
+</tr>
+<tr>
+<td>Backtracking</td>
+<td>комбінації, перестановки, N-Queens</td>
+</tr>
+<tr>
+<td>Greedy</td>
+<td>інтервали, задачі з локальним оптимумом</td>
+</tr>
+<tr>
+<td>Monotonic Stack</td>
+<td>next greater element, задачі на гістограми</td>
+</tr>
+<tr>
+<td>Union-Find</td>
+<td>connected components, задачі на обʼєднання множин</td>
+</tr>
+<tr>
+<td>Topological Sort</td>
+<td>залежності між задачами, курси, build order</td>
+</tr>
+</tbody>
+</table>
+<h2 id="порядок-вивчення">Порядок вивчення</h2>
+<p>Не варто стрибати одразу на графи або динамічне програмування. Ось послідовність, яка дає найшвидший результат:</p>
+<pre tabindex="0"><code>1. Big O нотація                    — 2-3 дні
+2. Array + Hash Map                 — 1-2 тижні
+3. Two Pointers + Sliding Window    — 1 тиждень
+4. Binary Search                    — 1 тиждень
+5. Stack + Queue                    — 1 тиждень
+6. Linked List                      — 1 тиждень
+7. Trees + BFS/DFS                  — 2 тижні
+8. Heap                             — 1 тиждень
+9. Graphs                           — 2 тижні
+10. Dynamic Programming             — 3-4 тижні (найскладніший блок)
+</code></pre><h2 id="фреймворк-для-розвʼязання-задачі">Фреймворк для розвʼязання задачі</h2>
+<p>На інтервʼю важливо не просто отримати правильну відповідь, а продемонструвати структурне мислення. Ось покроковий підхід:</p>
+<ol>
+<li><strong>Прочитай умову двічі</strong> — не поспішай писати код</li>
+<li><strong>Уточни edge cases</strong> — пустий масив? відʼємні числа? один елемент?</li>
+<li><strong>Придумай brute force</strong> — проговори вголос, навіть якщо він повільний</li>
+<li><strong>Оптимізуй</strong> — що тут надлишково? що можна кешувати або передобчислити?</li>
+<li><strong>Напиши код</strong> — чистий, з говорячими іменами змінних</li>
+<li><strong>Перевір вручну</strong> — пройдись по прикладу на папері або в голові</li>
+<li><strong>Назви складність</strong> — час і памʼять</li>
+</ol>
+<p>Навіть якщо не вдається дійти до оптимального рішення — правильний процес мислення важливий не менше, ніж відповідь.</p>
+<h2 id="ресурси-для-підготовки">Ресурси для підготовки</h2>
+<ul>
+<li><strong><a href="https://neetcode.io">NeetCode.io</a></strong> — найкращий структурований roadmap з відео поясненнями по кожному патерну</li>
+<li><strong><a href="https://leetcode.com">LeetCode</a></strong> — основна платформа для практики (починай з Easy, потім Medium)</li>
+</ul>
+
+</content>
+
+
+
+<p>
+  
+  <a href="//localhost:1313/tags/%D0%B0%D0%BB%D0%B3%D0%BE%D1%80%D0%B8%D1%82%D0%BC%D0%B8/">#Алгоритми</a>
+  
+  <a href="//localhost:1313/tags/leetcode/">#Leetcode</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

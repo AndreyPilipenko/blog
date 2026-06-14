@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Proxmox VE Cluster: від теорії до продакшену | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="Proxmox VE Cluster: від теорії до продакшену" />
+<meta name="description" content="Proxmox Virtual Environment — це платформа на базі Debian Linux, що поєднує KVM-віртуалізацію та LXC-контейнеризацію в єдиному веб-інтерфейсі. Поодинокий гіпервізор — це завжди single point of failure. Кластер вирішує цю проблему, але за умови що ти розумієш як він реально працює всередині.
+Як Proxmox влаштований на низькому рівні Перед тим як говорити про кластер — треба зрозуміти що відбувається на одній ноді.
+Шар 1 — Залізо і ядро Proxmox встановлюється прямо на bare metal." />
+<meta name="keywords" content="Proxmox,Virtualization,Infrastructure,HA,Corosync,DevOps," />
+
+
+<meta property="og:title" content="Proxmox VE Cluster: від теорії до продакшену" />
+<meta property="og:description" content="Proxmox Virtual Environment — це платформа на базі Debian Linux, що поєднує KVM-віртуалізацію та LXC-контейнеризацію в єдиному веб-інтерфейсі. Поодинокий гіпервізор — це завжди single point of failure. Кластер вирішує цю проблему, але за умови що ти розумієш як він реально працює всередині.
+Як Proxmox влаштований на низькому рівні Перед тим як говорити про кластер — треба зрозуміти що відбувається на одній ноді.
+Шар 1 — Залізо і ядро Proxmox встановлюється прямо на bare metal." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/blog/proxmox-cluster-guide/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2026-06-04T00:00:00+03:00" />
+<meta property="article:modified_time" content="2026-06-04T00:00:00+03:00" />
+
+
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Proxmox VE Cluster: від теорії до продакшену"/>
+<meta name="twitter:description" content="Proxmox Virtual Environment — це платформа на базі Debian Linux, що поєднує KVM-віртуалізацію та LXC-контейнеризацію в єдиному веб-інтерфейсі. Поодинокий гіпервізор — це завжди single point of failure. Кластер вирішує цю проблему, але за умови що ти розумієш як він реально працює всередині.
+Як Proxmox влаштований на низькому рівні Перед тим як говорити про кластер — треба зрозуміти що відбувається на одній ноді.
+Шар 1 — Залізо і ядро Proxmox встановлюється прямо на bare metal."/>
+
+
+
+<meta itemprop="name" content="Proxmox VE Cluster: від теорії до продакшену">
+<meta itemprop="description" content="Proxmox Virtual Environment — це платформа на базі Debian Linux, що поєднує KVM-віртуалізацію та LXC-контейнеризацію в єдиному веб-інтерфейсі. Поодинокий гіпервізор — це завжди single point of failure. Кластер вирішує цю проблему, але за умови що ти розумієш як він реально працює всередині.
+Як Proxmox влаштований на низькому рівні Перед тим як говорити про кластер — треба зрозуміти що відбувається на одній ноді.
+Шар 1 — Залізо і ядро Proxmox встановлюється прямо на bare metal."><meta itemprop="datePublished" content="2026-06-04T00:00:00+03:00" />
+<meta itemprop="dateModified" content="2026-06-04T00:00:00+03:00" />
+<meta itemprop="wordCount" content="2117">
+<meta itemprop="keywords" content="Proxmox,Virtualization,Infrastructure,HA,Corosync,DevOps," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</h2>
+</a>
+<nav>
+<a href="/">Home</a>
+
+<a href="/blog/">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Proxmox VE Cluster: від теорії до продакшену</h1>
+<p>
+  <i>
+    <time datetime='2026-06-04'>
+      04 Jun, 2026
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>Proxmox Virtual Environment — це платформа на базі Debian Linux, що поєднує KVM-віртуалізацію та LXC-контейнеризацію в єдиному веб-інтерфейсі. Поодинокий гіпервізор — це завжди single point of failure. Кластер вирішує цю проблему, але за умови що ти розумієш як він реально працює всередині.</p>
+<h2 id="як-proxmox-влаштований-на-низькому-рівні">Як Proxmox влаштований на низькому рівні</h2>
+<p>Перед тим як говорити про кластер — треба зрозуміти що відбувається на одній ноді.</p>
+<h3 id="шар-1--залізо-і-ядро">Шар 1 — Залізо і ядро</h3>
+<p>Proxmox встановлюється прямо на bare metal. Ніякого гіпервізора між залізом і ядром немає. Це Debian з кастомним ядром <code>pve-kernel</code>, в яке вбудовано ZFS, KVM-модуль (<code>/dev/kvm</code>) і VFIO для PCI passthrough. KVM і є гіпервізор — але він живе як модуль Linux.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Переконатись що KVM завантажений</span>
+</span></span><span style="display:flex;"><span>lsmod | grep kvm
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kvm_intel або kvm_amd — залежно від процесора</span>
+</span></span></code></pre></div><h3 id="шар-2--процес-на-кожну-vm">Шар 2 — Процес на кожну VM</h3>
+<p>Коли ти запускаєш VM — Proxmox форкає окремий процес <code>qemu-system-x86_64</code>. Кожна VM = один Linux-процес. Цей процес через <code>/dev/kvm</code> просить ядро виконати guest-код напряму на CPU через VT-x/AMD-V — без емуляції. Тому KVM VM такі швидкі.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Побачиш по одному процесу на кожну запущену VM</span>
+</span></span><span style="display:flex;"><span>ps aux | grep qemu-system
+</span></span></code></pre></div><p>LXC-контейнери — зовсім інша історія. Вони не емулюють залізо взагалі. Просто <code>clone()</code> системний виклик з новими namespace і cgroup. Контейнер бачить ізольований процесний простір і мережу, але <strong>ядро хоста спільне</strong>. Старт LXC — ~100ms. Старт KVM VM — кілька секунд.</p>
+<h3 id="шар-3--системні-сервіси">Шар 3 — Системні сервіси</h3>
+<p><strong><code>pvedaemon</code></strong> — мозок вузла. REST API сервер на внутрішньому порту 85. Він запускає і зупиняє VM, керує сховищем, виконує завдання. Якщо він падає — Web UI перестає відповідати, але вже запущені VM <strong>продовжують жити</strong> — їх процеси незалежні від pvedaemon.</p>
+<p><strong><code>pveproxy</code></strong> — тільки проксі. Приймає HTTPS на порт 8006, робить TLS-термінацію і передає запити до pvedaemon. Веб-інтерфейс (Ext.js) живе тут.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>systemctl status pvedaemon pveproxy
+</span></span></code></pre></div><h3 id="де-живуть-конфіги">Де живуть конфіги</h3>
+<p><code>/etc/pve/</code> — це не звичайна директорія. Це FUSE-файлова система <code>pmxcfs</code>, яка реплікується між усіма нодами кластера в реальному часі через Corosync. Змінив конфіг VM на node01 → через мілісекунди зʼявилось на node02 і node03.</p>
+<pre tabindex="0"><code>/etc/pve/
+├── qemu-server/       # конфіги KVM VM (101.conf, 102.conf...)
+├── lxc/               # конфіги LXC контейнерів
+├── storage.cfg        # визначення сховищ (cluster-wide)
+├── datacenter.cfg     # глобальні налаштування кластера
+├── corosync.conf      # конфіг кластеру
+├── ha/
+│   ├── resources.cfg  # які VM захищені HA
+│   └── groups.cfg     # групи нод для HA
+└── nodes/
+    └── pve01/         # конфіги специфічні для ноди
+</code></pre><p>Все що в <code>/etc/pve</code> — автоматично синхронізується. Те що поза ним (<code>/etc/network/interfaces</code> тощо) — ні.</p>
+<p><strong>Критичний нюанс:</strong> якщо кластер втратив кворум — <code>/etc/pve</code> переходить в <strong>read-only на всіх нодах</strong>. Ти не зможеш запустити нову VM, змінити мережу, нічого. Це навмисна поведінка — захист від split-brain.</p>
+<hr>
+<h2 id="архітектура-кластера">Архітектура кластера</h2>
+<h3 id="що-таке-кворум-і-чому-мінімум-3-ноди">Що таке кворум і чому мінімум 3 ноди</h3>
+<p>Кворум — це стан коли більшість вузлів бачать один одного і можуть приймати рішення. Формула проста:</p>
+<pre tabindex="0"><code>мінімально необхідна кількість голосів = floor(total_votes / 2) + 1
+</code></pre><p>При <strong>3 нодах</strong>: кворум = 2. Впала одна нода → лишилось 2/3 → кластер живий, HA спрацьовує.</p>
+<p>При <strong>2 нодах</strong>: кворум = 2. Впала одна нода → лишилось 1/2 → <strong>кворуму немає</strong>, кластер заморожує всі зміни, HA не мігрує VM.</p>
+<p>Це не баг — це захист від split-brain.</p>
+<h3 id="split-brain-чому-це-найгірше-що-може-статись">Split-brain: чому це найгірше що може статись</h3>
+<p>Split-brain — коли мережа між нодами розривається і обидві частини вирішують що вони &ldquo;живі&rdquo;. Обидві намагаються змонтувати той самий диск спільного сховища в read-write. Результат — <strong>гарантована корупція файлової системи</strong> всередині VM. ZFS pool після цього не відновити.</p>
+<p>Proxmox запобігає цьому через кворум: якщо у тебе менше половини голосів — ти нічого не робиш. Меншість мовчить, більшість керує.</p>
+<h3 id="що-робити-якщо-фізично-тільки-2-сервери">Що робити якщо фізично тільки 2 сервери</h3>
+<p><strong>QDevice (Corosync Qdevice)</strong> — зовнішній арбітр кворуму. Розгортається на окремій малесенькій машині (VPS, Raspberry Pi) — вона не несе VM, тільки голосує при розриві між нодами.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># На окремій машині (арбітр)</span>
+</span></span><span style="display:flex;"><span>apt install corosync-qnetd
+</span></span><span style="display:flex;"><span>corosync-qnetd-certutil -i
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># На мастер-ноді кластера</span>
+</span></span><span style="display:flex;"><span>pvecm qdevice setup 192.168.1.100   <span style="color:#75715e"># IP арбітра</span>
+</span></span></code></pre></div><p>Після цього <code>pvecm status</code> покаже <code>Expected votes: 3</code> при двох фізичних нодах.</p>
+<blockquote>
+<p><strong>Важливо:</strong> QDevice і його хост мають бути в іншій мережі або локації. Якщо він в тій самій стійці що й обидві ноди — при відключенні стійки втрачаєш всі три голоси одночасно.</p>
+</blockquote>
+<hr>
+<h2 id="мережева-інфраструктура-де-найчастіше-все-ламається">Мережева інфраструктура: де найчастіше все ламається</h2>
+<h3 id="що-треба-ізолювати-фізично">Що треба ізолювати фізично</h3>
+<table>
+<thead>
+<tr>
+<th>Трафік</th>
+<th>Вимоги</th>
+<th>Чому окремо</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Corosync heartbeat</td>
+<td>&lt;2ms latency, low jitter</td>
+<td>Один dropped packet = нода вважається мертвою</td>
+</tr>
+<tr>
+<td>ZFS replication / Ceph</td>
+<td>10GbE+, high bandwidth</td>
+<td>Flooding цього трафіку вбиває Corosync latency</td>
+</tr>
+<tr>
+<td>Live migration (VM RAM)</td>
+<td>висока пропускна здатність</td>
+<td>При великих VM може забити канал Corosync</td>
+</tr>
+<tr>
+<td>VM traffic (public)</td>
+<td>залежить від задачі</td>
+<td>Ізоляція безпеки та QoS</td>
+</tr>
+<tr>
+<td>IPMI/BMC</td>
+<td>окремий management VLAN</td>
+<td>Потрібен навіть коли ОС повністю впала</td>
+</tr>
+</tbody>
+</table>
+<p>Якщо є тільки два фізичних порти — мінімум роби VLAN trunk і окремий VLAN для Corosync. Але краще — окремі NIC.</p>
+<h3 id="migration-network-нюанс-який-часто-забувають">Migration network: нюанс який часто забувають</h3>
+<p>За замовчуванням трафік live migration VM іде через той самий інтерфейс що і Corosync. При міграції великої VM (64GB RAM) це може забити канал — Corosync пакети дропаються, нода виглядає мертвою, HA вирішує мігрувати ще більше VM. Каскадний збій.</p>
+<p>Виправлення в <code>/etc/pve/datacenter.cfg</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#a6e22e">migration: type</span><span style="color:#f92672">=</span><span style="color:#e6db74">insecure,network=10.0.1.0/24</span>
+</span></span></code></pre></div><p>Або через UI: <strong>Datacenter → Options → Migration Settings</strong>.</p>
+<p><code>insecure</code> означає відсутність додаткового шифрування поверх — якщо мережа фізично ізольована, це нормально. Для WAN — використовуй <code>secure</code> (SSH tunnel, але повільніше).</p>
+<hr>
+<h2 id="corosync-налаштування-таймаутів">Corosync: налаштування таймаутів</h2>
+<p>Файл <code>/etc/corosync/corosync.conf</code>, секція <code>totem</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#a6e22e">totem {</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">version: 2</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cluster_name: pve-prod</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">transport: knet</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Час очікування токену між нодами (мс). Дефолт: 1000.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># На WAN між дата-центрами — збільш до 5000-20000.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">token: 5000</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># token * token_retransmits = реальний таймаут до оголошення ноди мертвою</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">token_retransmits_before_loss_const: 10</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">join: 100</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">consensus: 1200</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">max_messages: 20</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Для WAN — обовʼязково knet з компресією</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">knet_compression_model: lz4</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">knet_compression_threshold: 100</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">}</span>
+</span></span></code></pre></div><p>Правило для <code>token</code>: має бути мінімум <strong>10× максимальної RTT</strong> між нодами.</p>
+<ul>
+<li>LAN (~0.3ms RTT) → <code>token: 5000</code> — запас з надлишком</li>
+<li>Між містами (~15ms RTT) → <code>token: 20000</code></li>
+<li>Між країнами (~60ms RTT) → <code>token: 80000</code> + <code>consensus: 90000</code></li>
+</ul>
+<p><strong>Після зміни — перезапуск через <code>systemctl restart corosync</code> тільки якщо кластер живий на більшості нод. Ніколи не роби це одночасно на всіх.</strong></p>
+<hr>
+<h2 id="що-робити-при-high-latency-або-нестабільному-звʼязку-між-локаціями">Що робити при high latency або нестабільному звʼязку між локаціями</h2>
+<h3 id="симптом-ноди-постійно-виходять-і-заходять-у-кластер">Симптом: ноди постійно виходять і заходять у кластер</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>journalctl -u corosync --since <span style="color:#e6db74">&#34;1 hour ago&#34;</span> | grep -E <span style="color:#e6db74">&#34;FAILED|left|joined&#34;</span>
+</span></span></code></pre></div><p>Якщо бачиш <code>totem: FAILED to receive the leave message</code> або <code>node X left the cluster</code> — latency перевищує token таймаут, або jitter вбиває пакети.</p>
+<h3 id="алгоритм-діагностики">Алгоритм діагностики</h3>
+<p><strong>1. Виміряй реальну latency саме на тому IP що в corosync.conf:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ping -c <span style="color:#ae81ff">100</span> -i 0.1 192.168.10.2 | tail -5
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># avg &gt; 5ms або mdev (jitter) &gt; 2ms — треба тюнити</span>
+</span></span></code></pre></div><p><strong>2. Перевір чи Corosync не ділить NIC з іншим трафіком:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Ненульовий dropped — або buffer overflow, або collision</span>
+</span></span><span style="display:flex;"><span>watch -n1 <span style="color:#e6db74">&#39;ip -s link show eth0&#39;</span>
+</span></span></code></pre></div><p><strong>3. Збільш таймаути пропорційно latency</strong> — формула вище.</p>
+<p><strong>4. Як тимчасово зупинити автоматичні міграції:</strong></p>
+<p>Якщо між локаціями нестабільний звʼязок і ти не хочеш щоб Proxmox починав автоматично мігрувати VM при кожному кліпанні каналу — заморозь HA policy:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Через CLI (заморожує прийняття рішень CRM)</span>
+</span></span><span style="display:flex;"><span>pvesh set /cluster/ha/config --no-shutdown-policy freeze
+</span></span></code></pre></div><p>Або через UI: <strong>Datacenter → HA → Resources</strong> → змінити policy на <code>ignored</code> для конкретних VM.</p>
+<blockquote>
+<p><strong>WARNING:</strong> Якщо вимкнеш фенсинг і при цьому нода &ldquo;зависне&rdquo; а не впаде — HA не зможе безпечно перезапустити VM на іншій ноді. Це trade-off між доступністю і безпекою даних.</p>
+</blockquote>
+<hr>
+<h2 id="fencing-і-stonith-як-proxmox-переконується-що-нода-мертва">Fencing і STONITH: як Proxmox переконується що нода мертва</h2>
+<p>Коли HA manager бачить що нода недоступна — він <strong>не</strong> одразу мігрує VM. Спочатку переконується що нода точно зупинила свої VM — інакше split-brain зі спільним сховищем.</p>
+<p>Якщо фенсинг не налаштований — HA <strong>чекає</strong> і нічого не робить. Звідси і &ldquo;VM не мігрує 10 хвилин після падіння ноди&rdquo; — це не баг, це безпека.</p>
+<p><strong>Типи фенсинг агентів:</strong></p>
+<pre tabindex="0"><code>Hardware IPMI/iDRAC/iLO → fence_ipmilan  (найнадійніше)
+PDU / розетка            → fence_apc_snmp
+Proxmox API (self)       → fence_pve
+</code></pre><p>Налаштування через UI: <strong>Datacenter → HA → Fencing → Add</strong>.</p>
+<p>Перевірка без реального перезапуску:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>fence_ipmilan -a 192.168.1.100 -u admin -p secret -o status
+</span></span></code></pre></div><h3 id="watchdog-як-нода-вбиває-сама-себе">Watchdog: як нода вбиває сама себе</h3>
+<p>Коли HA активований, кожна нода відкриває <code>/dev/watchdog</code>. Якщо LRM перестає оновлювати watchdog (бо нода зависла, ОС крашнулась) — апаратний watchdog <strong>примусово перезавантажує сервер</strong> через кілька секунд. Це self-fencing — нода сама себе вбиває щоб CRM міг безпечно запустити її VM деінде.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat /proc/sys/kernel/watchdog
+</span></span><span style="display:flex;"><span>ls /dev/watchdog*
+</span></span></code></pre></div><hr>
+<h2 id="datacenter-manager-що-він-реально-контролює">Datacenter Manager: що він реально контролює</h2>
+<p><code>Datacenter</code> у Proxmox Web UI — це не просто &ldquo;група нод&rdquo;. Тут зберігаються речі які автоматично розповсюджуються на всі ноди через pmxcfs:</p>
+<p><strong>Storage definitions</strong> — якщо додаєш NFS в <strong>Datacenter → Storage</strong>, він стає доступним на всіх нодах автоматично. Якщо додаєш storage тільки на одній ноді — він видимий тільки там.</p>
+<p><strong>HA Groups і Resources</strong> — тут визначаєш які VM є HA-захищеними і на які ноди вони можуть мігрувати. VM без HA-ресурсу не буде автоматично перезапущена при падінні ноди.</p>
+<p><strong>Resource Mapping (PVE 8+)</strong> — абстракція для PCI пристроїв (GPU, HBA, USB) на рівні кластера. Описуєш &ldquo;GPU у slot 1&rdquo; на кожній ноді під спільною назвою — тоді VM з GPU passthrough можна мігрувати між нодами.</p>
+<p><strong>SDN (Software Defined Networking)</strong> — VXLAN-зони, VNet, subnet. Замість того щоб вручну прописувати bridge на кожній ноді — робиш один раз у Datacenter, конфіг реплікується через pmxcfs.</p>
+<p><strong>Datacenter-level Firewall</strong> — ipsets, aliases, security groups. Правила з datacenter-рівня застосовуються до всіх VM і нод якщо увімкнені.</p>
+<hr>
+<h2 id="покрокове-створення-кластера">Покрокове створення кластера</h2>
+<h3 id="крок-1--ініціалізація-на-першій-ноді">Крок 1 — Ініціалізація на першій ноді</h3>
+<p><strong>Datacenter → Cluster → Create Cluster</strong></p>
+<ul>
+<li>Вкажи імʼя кластера (наприклад <code>pve-prod</code>)</li>
+<li>Вибери мережевий інтерфейс для Corosync (Link 0) — обовʼязково виділений, не той де йде VM-трафік</li>
+<li>Додай Link 1 для резервування (інший фізичний комутатор)</li>
+</ul>
+<h3 id="крок-2--отримання-join-information">Крок 2 — Отримання Join Information</h3>
+<p><strong>Datacenter → Cluster → Join Information</strong> → скопіюй весь текст (Information String).</p>
+<h3 id="крок-3--приєднання-другої-і-третьої-ноди">Крок 3 — Приєднання другої і третьої ноди</h3>
+<p>На кожній ноді що додається: <strong>Datacenter → Cluster → Join Cluster</strong></p>
+<ul>
+<li>Встав Information String</li>
+<li>Введи пароль root від першої ноди (для первинного обміну SSH-ключами)</li>
+<li>Вибери локальні лінки для Corosync</li>
+</ul>
+<blockquote>
+<p><strong>Застереження:</strong> під час join веб-інтерфейс ноди що додається перезавантажиться — відбувається заміна локального <code>/etc/pve</code> на кластерну pmxcfs. Нода що приєднується <strong>не повинна мати запущених VM з ID які вже є в кластері</strong>.</p>
+</blockquote>
+<h3 id="перевірка-після-join">Перевірка після join</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pvecm status        <span style="color:#75715e"># загальний статус і кворум</span>
+</span></span><span style="display:flex;"><span>pvecm nodes         <span style="color:#75715e"># список нод з голосами</span>
+</span></span><span style="display:flex;"><span>corosync-cfgtool -s <span style="color:#75715e"># статус Corosync кілець</span>
+</span></span></code></pre></div><hr>
+<h2 id="що-відбувається-при-падінні-ноди-покроково">Що відбувається при падінні ноди: покроково</h2>
+<pre tabindex="0"><code>1. node02 перестає відповідати на Corosync heartbeat
+2. Через token timeout (~5-6 сек дефолт) node01 і node03 оголошують node02 мертвою
+3. Corosync перераховує голоси: 2/3 — кворум є
+4. CRM отримує подію &#34;node02 left&#34;
+5. CRM чекає grace period (60 сек) — раптом нода сама повернеться
+6. Якщо фенсинг налаштований — CRM надсилає IPMI команду &#34;вимкни node02&#34;
+7. Після підтвердження фенсингу — CRM дає команду LRM запустити VM з node02
+8. LRM форкає нові qemu-system процеси для цих VM
+</code></pre><p>Якщо фенсинг не налаштований — крок 6 пропускається, але CRM чекає набагато довше перш ніж мігрувати.</p>
+<hr>
+<h2 id="сховище-у-кластері">Сховище у кластері</h2>
+<p>Сам по собі кластер не переміщує дані дисків автоматично якщо у тебе локальні диски. Для live migration (без зупинки VM) потрібне правильне сховище.</p>
+<table>
+<thead>
+<tr>
+<th>Тип</th>
+<th>Технологія</th>
+<th>Плюси</th>
+<th>Мінуси</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Локальне з реплікацією</td>
+<td>ZFS Storage Replication</td>
+<td>Швидкі локальні NVMe/SSD</td>
+<td>Реплікація за розкладом, при падінні ноди — втрата даних за останні N хвилин</td>
+</tr>
+<tr>
+<td>Спільне мережеве</td>
+<td>NFS / iSCSI</td>
+<td>Простота, live migration</td>
+<td>Single point of failure (NFS сервер)</td>
+</tr>
+<tr>
+<td>Розподілене</td>
+<td>Ceph</td>
+<td>Справжній HA, live migration за секунди</td>
+<td>Потребує 10GbE+, мінімум 3 OSD ноди</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="оновлення-нод-без-downtime">Оновлення нод без downtime</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 1. Міграція всіх VM з ноди</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> vmid in <span style="color:#66d9ef">$(</span>qm list | awk <span style="color:#e6db74">&#39;NR&gt;1 {print $1}&#39;</span><span style="color:#66d9ef">)</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    qm migrate $vmid pve02 --online
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. Переводимо ноду в maintenance mode</span>
+</span></span><span style="display:flex;"><span>ha-manager crm-command node-maintenance enable pve01
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3. Оновлення</span>
+</span></span><span style="display:flex;"><span>apt update <span style="color:#f92672">&amp;&amp;</span> apt dist-upgrade -y
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 4. Перезавантаження якщо змінилось ядро</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -f /var/run/reboot-required <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span> reboot; <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 5. Перевірка після ребуту</span>
+</span></span><span style="display:flex;"><span>pvecm status
+</span></span><span style="display:flex;"><span>ha-manager status
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 6. Виводимо з maintenance</span>
+</span></span><span style="display:flex;"><span>ha-manager crm-command node-maintenance disable pve01
+</span></span></code></pre></div><hr>
+<h2 id="діагностика-команди-які-завжди-під-рукою">Діагностика: команди які завжди під рукою</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Загальний статус кластера і кворуму</span>
+</span></span><span style="display:flex;"><span>pvecm status
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Список нод з голосами</span>
+</span></span><span style="display:flex;"><span>pvecm nodes
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Детальний статус Corosync кілець</span>
+</span></span><span style="display:flex;"><span>corosync-cfgtool -s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Список нод з кількістю голосів</span>
+</span></span><span style="display:flex;"><span>corosync-quorumtool -l
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># HA статус всіх ресурсів</span>
+</span></span><span style="display:flex;"><span>ha-manager status
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Статус реплікації ZFS</span>
+</span></span><span style="display:flex;"><span>pvesr status
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Логи кластерних подій (де шукати проблеми першим ділом)</span>
+</span></span><span style="display:flex;"><span>journalctl -u pve-cluster -u corosync --since <span style="color:#e6db74">&#34;30 min ago&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірка синхронізації часу (різниця &gt;5с = Corosync не зʼєднається)</span>
+</span></span><span style="display:flex;"><span>chronyc tracking
+</span></span><span style="display:flex;"><span>timedatectl status
+</span></span></code></pre></div><hr>
+<h2 id="чеклист-перед-запуском-в-продакшен">Чеклист перед запуском в продакшен</h2>
+<pre tabindex="0"><code>[ ] Мінімум 3 ноди або 2 ноди + QDevice в окремій локації
+[ ] Окремий фізичний інтерфейс або VLAN для Corosync
+[ ] Link 0 + Link 1 для Corosync (різні фізичні комутатори)
+[ ] Окрема мережа для storage/replication трафіку
+[ ] Окрема мережа для live migration (datacenter.cfg)
+[ ] NTP/chrony синхронізований на всіх нодах
+[ ] Фенсинг налаштований і протестований (IPMI або PDU)
+[ ] HA Groups і Resources визначені для критичних VM
+[ ] corosync token timeout відповідає реальній RTT мережі
+[ ] Протестований failover: вимкни одну ноду і перевір HA
+[ ] Proxmox Backup Server або VZDump з перевіреним відновленням
+</code></pre>
+</content>
+
+
+
+<p>
+  
+  <a href="//localhost:1313/tags/proxmox/">#Proxmox</a>
+  
+  <a href="//localhost:1313/tags/virtualization/">#Virtualization</a>
+  
+  <a href="//localhost:1313/tags/infrastructure/">#Infrastructure</a>
+  
+  <a href="//localhost:1313/tags/ha/">#HA</a>
+  
+  <a href="//localhost:1313/tags/corosync/">#Corosync</a>
+  
+  <a href="//localhost:1313/tags/devops/">#DevOps</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

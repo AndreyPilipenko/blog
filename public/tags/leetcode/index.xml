@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Leetcode on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+    <link>//localhost:1313/tags/leetcode/</link>
+    <description>Recent content in Leetcode on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 14 Jun 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/tags/leetcode/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Алгоритми та структури даних</title>
+      <link>//localhost:1313/blog/algoritmy/</link>
+      <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/algoritmy/</guid>
+      <description>Big O — перше, що треба засвоїти Перш ніж писати будь-який код на інтервʼю, потрібно вміти оцінювати його ефективність. Big O нотація описує, як зростає час виконання або споживання памʼяті залежно від розміру вхідних даних.&#xA;Нотація Назва Приклад O(1) константна звернення до масиву за індексом O(log n) логарифмічна бінарний пошук O(n) лінійна прохід по масиву O(n log n) лінійно-логарифмічна злиттєве сортування O(n²) квадратична вкладені цикли O(2ⁿ) експоненційна рекурсія без мемоізації Структури даних — обовʼязковий мінімум Лінійні структури Array / Slice — основа всього.</description>
+    </item>
+  </channel>
+</rss>

@@ -18,14 +18,14 @@
     <item>
       <title>Kubernetes Cheatsheet</title>
       <link>//localhost:1313/blog/kubernetes-cheatsheet/</link>
-      <pubDate>Fri, 01 May 2026 00:00:00 +0300</pubDate>
+      <pubDate>Sun, 04 Jan 2026 00:00:00 +0300</pubDate>
       <guid>//localhost:1313/blog/kubernetes-cheatsheet/</guid>
       <description>This is a page about »Kubernetes Cheatsheet«.</description>
     </item>
     <item>
       <title>Top commands to diagnose Linux system load</title>
       <link>//localhost:1313/blog/linux-load/</link>
-      <pubDate>Sat, 10 Jan 2026 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/blog/linux-load/</guid>
       <description>Top commands to diagnose Linux system load&#xA;iotop -o — shows processes that are currently performing disk I/O journalctl --disk-usage — displays how much disk space is used by systemd logs journalctl --vacuum-size=500M — truncates systemd logs to 500 MB ps aux --sort=-%cpu | head — top processes by CPU usage ps aux --sort=-%mem | head — top processes by RAM usage systemctl list-units --failed — services that failed or did not start Additional useful commands iotop -a — shows total disk read/write per process since startup vmstat -SM 5 — memory, swap, and CPU statistics updated every 5 seconds df -hT — disk usage by filesystem with filesystem type glances — real-time overview of CPU, memory, disk, network, and processes </description>
     </item>

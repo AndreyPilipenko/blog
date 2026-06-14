@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Підготовка до співбесід: глибоке розуміння алгоритмів, структур даних та архітектури | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="Підготовка до співбесід: глибоке розуміння алгоритмів, структур даних та архітектури" />
+<meta name="description" content="Як читати цю статтю: Можна по порядку, можна стрибати до потрібного розділу. Кожна тема самодостатня. Але читаючи все разом — побачиш, як теми з&rsquo;єднані між собою.
+Зміст Heap і Priority Queue Binary Search: один шаблон для всього Рекурсія і Leap of Faith Doubly Linked List і Memory Leak LRU Cache LFU Cache Хеш-таблиці зсередини Memory Model: як компілятор і CPU можуть тебе здивувати Транзакції: ACID і BASE Рівні ізоляції транзакцій і аномалії Concurrency Control: як синхронізувати доступ до даних Dynamic Programming: мислення, а не заучування Чистий код і архітектура Golang Scheduler зсередини Як вчити алгоритми ефективно Критичне мислення для розробника Heap і Priority Queue Що це таке і навіщо Priority Queue (черга з пріоритетом) — абстракція: черга, де кожен елемент має пріоритет." />
+<meta name="keywords" content="алгоритми," />
+
+
+<meta property="og:title" content="Підготовка до співбесід: глибоке розуміння алгоритмів, структур даних та архітектури" />
+<meta property="og:description" content="Як читати цю статтю: Можна по порядку, можна стрибати до потрібного розділу. Кожна тема самодостатня. Але читаючи все разом — побачиш, як теми з&rsquo;єднані між собою.
+Зміст Heap і Priority Queue Binary Search: один шаблон для всього Рекурсія і Leap of Faith Doubly Linked List і Memory Leak LRU Cache LFU Cache Хеш-таблиці зсередини Memory Model: як компілятор і CPU можуть тебе здивувати Транзакції: ACID і BASE Рівні ізоляції транзакцій і аномалії Concurrency Control: як синхронізувати доступ до даних Dynamic Programming: мислення, а не заучування Чистий код і архітектура Golang Scheduler зсередини Як вчити алгоритми ефективно Критичне мислення для розробника Heap і Priority Queue Що це таке і навіщо Priority Queue (черга з пріоритетом) — абстракція: черга, де кожен елемент має пріоритет." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/blog/interview/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2025-06-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2025-06-14T00:00:00+00:00" />
+
+
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Підготовка до співбесід: глибоке розуміння алгоритмів, структур даних та архітектури"/>
+<meta name="twitter:description" content="Як читати цю статтю: Можна по порядку, можна стрибати до потрібного розділу. Кожна тема самодостатня. Але читаючи все разом — побачиш, як теми з&rsquo;єднані між собою.
+Зміст Heap і Priority Queue Binary Search: один шаблон для всього Рекурсія і Leap of Faith Doubly Linked List і Memory Leak LRU Cache LFU Cache Хеш-таблиці зсередини Memory Model: як компілятор і CPU можуть тебе здивувати Транзакції: ACID і BASE Рівні ізоляції транзакцій і аномалії Concurrency Control: як синхронізувати доступ до даних Dynamic Programming: мислення, а не заучування Чистий код і архітектура Golang Scheduler зсередини Як вчити алгоритми ефективно Критичне мислення для розробника Heap і Priority Queue Що це таке і навіщо Priority Queue (черга з пріоритетом) — абстракція: черга, де кожен елемент має пріоритет."/>
+
+
+
+<meta itemprop="name" content="Підготовка до співбесід: глибоке розуміння алгоритмів, структур даних та архітектури">
+<meta itemprop="description" content="Як читати цю статтю: Можна по порядку, можна стрибати до потрібного розділу. Кожна тема самодостатня. Але читаючи все разом — побачиш, як теми з&rsquo;єднані між собою.
+Зміст Heap і Priority Queue Binary Search: один шаблон для всього Рекурсія і Leap of Faith Doubly Linked List і Memory Leak LRU Cache LFU Cache Хеш-таблиці зсередини Memory Model: як компілятор і CPU можуть тебе здивувати Транзакції: ACID і BASE Рівні ізоляції транзакцій і аномалії Concurrency Control: як синхронізувати доступ до даних Dynamic Programming: мислення, а не заучування Чистий код і архітектура Golang Scheduler зсередини Як вчити алгоритми ефективно Критичне мислення для розробника Heap і Priority Queue Що це таке і навіщо Priority Queue (черга з пріоритетом) — абстракція: черга, де кожен елемент має пріоритет."><meta itemprop="datePublished" content="2025-06-14T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2025-06-14T00:00:00+00:00" />
+<meta itemprop="wordCount" content="5617">
+<meta itemprop="keywords" content="алгоритми," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</h2>
+</a>
+<nav>
+<a href="/">Home</a>
+
+<a href="/blog/">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Підготовка до співбесід: глибоке розуміння алгоритмів, структур даних та архітектури</h1>
+<p>
+  <i>
+    <time datetime='2025-06-14'>
+      14 Jun, 2025
+    </time>
+  </i>
+</p>
+
+<content>
+  <p><strong>Як читати цю статтю:</strong> Можна по порядку, можна стрибати до потрібного розділу. Кожна тема самодостатня. Але читаючи все разом — побачиш, як теми з&rsquo;єднані між собою.</p>
+<hr>
+<h2 id="зміст">Зміст</h2>
+<ol>
+<li><a href="#heap-%D1%96-priority-queue">Heap і Priority Queue</a></li>
+<li><a href="#binary-search">Binary Search: один шаблон для всього</a></li>
+<li><a href="#%D1%80%D0%B5%D0%BA%D1%83%D1%80%D1%81%D1%96%D1%8F">Рекурсія і Leap of Faith</a></li>
+<li><a href="#linked-list-%D1%96-memory-leak">Doubly Linked List і Memory Leak</a></li>
+<li><a href="#lru-cache">LRU Cache</a></li>
+<li><a href="#lfu-cache">LFU Cache</a></li>
+<li><a href="#%D1%85%D0%B5%D1%88-%D1%82%D0%B0%D0%B1%D0%BB%D0%B8%D1%86%D1%96">Хеш-таблиці зсередини</a></li>
+<li><a href="#memory-model">Memory Model: як компілятор і CPU можуть тебе здивувати</a></li>
+<li><a href="#%D1%82%D1%80%D0%B0%D0%BD%D0%B7%D0%B0%D0%BA%D1%86%D1%96%D1%97-acid-%D1%96-base">Транзакції: ACID і BASE</a></li>
+<li><a href="#%D1%80%D1%96%D0%B2%D0%BD%D1%96-%D1%96%D0%B7%D0%BE%D0%BB%D1%8F%D1%86%D1%96%D1%97-%D1%82%D1%80%D0%B0%D0%BD%D0%B7%D0%B0%D0%BA%D1%86%D1%96%D0%B9">Рівні ізоляції транзакцій і аномалії</a></li>
+<li><a href="#concurrency-control">Concurrency Control: як синхронізувати доступ до даних</a></li>
+<li><a href="#dynamic-programming">Dynamic Programming: мислення, а не заучування</a></li>
+<li><a href="#%D1%87%D0%B8%D1%81%D1%82%D0%B8%D0%B9-%D0%BA%D0%BE%D0%B4-%D1%96-%D0%B0%D1%80%D1%85%D1%96%D1%82%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%B0">Чистий код і архітектура</a></li>
+<li><a href="#golang-scheduler">Golang Scheduler зсередини</a></li>
+<li><a href="#%D1%8F%D0%BA-%D0%B2%D1%87%D0%B8%D1%82%D0%B8-%D0%B0%D0%BB%D0%B3%D0%BE%D1%80%D0%B8%D1%82%D0%BC%D0%B8">Як вчити алгоритми ефективно</a></li>
+<li><a href="#%D0%BA%D1%80%D0%B8%D1%82%D0%B8%D1%87%D0%BD%D0%B5-%D0%BC%D0%B8%D1%81%D0%BB%D0%B5%D0%BD%D0%BD%D1%8F">Критичне мислення для розробника</a></li>
+</ol>
+<hr>
+<h2 id="heap-і-priority-queue">Heap і Priority Queue</h2>
+<h3 id="що-це-таке-і-навіщо">Що це таке і навіщо</h3>
+<p><strong>Priority Queue (черга з пріоритетом)</strong> — абстракція: черга, де кожен елемент має пріоритет. Елемент з найвищим (або найнижчим) пріоритетом виходить першим, незалежно від порядку додавання.</p>
+<p><strong>Heap (купа)</strong> — конкретна структура даних, яка реалізує Priority Queue ефективно. Це бінарне дерево з одним правилом: батько завжди більший (Max-Heap) або менший (Min-Heap) за своїх дітей.</p>
+<pre tabindex="0"><code>       Max-Heap:              Min-Heap:
+           9                     1
+          / \                   / \
+         7   8                 3   2
+        / \ / \               / \ / \
+       4  6 5  3             7  4 5  6
+</code></pre><h3 id="як-зберігається-в-памяті">Як зберігається в пам&rsquo;яті</h3>
+<p>Heap зберігається як <strong>масив</strong>, не як вказівники на вузли. Це важливо — немає витрат на вказівники, краща cache locality (дані поруч у пам&rsquo;яті).</p>
+<p>Індексація:</p>
+<ul>
+<li>Батько індексу <code>i</code> → <code>(i-1) / 2</code></li>
+<li>Ліва дитина → <code>2*i + 1</code></li>
+<li>Права дитина → <code>2*i + 2</code></li>
+</ul>
+<pre tabindex="0"><code>Дерево:    [9, 7, 8, 4, 6, 5, 3]
+Індекси:    0  1  2  3  4  5  6
+
+9 (індекс 0) → діти: 7 (1) та 8 (2)
+7 (індекс 1) → діти: 4 (3) та 6 (4)
+</code></pre><h3 id="операції-та-їх-складність">Операції та їх складність</h3>
+<table>
+<thead>
+<tr>
+<th>Операція</th>
+<th>Складність</th>
+<th>Пояснення</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Insert</td>
+<td>O(log n)</td>
+<td>Додаємо в кінець, спливаємо вгору (Heapify Up)</td>
+</tr>
+<tr>
+<td>Extract Max/Min</td>
+<td>O(log n)</td>
+<td>Беремо корінь, ставимо останній, тонемо вниз (Heapify Down)</td>
+</tr>
+<tr>
+<td>Peek (подивитись без видалення)</td>
+<td>O(1)</td>
+<td>Корінь завжди максимум/мінімум</td>
+</tr>
+<tr>
+<td>Build Heap з масиву</td>
+<td><strong>O(n)</strong></td>
+<td>Не O(n log n)! Пояснення нижче</td>
+</tr>
+</tbody>
+</table>
+<h3 id="чому-build-heap--on-а-не-on-log-n">Чому Build Heap — O(n), а не O(n log n)?</h3>
+<p>Це класичне питання на співбесідах. Якщо вставляти n елементів по одному — O(n log n). Але якщо будувати через <strong>Heapify Down</strong> з середини масиву:</p>
+<ul>
+<li>Половина елементів (листки) не потребують жодного переміщення</li>
+<li>Чверть переміщується на 1 рівень</li>
+<li>Восьма частина — на 2 рівні</li>
+<li>і т.д.</li>
+</ul>
+<p>Сума цього ряду сходиться до <strong>O(n)</strong>. Математично: <code>Σ k * n/2^k = O(n)</code>.</p>
+<h3 id="heap-sort-сортування-за-on-log-n">Heap Sort: сортування за O(n log n)</h3>
+<pre tabindex="0"><code>1. Build Max-Heap з масиву: O(n)
+2. Повторно: беремо максимум (корінь), 
+   ставимо в кінець, зменшуємо розмір, 
+   відновлюємо Heap: O(n log n)
+</code></pre><p>Переваги: in-place (не потребує додаткової пам&rsquo;яті), O(n log n) гарантовано.
+Недолік: cache-unfriendly на практиці, тому Quick Sort часто швидший.</p>
+<h3 id="де-застосовується-в-реальному-житті">Де застосовується в реальному житті</h3>
+<ul>
+<li><strong>Dijkstra&rsquo;s algorithm</strong> (найкоротший шлях у графі) — Priority Queue для вибору наступної вершини</li>
+<li><strong>Медіана потоку даних</strong> — два heap&rsquo;и (max і min)</li>
+<li><strong>Top K найбільших елементів</strong> — Min-Heap розміру K</li>
+<li><strong>Планувальники задач</strong> (OS, Go scheduler) — пріоритет процесів</li>
+<li><strong>Злиття K відсортованих масивів</strong> — Min-Heap з K елементами</li>
+</ul>
+<hr>
+<h2 id="binary-search">Binary Search</h2>
+<h3 id="проблема-зі-стандартними-поясненнями">Проблема зі стандартними поясненнями</h3>
+<p>Більшість туторіалів показують простий пошук числа в масиві. А потім на практиці виявляється: умови циклу різні (<code>&lt;=</code>, <code>&lt;</code>, <code>!=</code>), межі (<code>lo &lt;= hi</code>, <code>lo &lt; hi</code>, <code>lo + 1 &lt; hi</code>) плутають, і з&rsquo;являються нескінченні цикли.</p>
+<p>Причина: вчать конкретний код, а не <strong>принцип</strong>.</p>
+<h3 id="один-універсальний-шаблон">Один універсальний шаблон</h3>
+<p>Ключова ідея Binary Search — <strong>бінарна властивість</strong>: весь простір пошуку можна розділити на дві частини: ліву (умова не виконується) і праву (умова виконується). Ми шукаємо <strong>границю</strong> між ними.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">binary_search</span>(lo, hi, condition):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Інваріант: condition(lo-1) = False, condition(hi) = True</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> lo <span style="color:#f92672">&lt;</span> hi:
+</span></span><span style="display:flex;"><span>        mid <span style="color:#f92672">=</span> lo <span style="color:#f92672">+</span> (hi <span style="color:#f92672">-</span> lo) <span style="color:#f92672">//</span> <span style="color:#ae81ff">2</span>  <span style="color:#75715e"># Без overflow</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> condition(mid):
+</span></span><span style="display:flex;"><span>            hi <span style="color:#f92672">=</span> mid          <span style="color:#75715e"># Права частина звужується</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            lo <span style="color:#f92672">=</span> mid <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>      <span style="color:#75715e"># Ліва частина звужується</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> lo  <span style="color:#75715e"># Перший індекс, де condition = True</span>
+</span></span></code></pre></div><p>Цей шаблон працює для всіх варіацій Binary Search. Змінюється тільки <code>condition</code>.</p>
+<h3 id="приклади-застосування">Приклади застосування</h3>
+<p><strong>Пошук числа в масиві:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>condition <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> mid: arr[mid] <span style="color:#f92672">&gt;=</span> target
+</span></span></code></pre></div><p><strong>Мінімальна швидкість, щоб встигнути до дедлайну:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>condition <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> speed: can_finish_in_time(speed)
+</span></span></code></pre></div><p><strong>Знайти мінімальний розмір підмасиву з сумою ≥ S:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>condition <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> size: exists_subarray_with_sum(size)
+</span></span></code></pre></div><h3 id="binary-search-не-тільки-на-масивах">Binary Search не тільки на масивах</h3>
+<p>Binary Search застосовується <strong>скрізь</strong>, де є монотонна функція. Навіть у дебагінгу: якщо є 1000 коммітів і треба знайти той, де з&rsquo;явився баг — <code>git bisect</code> використовує binary search. Замість 1000 перевірок — 10 (<code>log₂(1000) ≈ 10</code>).</p>
+<hr>
+<h2 id="рекурсія">Рекурсія</h2>
+<h3 id="декларативне-мислення-проти-імперативного">Декларативне мислення проти імперативного</h3>
+<p><strong>Імперативне:</strong> пояснюєш комп&rsquo;ютеру <em>як</em> робити крок за кроком.
+<strong>Декларативне:</strong> описуєш <em>що</em> маєш і <em>що</em> хочеш отримати.</p>
+<p>Рекурсія — інструмент декларативного мислення. Замість &ldquo;йди в цикл, відстежуй індекс, перевіряй умову&hellip;&rdquo; описуєш: &ldquo;якщо маємо X — робимо Y, далі те саме для меншої задачі&rdquo;.</p>
+<h3 id="leap-of-faith--стрибок-віри">Leap of Faith — стрибок віри</h3>
+<p>Найважливіший принцип рекурсивного мислення. Коли пишеш рекурсивну функцію, <strong>вір</strong>, що вона вже правильно вирішує меншу підзадачу. Твоя робота — тільки:</p>
+<ol>
+<li>Визначити базовий випадок (base case) — коли відповідь відома без рекурсії</li>
+<li>Звести задачу до меншої</li>
+<li>Скористатись результатом підзадачі</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Сума списку: &#34;якщо список порожній — 0,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># інакше перший елемент + сума решти&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">sum_list</span>(lst):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> lst:          <span style="color:#75715e"># base case</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> lst[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">+</span> sum_list(lst[<span style="color:#ae81ff">1</span>:])  <span style="color:#75715e"># Leap of Faith: sum_list(lst[1:]) вже працює</span>
+</span></span></code></pre></div><h3 id="де-рекурсія-краща-за-ітерацію">Де рекурсія краща за ітерацію</h3>
+<ul>
+<li><strong>Дерева і графи</strong> — природно рекурсивні структури</li>
+<li><strong>Divide and Conquer</strong> — Merge Sort, Quick Sort</li>
+<li><strong>Dynamic Programming</strong> (top-down з мемоїзацією)</li>
+<li><strong>Backtracking</strong> — перебір з відкатом (судоку, n-queens)</li>
+<li><strong>C++ template metaprogramming</strong> — код, що виконується під час компіляції</li>
+<li><strong>Parsing</strong> — парсинг HTML DOM дерева, JSON</li>
+</ul>
+<h3 id="tail-recursion-optimization-tro">Tail Recursion Optimization (TRO)</h3>
+<p><strong>Хвостова рекурсія (tail recursion)</strong> — коли рекурсивний виклик є останньою операцією функції (не <code>return f(n-1) + 1</code>, а <code>return f(n-1)</code>). Компілятор може оптимізувати це в звичайний цикл, не нагромаджуючи стек.</p>
+<p>Підтримують: Lisp, Rust (частково), C++ (залежить від компілятора), Kotlin (<code>tailrec</code>).
+<strong>Не підтримують:</strong> Python, Java, Go (там треба явно переписувати в цикл).</p>
+<h3 id="pruning--відсікання-гілок">Pruning — відсікання гілок</h3>
+<p>Рекурсія може бути <strong>швидшою</strong> за цикли завдяки pruning: якщо бачимо, що гілка не може дати правильну відповідь — робимо <code>return</code> і не йдемо далі. У циклах це зробити складніше.</p>
+<hr>
+<h2 id="linked-list-і-memory-leak">Linked List і Memory Leak</h2>
+<h3 id="doubly-linked-list-двозвязний-список">Doubly Linked List (двозв&rsquo;язний список)</h3>
+<p>Кожен вузол зберігає вказівники на попередній і наступний елемент:</p>
+<pre tabindex="0"><code>None ← [prev|data|next] ↔ [prev|data|next] ↔ [prev|data|next] → None
+</code></pre><p><strong>Переваги:</strong> вставка і видалення — O(1) якщо є вказівник на елемент; обхід в обидва боки.
+<strong>Недоліки:</strong> більше пам&rsquo;яті (два вказівники); погана cache locality (елементи розкидані по пам&rsquo;яті, тому CPU кешує їх погано).</p>
+<p>Страуструп (автор C++) казав: &ldquo;ніколи не використовуй linked list, завжди vector&rdquo;. Потім пояснив, що мав на увазі загальну тенденцію — для більшості випадків <code>vector</code> (масив) швидший через cache locality. Але DLL незамінний там, де потрібні O(1) вставка/видалення у відомому місці.</p>
+<h3 id="memory-leak-через-циклічні-посилання">Memory Leak через циклічні посилання</h3>
+<p>Класична пастка в C++ з <code>shared_ptr</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Node</span> {
+</span></span><span style="display:flex;"><span>    shared_ptr<span style="color:#f92672">&lt;</span>Node<span style="color:#f92672">&gt;</span> next;
+</span></span><span style="display:flex;"><span>    shared_ptr<span style="color:#f92672">&lt;</span>Node<span style="color:#f92672">&gt;</span> prev;  <span style="color:#75715e">// Проблема!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>};
+</span></span></code></pre></div><p><code>shared_ptr</code> рахує кількість посилань (reference counting). Якщо A → B і B → A (обидва через <code>shared_ptr</code>), лічильник ніколи не впаде до нуля — <strong>memory leak</strong>.</p>
+<p><strong>Рішення:</strong> <code>prev</code> робити <code>weak_ptr</code>. Слабкий вказівник не збільшує лічильник — цикл розривається.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Node</span> {
+</span></span><span style="display:flex;"><span>    shared_ptr<span style="color:#f92672">&lt;</span>Node<span style="color:#f92672">&gt;</span> next;
+</span></span><span style="display:flex;"><span>    weak_ptr<span style="color:#f92672">&lt;</span>Node<span style="color:#f92672">&gt;</span> prev;  <span style="color:#75715e">// Не збільшує reference count
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>};
+</span></span></code></pre></div><p><strong>Rule of 5 в C++:</strong> якщо визначаєш один з цих методів, визнач усі п&rsquo;ять:</p>
+<ul>
+<li>Copy constructor</li>
+<li>Move constructor</li>
+<li>Copy assignment operator</li>
+<li>Move assignment operator</li>
+<li>Destructor</li>
+</ul>
+<p>Або <strong>Rule of 0</strong>: якщо клас не управляє ресурсами — не визначай жодного, покладайся на компілятор.</p>
+<hr>
+<h2 id="lru-cache">LRU Cache</h2>
+<h3 id="що-таке-lru">Що таке LRU</h3>
+<p><strong>LRU (Least Recently Used)</strong> — алгоритм витіснення кешу. Коли кеш заповнений і треба додати новий елемент — видаляємо той, що використовувався <strong>найдавніше</strong>.</p>
+<p>Приклад: браузер кешує вкладки. Якщо пам&rsquo;яті не вистачає — видаляє ту, яку ти найдавніше переглядав.</p>
+<h3 id="реалізація-hash-map--doubly-linked-list">Реалізація: Hash Map + Doubly Linked List</h3>
+<p>Ось де DLL стає незамінним:</p>
+<ul>
+<li><strong>Hash Map</strong> (словник): <code>key → вузол списку</code> — O(1) пошук</li>
+<li><strong>DLL</strong>: зберігає порядок використання, голова = найновіший, хвіст = найстаріший</li>
+</ul>
+<pre tabindex="0"><code>Кеш розміром 3, операції: get(1), get(2), get(3), get(1), get(4)
+
+Після get(1): [1]
+Після get(2): [2, 1]
+Після get(3): [3, 2, 1]
+Після get(1): [1, 3, 2]  ← 1 переміщається на початок
+Після get(4): [4, 1, 3]  ← 2 витісняється (найстаріший)
+</code></pre><p><strong>Операції — O(1):</strong></p>
+<ul>
+<li><code>get(key)</code>: знайти у словнику → перемістити вузол на початок DLL</li>
+<li><code>put(key, value)</code>: якщо є — оновити і перемістити; якщо ні — додати в початок, якщо переповнено — видалити з хвоста і зі словника</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LRUCache</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, capacity):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>cap <span style="color:#f92672">=</span> capacity
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>cache <span style="color:#f92672">=</span> {}              <span style="color:#75715e"># key → node</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>head <span style="color:#f92672">=</span> Node()           <span style="color:#75715e"># dummy head (найновіший)</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>tail <span style="color:#f92672">=</span> Node()           <span style="color:#75715e"># dummy tail (найстаріший)</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>head<span style="color:#f92672">.</span>next <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>tail
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>tail<span style="color:#f92672">.</span>prev <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>head
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get</span>(self, key):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> key <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> self<span style="color:#f92672">.</span>cache:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>        node <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>cache[key]
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_move_to_front(node)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> node<span style="color:#f92672">.</span>val
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">put</span>(self, key, value):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> key <span style="color:#f92672">in</span> self<span style="color:#f92672">.</span>cache:
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>cache[key]<span style="color:#f92672">.</span>val <span style="color:#f92672">=</span> value
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>_move_to_front(self<span style="color:#f92672">.</span>cache[key])
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> len(self<span style="color:#f92672">.</span>cache) <span style="color:#f92672">==</span> self<span style="color:#f92672">.</span>cap:
+</span></span><span style="display:flex;"><span>                lru <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>tail<span style="color:#f92672">.</span>prev  <span style="color:#75715e"># Видаляємо найстаріший</span>
+</span></span><span style="display:flex;"><span>                self<span style="color:#f92672">.</span>_remove(lru)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">del</span> self<span style="color:#f92672">.</span>cache[lru<span style="color:#f92672">.</span>key]
+</span></span><span style="display:flex;"><span>            node <span style="color:#f92672">=</span> Node(key, value)
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>cache[key] <span style="color:#f92672">=</span> node
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>_insert_front(node)
+</span></span></code></pre></div><h3 id="де-застосовується">Де застосовується</h3>
+<ul>
+<li>CPU кеші (L1/L2/L3)</li>
+<li>Кеш сторінок в ОС</li>
+<li>Redis з <code>maxmemory-policy allkeys-lru</code></li>
+<li>CDN кеші</li>
+<li>Кеш DNS записів</li>
+</ul>
+<hr>
+<h2 id="lfu-cache">LFU Cache</h2>
+<h3 id="lfu-vs-lru-в-чому-різниця">LFU vs LRU: в чому різниця</h3>
+<p><strong>LFU (Least Frequently Used)</strong> — витісняє елемент з <strong>найменшою кількістю звернень</strong>, а не найдавніший.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>LRU</th>
+<th>LFU</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Критерій витіснення</td>
+<td>Найдавніше використаний</td>
+<td>Найрідше використаний</td>
+</tr>
+<tr>
+<td>Підходить для</td>
+<td>Загальний веб-кеш, сесії</td>
+<td>Трендовий контент, популярні дані</td>
+</tr>
+<tr>
+<td>Складність реалізації</td>
+<td>Середня</td>
+<td>Вища</td>
+</tr>
+</tbody>
+</table>
+<h3 id="реалізація-o1">Реалізація O(1)</h3>
+<p>Наївна реалізація — O(log n) через сортування. Але O(1) можлива через:</p>
+<ul>
+<li><strong>Hash Map</strong> <code>key → (value, frequency)</code></li>
+<li><strong>Hash Map</strong> <code>frequency → DLL вузлів з такою частотою</code></li>
+<li>Змінна <code>min_freq</code> — поточна мінімальна частота</li>
+</ul>
+<p>При зверненні до ключа: збільшуємо частоту, переміщуємо зі списку <code>freq</code> до списку <code>freq+1</code>, оновлюємо <code>min_freq</code>.</p>
+<h3 id="коли-lfu-краще-lru">Коли LFU краще LRU</h3>
+<p>LRU має проблему: якщо ти нещодавно переглянув рідкісний файл, він витіснить популярний файл, до якого давно не зверталися. LFU краще для даних з чіткими патернами популярності (трендові відео, гарячі ключі в БД).</p>
+<hr>
+<h2 id="хеш-таблиці">Хеш-таблиці</h2>
+<h3 id="як-це-працює-зсередини">Як це працює зсередини</h3>
+<p>Уяви масив на 100 комірок. Хочемо зберегти <code>&quot;name&quot; → &quot;Alice&quot;</code>:</p>
+<ol>
+<li>Застосовуємо <strong>хеш-функцію</strong> до ключа: <code>hash(&quot;name&quot;) = 42</code></li>
+<li>Записуємо в <code>array[42] = (&quot;name&quot;, &quot;Alice&quot;)</code></li>
+<li>При пошуку: хешуємо ключ → отримуємо індекс → читаємо значення</li>
+</ol>
+<p>Весь процес — <strong>O(1)</strong> в середньому. Незалежно від кількості елементів.</p>
+<h3 id="вимоги-до-хеш-функції">Вимоги до хеш-функції</h3>
+<ul>
+<li><strong>Детермінована:</strong> один ключ → завжди один хеш</li>
+<li><strong>Рівномірний розподіл:</strong> мінімум колізій</li>
+<li><strong>Швидка:</strong> O(1) для обчислення</li>
+<li><strong>Лавинний ефект:</strong> мала зміна ключа → великий зміна хешу (для криптографічних хешів)</li>
+</ul>
+<h3 id="load-factor-і-resize">Load Factor і Resize</h3>
+<p><strong>Load Factor (коефіцієнт завантаження)</strong> = <code>кількість елементів / розмір масиву</code></p>
+<p>Якщо Load Factor перевищує поріг (зазвичай <strong>0.7–0.75</strong>):</p>
+<ol>
+<li>Створюємо новий масив вдвічі більшого розміру</li>
+<li>Перехешовуємо всі елементи в нові позиції</li>
+<li>Видаляємо старий масив</li>
+</ol>
+<p>Це <strong>O(n)</strong> операція, але відбувається рідко. Амортизована складність insert залишається O(1).</p>
+<h3 id="колізії-два-ключі-дають-однаковий-індекс">Колізії: два ключі дають однаковий індекс</h3>
+<p><strong>Chaining (ланцюжки):</strong></p>
+<pre tabindex="0"><code>array[42] → [(&#34;name&#34;, &#34;Alice&#34;) → (&#34;email&#34;, &#34;Bob&#34;) → null]
+array[43] → null
+</code></pre><p>Кожна комірка — зв&rsquo;язний список. При колізії — додаємо в список. Пошук: O(1) середнє, O(n) у найгіршому (якщо всі в одній комірці).</p>
+<p><strong>Open Addressing (відкрита адресація):</strong>
+При колізії шукаємо <strong>наступну вільну комірку</strong> за певним правилом:</p>
+<ul>
+<li><strong>Linear Probing:</strong> перевіряємо <code>42, 43, 44, 45...</code> (просто, але кластеризація)</li>
+<li><strong>Quadratic Probing:</strong> <code>42, 42+1, 42+4, 42+9...</code> (менше кластеризації)</li>
+<li><strong>Double Hashing:</strong> крок = <code>hash2(key)</code>, унікальний для кожного ключа (найкраще розподілення)</li>
+</ul>
+<p>Open Addressing краще cache-friendly (дані поруч), але складніше видалення (потрібен tombstone — маркер видаленого).</p>
+<h3 id="коли-хеш-таблиця-може-підвести">Коли хеш-таблиця може підвести</h3>
+<ul>
+<li><strong>Погана хеш-функція</strong> → всі ключі в одну комірку → O(n)</li>
+<li><strong>Hash Flooding Attack</strong> → зловмисник підбирає ключі з однаковим хешем → DoS. Python і Java захищаються рандомізацією хеш-seed&rsquo;у при запуску</li>
+<li><strong>Маленькі колекції:</strong> масив з лінійним пошуком може бути швидшим через cache locality і відсутність overhead хешування</li>
+</ul>
+<h3 id="hashmap-у-різних-мовах">HashMap у різних мовах</h3>
+<table>
+<thead>
+<tr>
+<th>Мова</th>
+<th>Назва</th>
+<th>Реалізація</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python</td>
+<td><code>dict</code></td>
+<td>Open Addressing (compact)</td>
+</tr>
+<tr>
+<td>Go</td>
+<td><code>map</code></td>
+<td>Chaining з bucket&rsquo;ами по 8 елементів</td>
+</tr>
+<tr>
+<td>Java</td>
+<td><code>HashMap</code></td>
+<td>Chaining, при &gt;8 елементів у bucket — Red-Black Tree</td>
+</tr>
+<tr>
+<td>C++</td>
+<td><code>unordered_map</code></td>
+<td>Chaining</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="memory-model">Memory Model</h2>
+<h3 id="що-таке-memory-model-і-навіщо-вона-потрібна">Що таке Memory Model і навіщо вона потрібна</h3>
+<p><strong>Memory Model (модель пам&rsquo;яті)</strong> — набір правил, що визначають:</p>
+<ul>
+<li>Коли зміни однієї нитки виконання (thread) стають видимими іншим</li>
+<li>В якому порядку виконуються операції з пам&rsquo;яттю</li>
+</ul>
+<p>Без Memory Model твій код може поводитись несподівано: і компілятор, і CPU <strong>переставляють інструкції</strong> для оптимізації.</p>
+<h3 id="чому-cpu-і-компілятор-переставляють-операції">Чому CPU і компілятор переставляють операції</h3>
+<p>CPU має кілька рівнів кешу (L1, L2, L3). Запис у пам&rsquo;ять — дорогий. Щоб не чекати — CPU виконує операції <strong>out-of-order</strong> (не по порядку коду) і буферизує записи.</p>
+<p>Компілятор теж може переставляти операції, якщо вважає їх незалежними.</p>
+<p>Для однопоточного коду — результат однаковий. Для багатопоточного — <strong>не гарантовано</strong>.</p>
+<h3 id="приклад-проблеми">Приклад проблеми</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ready</span> <span style="color:#66d9ef">bool</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">data</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Goroutine 1:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">data</span> = <span style="color:#ae81ff">42</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">ready</span> = <span style="color:#66d9ef">true</span>    <span style="color:#75715e">// CPU може виконати це РАНІШЕ ніж data = 42!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Goroutine 2:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">ready</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">data</span>)  <span style="color:#75715e">// Може надрукувати 0 замість 42!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h3 id="вирішення-memory-barriers-і-атомарні-операції">Вирішення: Memory Barriers і атомарні операції</h3>
+<p><strong>Memory Barrier (бар&rsquo;єр пам&rsquo;яті)</strong> — інструкція процесору: &ldquo;всі операції до цього місця мають бути завершені перед продовженням&rdquo;.</p>
+<p>У Go: <code>sync/atomic</code>, <code>sync.Mutex</code>, канали — всі вони встановлюють неявні бар&rsquo;єри.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ready</span> <span style="color:#66d9ef">int32</span>  <span style="color:#75715e">// Атомарна змінна
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">data</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Goroutine 1:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">data</span> = <span style="color:#ae81ff">42</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">atomic</span>.<span style="color:#a6e22e">StoreInt32</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ready</span>, <span style="color:#ae81ff">1</span>)  <span style="color:#75715e">// Гарантує, що data=42 видиме перед цим
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Goroutine 2:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">atomic</span>.<span style="color:#a6e22e">LoadInt32</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ready</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">data</span>)  <span style="color:#75715e">// Безпечно: 42
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h3 id="memory-model-у-різних-мовах">Memory Model у різних мовах</h3>
+<ul>
+<li><strong>C++11+:</strong> чітко визначена Memory Model з атомарними операціями і memory_order</li>
+<li><strong>Java:</strong> Java Memory Model (JMM) з <code>volatile</code> і <code>synchronized</code></li>
+<li><strong>Go:</strong> Go Memory Model: &ldquo;happens-before&rdquo; відносини через канали, мьютекси, atomic</li>
+</ul>
+<hr>
+<h2 id="транзакції-acid-і-base">Транзакції: ACID і BASE</h2>
+<h3 id="acid--гарантії-реляційних-бд">ACID — гарантії реляційних БД</h3>
+<p><strong>ACID</strong> — абревіатура з чотирьох властивостей транзакції:</p>
+<p><strong>A — Atomicity (Атомарність)</strong>
+Транзакція або виконується повністю, або не виконується взагалі. Якщо під час переказу грошей з рахунку A на рахунок B сталась помилка — ні A не зменшиться, ні B не збільшиться.</p>
+<p><strong>C — Consistency (Узгодженість)</strong>
+Транзакція переводить БД з одного консистентного стану в інший. Всі обмеження (constraints, foreign keys, check constraints) виконуються.</p>
+<p><strong>I — Isolation (Ізольованість)</strong>
+Паралельні транзакції не бачать проміжних станів одна одної. Ступінь ізоляції налаштовується (детально — у наступному розділі).</p>
+<p><strong>D — Durability (Тривалість)</strong>
+Після успішного <code>COMMIT</code> дані збережені назавжди, навіть при збої системи. Забезпечується через <strong>Write-Ahead Log (WAL)</strong> — журнал, куди запис йде спершу.</p>
+<h3 id="base--властивості-nosql-систем">BASE — властивості NoSQL систем</h3>
+<p><strong>BASE</strong> — протиставлення ACID для розподілених систем:</p>
+<p><strong>BA — Basically Available (Базова доступність)</strong>
+Система завжди відповідає, навіть якщо дані можуть бути застарілими або частково недоступними.</p>
+<p><strong>S — Soft State (М&rsquo;який стан)</strong>
+Стан системи може змінюватись з часом навіть без зовнішніх запитів (через реплікацію).</p>
+<p><strong>E — Eventual Consistency (Можлива узгодженість)</strong>
+Система зрештою досягне консистентного стану, але не гарантує це в будь-який момент часу.</p>
+<p><strong>Приклад:</strong> Amazon DynamoDB. Якщо ти оновив кількість товарів на складі, інший сервіс може ще хвилину бачити старе значення. Але зрештою — побачить нове.</p>
+<h3 id="теорема-cap">Теорема CAP</h3>
+<p>У розподілених системах неможливо одночасно гарантувати всі три:</p>
+<ul>
+<li><strong>C</strong>onsistency — всі вузли бачать одні й ті ж дані</li>
+<li><strong>A</strong>vailability — система завжди відповідає</li>
+<li><strong>P</strong>artition Tolerance — система працює при мережевих збоях між вузлами</li>
+</ul>
+<p>Треба вибрати два. PostgreSQL — CP (жертвує доступністю). Cassandra — AP (жертвує консистентністю).</p>
+<hr>
+<h2 id="рівні-ізоляції-транзакцій">Рівні ізоляції транзакцій</h2>
+<h3 id="проблема-паралельних-транзакцій-аномалії">Проблема паралельних транзакцій: аномалії</h3>
+<p>Коли кілька транзакцій працюють одночасно, можуть виникати <strong>аномалії читання</strong>:</p>
+<p><strong>Dirty Read (брудне читання)</strong>
+Транзакція B читає дані, які записала транзакція A, але ще не зробила <code>COMMIT</code>. Якщо A зробить <code>ROLLBACK</code> — B прочитала неіснуючі дані.</p>
+<pre tabindex="0"><code>T1: UPDATE balance = 0 WHERE user=1
+T2: SELECT balance FROM users WHERE user=1  → 0  (брудне читання!)
+T1: ROLLBACK  → balance знову 100
+</code></pre><p><strong>Non-Repeatable Read (неповторюване читання)</strong>
+Транзакція читає один рядок двічі і отримує різні значення (між читаннями інша транзакція змінила рядок і зробила <code>COMMIT</code>).</p>
+<p><strong>Phantom Read (фантомне читання)</strong>
+Транзакція виконує запит двічі і отримує різні <strong>набори рядків</strong> (між запитами інша транзакція вставила або видалила рядки).</p>
+<p><strong>Lost Update (втрачене оновлення)</strong>
+Дві транзакції читають значення, обидві обчислюють нове і записують. Перший запис перезаписується другим.</p>
+<pre tabindex="0"><code>T1: READ balance = 100
+T2: READ balance = 100
+T1: WRITE balance = 100 + 50 = 150
+T2: WRITE balance = 100 + 30 = 130  ← Втрачено +50!
+</code></pre><h3 id="рівні-ізоляції-від-найслабшого-до-найсильнішого">Рівні ізоляції (від найслабшого до найсильнішого)</h3>
+<p><strong>Read Uncommitted</strong>
+Дозволяє всі аномалії. Практично не використовується. Транзакція бачить навіть незакомічені зміни.</p>
+<p><strong>Read Committed (default у PostgreSQL, Oracle)</strong>
+Усуває Dirty Read. Транзакція бачить тільки закомічені дані. Але Non-Repeatable Read і Phantom Read можливі.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SET</span> <span style="color:#66d9ef">TRANSACTION</span> <span style="color:#66d9ef">ISOLATION</span> <span style="color:#66d9ef">LEVEL</span> <span style="color:#66d9ef">READ</span> <span style="color:#66d9ef">COMMITTED</span>;
+</span></span></code></pre></div><p><strong>Repeatable Read (default у MySQL InnoDB)</strong>
+Усуває Dirty Read і Non-Repeatable Read. Один і той самий <code>SELECT</code> поверне ті самі рядки протягом транзакції. Phantom Read теоретично можливий (у PostgreSQL через MVCC — ні).</p>
+<p><strong>Serializable</strong>
+Найсильніша ізоляція. Паралельні транзакції виконуються так, ніби послідовно. Усуває всі аномалії, але найповільніший.</p>
+<h3 id="mvcc--як-postgresql-реалізує-ізоляцію">MVCC — як PostgreSQL реалізує ізоляцію</h3>
+<p><strong>MVCC (Multi-Version Concurrency Control)</strong> — багатоверсійний контроль конкурентності. Замість блокувань — кожен <code>UPDATE</code> створює <strong>нову версію рядка</strong>, стара залишається.</p>
+<pre tabindex="0"><code>Рядок: id=1, balance=100, xmin=5, xmax=0   (версія від транзакції 5)
+
+T7: UPDATE balance=150
+→ Рядок v1: id=1, balance=100, xmin=5, xmax=7   (застаріла, видалена T7)
+→ Рядок v2: id=1, balance=150, xmin=7, xmax=0   (актуальна)
+
+T6 (стартувала раніше T7): SELECT balance
+→ Бачить v1 (balance=100), бо xmax=7 &gt; T6&#39;s snapshot_time
+</code></pre><p><strong>Переваги MVCC:</strong></p>
+<ul>
+<li>Читачі не блокують письменників</li>
+<li>Письменники не блокують читачів</li>
+<li>Кожна транзакція бачить консистентний snapshot даних</li>
+</ul>
+<p><strong>Недолік:</strong> накопичення мертвих версій рядків. Потрібен <strong>VACUUM</strong> — процес прибирання застарілих версій.</p>
+<h3 id="ssi--serializable-snapshot-isolation">SSI — Serializable Snapshot Isolation</h3>
+<p><strong>SSI (Serializable Snapshot Isolation)</strong> — сучасний підхід у PostgreSQL (з версії 9.1), що дає serializable ізоляцію <strong>без важких блокувань</strong>. Відстежує &ldquo;небезпечні&rdquo; залежності між транзакціями і відкочує тільки ті, що порушують serializable порядок.</p>
+<p>На практиці SSI значно продуктивніший за класичний Serializable з S-блокуваннями.</p>
+<hr>
+<h2 id="concurrency-control">Concurrency Control</h2>
+<h3 id="pessimistic-vs-optimistic-лocking">Pessimistic vs Optimistic лocking</h3>
+<p><strong>Pessimistic Locking (песимістичне блокування)</strong>
+&ldquo;Хтось точно захоче змінити ці дані — заблокую одразу.&rdquo;</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">BEGIN</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> accounts <span style="color:#66d9ef">WHERE</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">FOR</span> <span style="color:#66d9ef">UPDATE</span>;  <span style="color:#75715e">-- Блокуємо рядок
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">UPDATE</span> accounts <span style="color:#66d9ef">SET</span> balance <span style="color:#f92672">=</span> balance <span style="color:#f92672">-</span> <span style="color:#ae81ff">100</span> <span style="color:#66d9ef">WHERE</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">COMMIT</span>;
+</span></span></code></pre></div><p><code>FOR UPDATE</code> — ексклюзивне блокування рядка. Інші транзакції чекають. Підходить при <strong>високій конкуренції</strong> за одні й ті ж дані.</p>
+<p><code>FOR UPDATE NOWAIT</code> — якщо рядок заблокований, одразу помилка (не чекає).</p>
+<p><code>FOR SHARE</code> — спільне блокування (інші можуть читати, але не писати).</p>
+<p><strong>Optimistic Locking (оптимістичне блокування)</strong>
+&ldquo;Скоріш за все ніхто не змінить — запишу без блокування, але перевірю.&rdquo;</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- Читаємо з версією
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> id, balance, <span style="color:#66d9ef">version</span> <span style="color:#66d9ef">FROM</span> accounts <span style="color:#66d9ef">WHERE</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- version = 5
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Оновлюємо тільки якщо version не змінилась
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">UPDATE</span> accounts 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SET</span> balance <span style="color:#f92672">=</span> balance <span style="color:#f92672">-</span> <span style="color:#ae81ff">100</span>, <span style="color:#66d9ef">version</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">version</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">version</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Якщо affected_rows = 0 → хтось встиг змінити → retry
+</span></span></span></code></pre></div><p>Підходить при <strong>низькій конкуренції</strong> — менше блокувань, більша пропускна здатність.</p>
+<h3 id="коли-що-використовувати">Коли що використовувати</h3>
+<table>
+<thead>
+<tr>
+<th>Ситуація</th>
+<th>Підхід</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Бронювання місць (висока конкуренція)</td>
+<td>Pessimistic (<code>FOR UPDATE</code>)</td>
+</tr>
+<tr>
+<td>Рідкісні оновлення профілю</td>
+<td>Optimistic (version field)</td>
+</tr>
+<tr>
+<td>Читання без запису</td>
+<td><code>FOR SHARE</code> або без блокування</td>
+</tr>
+<tr>
+<td>Не можна чекати (real-time)</td>
+<td><code>NOWAIT</code> + обробка помилки</td>
+</tr>
+</tbody>
+</table>
+<h3 id="distributed-transactions-і-saga-pattern">Distributed Transactions і Saga Pattern</h3>
+<p>У мікросервісах одна бізнес-операція може зачіпати кілька сервісів з різними БД. Класичні транзакції тут не працюють.</p>
+<p><strong>2PC (Two-Phase Commit)</strong> — класичний протокол розподілених транзакцій:</p>
+<ol>
+<li><strong>Prepare phase:</strong> координатор питає всіх учасників &ldquo;готові закомітити?&rdquo;</li>
+<li><strong>Commit phase:</strong> якщо всі &ldquo;так&rdquo; → commit; якщо хтось &ldquo;ні&rdquo; → rollback</li>
+</ol>
+<p>Проблема: якщо координатор падає між фазами — невизначеність.</p>
+<p><strong>Saga Pattern</strong> — альтернатива для мікросервісів:</p>
+<ul>
+<li>Транзакція розбивається на локальні кроки</li>
+<li>Кожен крок має <strong>compensating transaction</strong> (компенсуючу транзакцію) для відкату</li>
+<li>При збої — запускаються компенсації у зворотньому порядку</li>
+</ul>
+<pre tabindex="0"><code>Замовлення: Reserve Inventory → Charge Payment → Ship Order
+При збої на Ship: Refund Payment → Release Inventory
+</code></pre><hr>
+<h2 id="dynamic-programming">Dynamic Programming</h2>
+<h3 id="що-таке-dp-і-чим-воно-відрізняється-від-рекурсії">Що таке DP і чим воно відрізняється від рекурсії</h3>
+<p><strong>Dynamic Programming (динамічне програмування)</strong> — техніка оптимізації рекурсії через збереження результатів підзадач.</p>
+<p>Рекурсія без DP може перераховувати одні й ті самі підзадачі <strong>мільйони разів</strong>. DP каже: &ldquo;порахував раз — запам&rsquo;ятай&rdquo;.</p>
+<pre tabindex="0"><code>Fibonacci без DP:
+fib(5) → fib(4) + fib(3)
+fib(4) → fib(3) + fib(2)  ← fib(3) рахується двічі!
+fib(3) → fib(2) + fib(1)  ← fib(2) рахується тричі!
+Складність: O(2^n)
+
+Fibonacci з DP (мемоїзація):
+fib(5) → fib(4) + fib(3)
+fib(4) → fib(4) вже в кеші!
+Складність: O(n)
+</code></pre><h3 id="два-підходи-top-down-і-bottom-up">Два підходи: Top-Down і Bottom-Up</h3>
+<p><strong>Top-Down (мемоїзація):</strong> пишемо рекурсію, додаємо кеш. Природно, декларативно, але є overhead стеку.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> functools <span style="color:#f92672">import</span> lru_cache
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@lru_cache</span>(maxsize<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">fib</span>(n):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> n <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">1</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> n
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> fib(n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">+</span> fib(n<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>)
+</span></span></code></pre></div><p><strong>Bottom-Up (табуляція):</strong> заповнюємо таблицю від базових випадків вгору. Без рекурсії, без стеку — часто швидше.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">fib</span>(n):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> n <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">1</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> n
+</span></span><span style="display:flex;"><span>    dp <span style="color:#f92672">=</span> [<span style="color:#ae81ff">0</span>] <span style="color:#f92672">*</span> (n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    dp[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">2</span>, n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>):
+</span></span><span style="display:flex;"><span>        dp[i] <span style="color:#f92672">=</span> dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">+</span> dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> dp[n]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Оптимізація: зберігаємо лише два попередніх</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">fib_optimized</span>(n):
+</span></span><span style="display:flex;"><span>    a, b <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(n):
+</span></span><span style="display:flex;"><span>        a, b <span style="color:#f92672">=</span> b, a <span style="color:#f92672">+</span> b
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> a
+</span></span></code></pre></div><h3 id="фреймворк-для-розвязання-dp-задач">Фреймворк для розв&rsquo;язання DP задач</h3>
+<p>Замість заучування конкретних алгоритмів — універсальний підхід:</p>
+<p><strong>1. Визначити стан:</strong> що характеризує поточну підзадачу?
+Зазвичай: індекс + накопичені параметри (залишкова ємність, поточна сума, etc.)</p>
+<p><strong>2. Знайти переходи:</strong> які рішення можна прийняти в поточному стані?
+&ldquo;Взяти елемент&rdquo; або &ldquo;пропустити&rdquo;, &ldquo;рухатись вліво&rdquo; або &ldquo;вправо&rdquo;</p>
+<p><strong>3. Базовий випадок:</strong> коли відповідь відома без рекурсії?</p>
+<p><strong>4. Мета:</strong> що шукаємо — максимум, мінімум, кількість варіантів?</p>
+<h3 id="knapsack-pattern--основа-половини-dp-задач">Knapsack Pattern — основа половини DP задач</h3>
+<p><strong>Задача про рюкзак (0/1 Knapsack):</strong>
+Є n предметів з вагами <code>w[i]</code> і цінностями <code>v[i]</code>. Рюкзак витримує <code>W</code>. Максимізувати цінність.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">knapsack</span>(weights, values, W):
+</span></span><span style="display:flex;"><span>    n <span style="color:#f92672">=</span> len(weights)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@lru_cache</span>(maxsize<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">dp</span>(i, capacity):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> i <span style="color:#f92672">==</span> n <span style="color:#f92672">or</span> capacity <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:   <span style="color:#75715e"># Базовий випадок</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Не беремо предмет i</span>
+</span></span><span style="display:flex;"><span>        skip <span style="color:#f92672">=</span> dp(i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, capacity)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Беремо предмет i (якщо влазить)</span>
+</span></span><span style="display:flex;"><span>        take <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> weights[i] <span style="color:#f92672">&lt;=</span> capacity:
+</span></span><span style="display:flex;"><span>            take <span style="color:#f92672">=</span> values[i] <span style="color:#f92672">+</span> dp(i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, capacity <span style="color:#f92672">-</span> weights[i])
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> max(skip, take)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> dp(<span style="color:#ae81ff">0</span>, W)
+</span></span></code></pre></div><p><strong>Цей самий патерн вирішує:</strong></p>
+<ul>
+<li>Best Time to Buy and Sell Stock (всі варіанти)</li>
+<li>Coin Change</li>
+<li>Partition Equal Subset Sum</li>
+<li>Maximum Subarray (Kadane&rsquo;s Algorithm)</li>
+<li>Filling Bookcase Shelves</li>
+</ul>
+<h3 id="відновлення-елементів-не-тільки-значення-а-й-що-взяли">Відновлення елементів: не тільки значення, а й що взяли</h3>
+<p>Часто потрібно не просте &ldquo;яке максимальне значення&rdquo;, а &ldquo;які елементи його дають&rdquo;. Для цього при заповненні кешу зберігаємо <strong>рішення</strong>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>memo_choice <span style="color:#f92672">=</span> {}  <span style="color:#75715e"># Зберігаємо: взяли чи пропустили</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">dp</span>(i, capacity):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> i <span style="color:#f92672">==</span> n:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    skip <span style="color:#f92672">=</span> dp(i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, capacity)
+</span></span><span style="display:flex;"><span>    take <span style="color:#f92672">=</span> values[i] <span style="color:#f92672">+</span> dp(i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, capacity <span style="color:#f92672">-</span> weights[i]) <span style="color:#66d9ef">if</span> weights[i] <span style="color:#f92672">&lt;=</span> capacity <span style="color:#66d9ef">else</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> take <span style="color:#f92672">&gt;</span> skip:
+</span></span><span style="display:flex;"><span>        memo_choice[(i, capacity)] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;take&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> take
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>        memo_choice[(i, capacity)] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;skip&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> skip
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Відновлення шляху:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">restore</span>(i, capacity):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> i <span style="color:#f92672">==</span> n:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> memo_choice[(i, capacity)] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;take&#39;</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> [i] <span style="color:#f92672">+</span> restore(i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, capacity <span style="color:#f92672">-</span> weights[i])
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> restore(i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, capacity)
+</span></span></code></pre></div><hr>
+<h2 id="чистий-код-і-архітектура">Чистий код і архітектура</h2>
+<h3 id="головна-ідея-код-читають-люди-не-машини">Головна ідея: код читають люди, не машини</h3>
+<p>Код пишеться <strong>один раз</strong>, але читається і змінюється <strong>десятки разів</strong>. Найдорожча операція в розробці — розібратися в чужому (або своєму старому) коді.</p>
+<p>Чистий код — не стиль і не естетика. Це <strong>економіка</strong>: менший час на зміни = менше грошей = більше фіч.</p>
+<h3 id="low-coupling-і-high-cohesion">Low Coupling і High Cohesion</h3>
+<p><strong>Low Coupling (низька зв&rsquo;язність):</strong> модулі мало знають один про одного. Зміна в одному не ламає інші.</p>
+<p><strong>High Cohesion (висока згуртованість):</strong> все, що разом відноситься до однієї відповідальності — знаходиться разом.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// Погано: висока зв&#39;язність між модулями
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// OrderService знає про деталі PaymentService
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">o</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">OrderService</span>) <span style="color:#a6e22e">CreateOrder</span>(<span style="color:#a6e22e">items</span> []<span style="color:#a6e22e">Item</span>, <span style="color:#a6e22e">cardNumber</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">cvv</span> <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// бізнес логіка замовлення...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">charge</span>(<span style="color:#a6e22e">cardNumber</span>, <span style="color:#a6e22e">cvv</span>, <span style="color:#a6e22e">total</span>)  <span style="color:#75715e">// знає деталі платіжки!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Добре: залежимо від абстракції
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">PaymentProvider</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Charge</span>(<span style="color:#a6e22e">amount</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">error</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">o</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">OrderService</span>) <span style="color:#a6e22e">CreateOrder</span>(<span style="color:#a6e22e">items</span> []<span style="color:#a6e22e">Item</span>, <span style="color:#a6e22e">payment</span> <span style="color:#a6e22e">PaymentProvider</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// бізнес логіка замовлення...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">payment</span>.<span style="color:#a6e22e">Charge</span>(<span style="color:#a6e22e">total</span>)  <span style="color:#75715e">// не знає, як саме відбувається оплата
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h3 id="solid--принципи-не-правила">SOLID — принципи, не правила</h3>
+<p><strong>SOLID</strong> — абревіатура п&rsquo;яти принципів проєктування:</p>
+<p><strong>S — Single Responsibility Principle (Принцип єдиної відповідальності)</strong>
+Клас/функція має одну причину для зміни. Не &ldquo;робить одну річ&rdquo; (це занадто вузько), а &ldquo;змінюється через одну причину&rdquo;.</p>
+<p><strong>O — Open/Closed Principle (Принцип відкритості/закритості)</strong>
+Відкрито для розширення (додавання нових типів), закрито для змін (не потрібно змінювати існуючий код). Досягається через поліморфізм і абстракції.</p>
+<p><strong>L — Liskov Substitution Principle (Принцип підстановки Ліскова)</strong>
+Підтип має повністю замінювати базовий тип без порушення поведінки. Якщо <code>Duck</code> реалізує <code>Bird</code>, то <code>fly(Bird)</code> має працювати з будь-яким <code>Duck</code>.</p>
+<p><strong>I — Interface Segregation Principle (Принцип розділення інтерфейсів)</strong>
+Краще кілька вузьких інтерфейсів, ніж один широкий. Клієнт не повинен залежати від методів, які не використовує.</p>
+<p><strong>D — Dependency Inversion Principle (Принцип інверсії залежностей)</strong>
+Залежи від абстракцій, не від конкретних реалізацій. Модулі вищого рівня не залежать від модулів нижчого.</p>
+<h3 id="декомпозиція-зверху-вниз">Декомпозиція зверху вниз</h3>
+<p>Пиши код так, щоб перші кілька функцій розповідали <strong>що</strong> робить програма, без деталей <strong>як</strong>. Деталі — нижче.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// Читається як текст — одразу зрозуміло що відбувається
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">HandleUserCommand</span>(<span style="color:#a6e22e">input</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">string</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cmd</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">parseCommand</span>(<span style="color:#a6e22e">input</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">isValidCommand</span>(<span style="color:#a6e22e">cmd</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">suggestSimilarCommands</span>(<span style="color:#a6e22e">cmd</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">executeCommand</span>(<span style="color:#a6e22e">cmd</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Реалізація кожного кроку — окремо
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">suggestSimilarCommands</span>(<span style="color:#a6e22e">input</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">string</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">known</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">getAllKnownCommands</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">similar</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">findSimilar</span>(<span style="color:#a6e22e">input</span>, <span style="color:#a6e22e">known</span>)  <span style="color:#75715e">// Levenshtein distance
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">formatSuggestions</span>(<span style="color:#a6e22e">similar</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="абстракції-в-реальному-світі-solid-скрізь">Абстракції в реальному світі (SOLID скрізь)</h3>
+<p>SOLID — не академічна теорія. Це те, як побудований весь великий софт:</p>
+<p><strong>Linux syscalls</strong> — твій код не знає, як ядро читає файл. Ти просто викликаєш <code>read()</code>. Абстракція приховує 10 000 рядків коду.</p>
+<p><strong>Файлові системи</strong> — ext4, btrfs, NTFS, і навіть FUSE (своя FS) — всі реалізують один інтерфейс. Open/Closed у чистому вигляді.</p>
+<p><strong>Завантажувані модулі ядра</strong> (<code>Loadable Kernel Module</code>) — кожен драйвер реалізує єдиний інтерфейс. Підключай і від&rsquo;єднуй без перекомпіляції ядра.</p>
+<p><strong>POSIX pthreads</strong> — мільярди програм на всіх платформах використовують один API. Жодна не знає деталей реалізації.</p>
+<p><strong>Kafka / RabbitMQ</strong> — надсилаєш повідомлення через абстракцію RPC. Як саме воно зберігається в WAL — не твоя відповідальність.</p>
+<p><strong>Unix Philosophy:</strong> &ldquo;Write programs that do one thing and do it well&rdquo; — SRP з 1970-х.</p>
+<p><strong>Bash pipelines:</strong> <code>cat file | grep error | sort | uniq -c</code> — кожна програма робить одне, з&rsquo;єднані абстракцією pipe. Ти ніколи не змінював код <code>grep</code>, бо він змінив формат pipe — бо є абстракція.</p>
+<h3 id="premature-optimization-і-premature-abstraction">Premature Optimization і Premature Abstraction</h3>
+<p>Два однаково шкідливих явища:</p>
+<pre tabindex="0"><code>&#34;Premature optimization is the root of all evil&#34; — Knuth
+&#34;Premature abstraction is evil&#34; — загальна мудрість
+</code></pre><p><strong>Premature Optimization:</strong> оптимізувати те, що ще не є bottleneck&rsquo;ом. 9 наносекунд різниці між <code>switch</code> і <code>vtable</code> при запиті в БД, який займає 200ms — це 0.0000045% часу. Irrelevant.</p>
+<p><strong>Premature Abstraction:</strong> вводити інтерфейси і шари там, де ще невідомо, що буде змінюватись. Результат — BBOM (Big Ball of Mud) з абстракціями.</p>
+<p>Правило: <strong>Measure first, optimize where it matters.</strong> За законом Амдала (Amdahl&rsquo;s Law) — загальне прискорення обмежене найповільнішою частиною системи.</p>
+<h3 id="еволюційна-розробка-vs-великий-дизайн-спочатку">Еволюційна розробка vs &ldquo;великий дизайн спочатку&rdquo;</h3>
+<p>Спроба продумати всю архітектуру заздалегідь (Waterfall) провалюється, бо вимоги змінюються. Краще:</p>
+<ol>
+<li>Почати просто — без зайвих абстракцій</li>
+<li>Писати код, що вирішує поточну задачу</li>
+<li>Рефакторити, коли бачиш повторення або зміни вимог</li>
+<li>Абстракції з&rsquo;являються, коли стає зрозуміло, <strong>що</strong> змінюватиметься</li>
+</ol>
+<pre tabindex="0"><code>&#34;Проект починається не з абстракцій, 
+а абстракції починаються з проекту&#34;
+</code></pre><hr>
+<h2 id="golang-scheduler">Golang Scheduler</h2>
+<h3 id="навіщо-go-зробив-свій-планувальник">Навіщо Go зробив свій планувальник</h3>
+<p>Стандартні потоки ОС (OS threads) важкі: ~1-8 МБ пам&rsquo;яті на поток, дорогий context switch (перемикання контексту) через системний виклик в ядро.</p>
+<p>Горутини в Go — легкі: ~2-8 КБ початково, ростуть динамічно. Можна запустити <strong>мільйони</strong> горутин. Перемикання відбувається всередині Go runtime, без системного виклику.</p>
+<h3 id="три-сутності-g-p-m">Три сутності: G, P, M</h3>
+<p><strong>G (Goroutine):</strong> легковага &ldquo;задача&rdquo;. Стек, реєстри, стан. Тисячі і мільйони.</p>
+<p><strong>P (Processor):</strong> логічний процесор. Черга горутин (Local Run Queue — LRQ), які він виконує. Кількість P = <code>GOMAXPROCS</code> (зазвичай = кількість CPU ядер).</p>
+<p><strong>M (Machine):</strong> справжній потік ОС. Виконує один P. Може бути більше M, ніж P (якщо P заблокований на системному виклику).</p>
+<pre tabindex="0"><code>OS Thread (M) → P (логічний процесор) → G, G, G... (горутини)
+</code></pre><h3 id="алгоритм-пошуку-горутин-для-виконання">Алгоритм пошуку горутин для виконання</h3>
+<p>Кожен P постійно шукає роботу за таким алгоритмом:</p>
+<pre tabindex="0"><code>Крок 1 (з імовірністю 1/61): перевіряємо Global Run Queue (GRQ)
+  → Дорогий виклик з блокуванням (lock), тому рідко
+  → Але якщо ніколи не перевіряти — горутини в GRQ голодуватимуть
+
+Крок 2: Local Run Queue (LRQ) — власна черга P
+  → Найшвидше, без синхронізації, без locks
+
+Крок 3: Global Run Queue (GRQ)
+  → Берем горутини звідси, якщо LRQ порожня
+
+Крок 4: NetPoller (fast path, non-blocking)
+  → Горутини, що чекали мережевих подій і вже готові
+  → epoll/kqueue повідомив ядро: &#34;є дані для читання&#34;
+  → Забираємо пачку, решту розподіляємо по іншим P і GRQ
+
+Крок 5: Work Stealing (крадіжка роботи)
+  → Тільки за умов: LRQ/GRQ/NetPoller порожні І
+    (поточний M починає spinning АБО spinning M &lt; зайнятих P / 2)
+  → Крадемо половину LRQ у іншого P
+
+Крок 6: Допомагаємо GC (Garbage Collector)
+  → Якщо GC зараз активний — допомагаємо з marking
+
+Крок 7: GRQ знову (ще одна спроба)
+
+Крок 8: NetPoller (blocking)
+  → Блокуємось до появи I/O подій (з таймаутом pollUntil)
+
+Крок 9: Park M
+  → Нічого немає → поміщаємо потік у пул сплячих потоків
+</code></pre><h3 id="spinning-і-чому-це-важливо">Spinning і чому це важливо</h3>
+<p><strong>Spinning M (крутящийся поток)</strong> — M, що активно шукає роботу замість того, щоб засинати. Це <strong>свідоме рішення</strong>: краще витратити трохи CPU, ніж платити за пробудження сплячого потоку (це ~мкс затримка).</p>
+<p>Але spinning M — дорого при бездіяльності. Тому Go обмежує: <code>spinning_Ms &lt;= зайняті_Ps / 2</code>.</p>
+<h3 id="netpoller-як-go-обробляє-мережу">NetPoller: як Go обробляє мережу</h3>
+<p>Замість блокуючих мережевих викликів Go використовує <strong>epoll</strong> (Linux) / <strong>kqueue</strong> (macOS) / <strong>IOCP</strong> (Windows) — системні механізми асинхронного I/O.</p>
+<p>Горутина, що чекає мережевих даних, <strong>паркується</strong> (не займає M). Окремий поток слідкує за подіями. Коли дані прийшли — горутина повертається в чергу.</p>
+<p>Це і є причина, чому Go-сервери витримують сотні тисяч одночасних з&rsquo;єднань без проблем.</p>
+<h3 id="work-stealing-балансування-між-ядрами">Work Stealing: балансування між ядрами</h3>
+<p>Якщо одне P завалено горутинами, а інше простоює — голодуюче P краде <strong>половину</strong> LRQ завантаженого P. Автоматичне балансування навантаження між CPU ядрами без явного керування.</p>
+<hr>
+<h2 id="як-вчити-алгоритми">Як вчити алгоритми</h2>
+<h3 id="що-насправді-потрібно-для-80-співбесід">Що насправді потрібно для 80% співбесід</h3>
+<p>Не потрібно знати всі алгоритми. Потрібна <strong>база</strong> і <strong>навик розпізнавання патернів</strong>:</p>
+<pre tabindex="0"><code>80% часу → array, list, string, stack, hash table, queue, set,
+           sorted set, sorting, binary search, heap, prefix sums,
+           two pointers, sliding window, BFS, DFS
+
+10% часу → recursion, trees (базові приклади)
+
+10% часу → dynamic programming (базові приклади)
+</code></pre><p>Принцип Парето: 20% тем дають 80% питань на реальних співбесідах.</p>
+<h3 id="active-recall-чому-пасивний-перегляд-не-працює">Active Recall: чому пасивний перегляд не працює</h3>
+<p><strong>Active Recall (активне пригадування)</strong> — техніка навчання, де ти <strong>витягуєш</strong> інформацію з пам&rsquo;яті через зусилля, а не пасивно споживаєш.</p>
+<p>Коли мозок змушений згадувати через &ldquo;біль&rdquo; невизначеності — він будує <strong>сильніші нейронні зв&rsquo;язки</strong>. Наступного разу та сама інформація витягується швидше і легше.</p>
+<p>Пасивний перегляд відео або читання коду — не працює. Мозку немає сенсу запам&rsquo;ятовувати те, що завжди доступне ззовні.</p>
+<p><strong>Практично:</strong></p>
+<ul>
+<li>Спробував задачу сам → не вийшло → підглянув <strong>ідею</strong> (не код!) → знову спробував сам</li>
+<li>Не переписуй код → кодуй <strong>по пам&rsquo;яті</strong></li>
+<li>Побачив патерн → закрив рішення → відтвори логіку в голові за 2-3 секунди</li>
+</ul>
+<h3 id="spaced-repetition-як-не-забути">Spaced Repetition: як не забути</h3>
+<p><strong>Spaced Repetition (інтервальне повторення)</strong> — повторюй матеріал в момент, коли починаєш <strong>трохи</strong> забувати. Тоді нейронний зв&rsquo;язок зміцнюється найефективніше.</p>
+<p><strong>Крива забування Еббінгауза:</strong> без повторення людина забуває ~50% за перший день, ~70% за тиждень. Кожне повторення &ldquo;скидає&rdquo; криву і уповільнює забування.</p>
+<p><strong>Рекомендовані інтервали:</strong> 1 день → 3 дні → 1 тиждень → 2 тижні → 1 місяць.</p>
+<p>Але краще — за відчуттями: &ldquo;починаю трохи забувати → повторюю&rdquo;. Не &ldquo;забув повністю → вчу знову&rdquo;.</p>
+<p><strong>Практично для алгоритмів:</strong></p>
+<ul>
+<li>Виписуй вивчені патерни</li>
+<li>Регулярно &ldquo;програй&rdquo; їх у голові (уяви, як дані перетікають)</li>
+<li>Не обов&rsquo;язково кодити кожного разу — досить ментальної симуляції</li>
+</ul>
+<h3 id="скільки-часу-витрачати-на-одну-задачу">Скільки часу витрачати на одну задачу</h3>
+<pre tabindex="0"><code>Є час → думай кілька днів, крути в голові
+
+Немає часу →
+  30 хв: пробуй різні патерни
+  Нічого → підглянь ІДЕЮ (не код)
+  Спробуй закодити сам
+  Не вийшло → подивись конструкції коду, закрий
+  Закодуй по пам&#39;яті
+  Розбери рішення крок за кроком
+  Виклади патерн → додай до списку для повторення
+</code></pre><h3 id="стрес-уповільнює-навчання">Стрес уповільнює навчання</h3>
+<p>Мозок у стресі переходить в режим &ldquo;бий або тікай&rdquo; — ресурси йдуть на виживання, а не на навчання. Підвищений кортизол знижує здатність до формування нових нейронних зв&rsquo;язків.</p>
+<p>Переконай себе, що тобі <strong>цікаво</strong>, а не страшно. Це не метафора — мозок буквально краще запам&rsquo;ятовує в стані зацікавленості.</p>
+<hr>
+<h2 id="критичне-мислення">Критичне мислення</h2>
+<h3 id="чому-це-важливо-для-розробника">Чому це важливо для розробника</h3>
+<p>Технічні дискусії, code review, вибір архітектурних рішень, співбесіди — всюди є аргументи, контраргументи, маніпуляції і когнітивні пастки. Без критичного мислення легко прийняти неправильне рішення або піддатися маніпуляції.</p>
+<h3 id="confirmation-bias-упередженість-підтвердження">Confirmation Bias (упередженість підтвердження)</h3>
+<p>Ми схильні шукати інформацію, що <strong>підтверджує</strong> наші погляди, і ігнорувати те, що суперечить.</p>
+<p><strong>У розробці:</strong> вивчив ООП → бачиш ООП-рішення скрізь. Вивчив SOLID → хочеш абстракції всюди. Зайнявся low-level → оптимізуєш кожен байт навіть там, де це не має значення.</p>
+<p><strong>Як протидіяти:</strong> активно шукай <strong>найкращі аргументи проти</strong> своєї позиції. Питай: &ldquo;Що могло б змінити мою думку?&rdquo;</p>
+<h3 id="straw-man-fallacy-підміна-тези">Straw Man Fallacy (підміна тези)</h3>
+<p>Замість відповіді на реальний аргумент — відповідаєш на <strong>викривлену</strong> версію.</p>
+<p><em>Оригінал:</em> &ldquo;SOLID — корисні принципи, які застосовуються за ситуацією.&rdquo;
+<em>Straw Man:</em> &ldquo;Ти кажеш завжди робити 100 класів і 50 інтерфейсів на кожну функцію?&rdquo;</p>
+<p><strong>Як розпізнати:</strong> &ldquo;Отже ти хочеш сказати, що&hellip;&rdquo; — і далі щось, чого ти не казав.</p>
+<h3 id="ad-hominem-атака-на-особистість">Ad Hominem (атака на особистість)</h3>
+<p>Замість критики аргументу — критика <strong>людини</strong>:</p>
+<ul>
+<li>&ldquo;Ти джун, що ти розумієш в архітектурі?&rdquo;</li>
+<li>&ldquo;Ти кашляєш на відео — яка довіра до тебе?&rdquo;</li>
+</ul>
+<p>Аргумент не стає хибним від того, хто його висловлює.</p>
+<h3 id="generalization-bias-надмірне-узагальнення">Generalization Bias (надмірне узагальнення)</h3>
+<p>&ldquo;Я ніколи не зустрічав цей алгоритм на роботі → алгоритми непотрібні.&rdquo;
+&ldquo;Мій прадід курив і прожив 100 років → куріння нешкідливе.&rdquo;</p>
+<p>Один приклад (або відсутність прикладу) — не доказ загальної закономірності.</p>
+<h3 id="false-dilemma-хибна-дилема">False Dilemma (хибна дилема)</h3>
+<p>Представлення ситуації як вибору між двома варіантами, коли є інші:</p>
+<ul>
+<li>&ldquo;Або чистий код, або продуктивність&rdquo; (можна мати обидва за розумного підходу)</li>
+<li>&ldquo;Або ти знаєш С++ досконало, або ти не справжній інженер&rdquo;</li>
+</ul>
+<h3 id="polarized-thinking-чорно-біле-мислення">Polarized Thinking (чорно-біле мислення)</h3>
+<p>Світ ділиться на &ldquo;повністю добре&rdquo; і &ldquo;повністю погане&rdquo;, без відтінків. У реальності більшість технічних рішень — trade-off (компроміс), а не абсолют.</p>
+<h3 id="як-думати-краще-алгоритм">Як думати краще: алгоритм</h3>
+<pre tabindex="0"><code>1. Сформулюй проблему максимально конкретно
+   (&#34;код повільний&#34; → &#34;запит займає 500ms при 1000 записах&#34;)
+
+2. Розділи факти від думок
+   Факт: &#34;benchmark показав 500ms&#34;
+   Думка: &#34;це через погані абстракції&#34;
+
+3. Знайди найсильніші аргументи проти своєї гіпотези
+
+4. Виміряй (measure, don&#39;t guess)
+   Profiler, benchmark, метрики — перед оптимізацією
+
+5. Прийми рішення, явно зазначивши невизначеність
+   &#34;Ймовірно X, тому що Y, але можливо Z&#34;
+
+6. Перевір результат і оновлюй модель
+</code></pre><h3 id="нарцисизм-у-it-і-як-не-згоріти">Нарцисизм у IT і як не згоріти</h3>
+<p>Токсичні колеги, хейт в інтернеті, деструктивне code review — реальність IT. Важливо розрізняти:</p>
+<p><strong>Здорова критика:</strong> &ldquo;Цей підхід має проблему X, бо Y. Розглянь альтернативу Z.&rdquo;</p>
+<p><strong>Токсична поведінка:</strong> вирвати деталь з контексту, ігнорувати суть, атака на особистість, &ldquo;допомога&rdquo; через приниження.</p>
+<p>Ознаки: прагнуть не вирішити проблему, а <strong>довести перевагу</strong> над тобою. Реагують агресивно на будь-яку незгоду. Закривають коментарі (бо бояться аргументів у відповідь).</p>
+<p><strong>Стратегія:</strong> аргументуй фактами і вимірами. Якщо людина не реагує на факти — це не технічна дискусія, а щось інше. Не трать на це енергію.</p>
+<hr>
+<h2 id="висновок-одна-ідея-в-різних-формах">Висновок: одна ідея в різних формах</h2>
+<p>Усі теми цієї статті — прояви однієї фундаментальної ідеї:</p>
+<p><strong>Декомпозиція складного на просте через правильні абстракції.</strong></p>
+<ul>
+<li><strong>Рекурсія</strong> декомпозує задачу на підзадачи</li>
+<li><strong>DP</strong> накопичує результати підзадач, щоб не рахувати двічі</li>
+<li><strong>Binary Search</strong> декомпозує простір пошуку на дві частини</li>
+<li><strong>Heap</strong> підтримує впорядкованість через локальну властивість</li>
+<li><strong>LRU/LFU</strong> декомпозує кеш на структури з різними відповідальностями</li>
+<li><strong>ACID</strong> декомпозує надійність транзакції на чотири незалежні властивості</li>
+<li><strong>MVCC</strong> декомпозує проблему конкурентності через версіонування</li>
+<li><strong>Go Scheduler</strong> декомпозує навантаження між G, P, M</li>
+<li><strong>Чиста архітектура</strong> декомпозує систему на модулі з чіткими межами</li>
+<li><strong>Критичне мислення</strong> декомпозує аргумент на факти, логіку і маніпуляції</li>
+</ul>
+<p>Навчись думати так — і будь-яка нова тема буде лише новим виявом знайомого принципу.</p>
+<hr>
+
+</content>
+
+
+
+<p>
+  
+  <a href="//localhost:1313/tags/%D0%B0%D0%BB%D0%B3%D0%BE%D1%80%D0%B8%D1%82%D0%BC%D0%B8/">#Алгоритми</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

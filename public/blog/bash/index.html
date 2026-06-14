@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>eBash | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="eBash" />
+<meta name="description" content="Вичерпний гід для підготовки до співбесіди по Bash: синтаксис, пастки, відлагодження, коди виходу, каверзні питання з поясненнями та реальними прикладами." />
+<meta name="keywords" content="bash,linux," />
+
+
+<meta property="og:title" content="eBash" />
+<meta property="og:description" content="Вичерпний гід для підготовки до співбесіди по Bash: синтаксис, пастки, відлагодження, коди виходу, каверзні питання з поясненнями та реальними прикладами." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/blog/bash/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2026-06-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-06-14T00:00:00+00:00" />
+
+
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="eBash"/>
+<meta name="twitter:description" content="Вичерпний гід для підготовки до співбесіди по Bash: синтаксис, пастки, відлагодження, коди виходу, каверзні питання з поясненнями та реальними прикладами."/>
+
+
+
+<meta itemprop="name" content="eBash">
+<meta itemprop="description" content="Вичерпний гід для підготовки до співбесіди по Bash: синтаксис, пастки, відлагодження, коди виходу, каверзні питання з поясненнями та реальними прикладами."><meta itemprop="datePublished" content="2026-06-14T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2026-06-14T00:00:00+00:00" />
+<meta itemprop="wordCount" content="4166">
+<meta itemprop="keywords" content="bash,linux," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</h2>
+</a>
+<nav>
+<a href="/">Home</a>
+
+<a href="/blog/">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>eBash</h1>
+<p>
+  <i>
+    <time datetime='2026-06-14'>
+      14 Jun, 2026
+    </time>
+  </i>
+</p>
+
+<content>
+  <hr>
+<h2 id="зміст">Зміст</h2>
+<ol>
+<li><a href="#%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D0%B8">Основи, які обов&rsquo;язково знати</a></li>
+<li><a href="#%D0%B7%D0%BC%D1%96%D0%BD%D0%BD%D1%96">Змінні та підстановки</a></li>
+<li><a href="#%D1%83%D0%BC%D0%BE%D0%B2%D0%B8">Умови та тести</a></li>
+<li><a href="#%D1%86%D0%B8%D0%BA%D0%BB%D0%B8">Цикли</a></li>
+<li><a href="#%D1%84%D1%83%D0%BD%D0%BA%D1%86%D1%96%D1%97">Функції</a></li>
+<li><a href="#%D0%BA%D0%BE%D0%B4%D0%B8-%D0%B2%D0%B8%D1%85%D0%BE%D0%B4%D1%83">Обробка помилок та коди виходу</a></li>
+<li><a href="#%D0%BF%D0%B5%D1%80%D0%B5%D0%BD%D0%B0%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%BD%D1%8F">Перенаправлення та pipe</a></li>
+<li><a href="#%D0%BC%D0%B0%D1%81%D0%B8%D0%B2%D0%B8">Масиви та асоціативні масиви</a></li>
+<li><a href="#%D1%80%D1%8F%D0%B4%D0%BA%D0%B8">Рядкові операції</a></li>
+<li><a href="#%D0%BF%D1%80%D0%BE%D1%86%D0%B5%D1%81%D0%B8">Процеси та сигнали</a></li>
+<li><a href="#%D0%B2%D1%96%D0%B4%D0%BB%D0%B0%D0%B3%D0%BE%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F">Відлагодження</a></li>
+<li><a href="#%D0%BA%D0%B0%D0%B2%D0%B5%D1%80%D0%B7%D0%BD%D1%96-%D0%BF%D0%B8%D1%82%D0%B0%D0%BD%D0%BD%D1%8F">Каверзні питання</a></li>
+<li><a href="#%D0%B7%D0%B0%D0%B4%D0%B0%D1%87%D1%96">Реальні задачі зі співбесід</a></li>
+</ol>
+<hr>
+<h2 id="основи">Основи</h2>
+<h3 id="shebang-та-режими-запуску">Shebang та режими запуску</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash        # Явний bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e">#!/usr/bin/env bash # Кращий варіант — шукає bash в $PATH (portable)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#!/bin/sh          # POSIX sh — без bashisms!</span>
+</span></span></code></pre></div><p><strong>Різниця між <code>bash script.sh</code>, <code>./script.sh</code> і <code>source script.sh</code>:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>bash script.sh    <span style="color:#75715e"># Запускає в дочірньому процесі, змінні не впливають на поточний shell</span>
+</span></span><span style="display:flex;"><span>./script.sh       <span style="color:#75715e"># Те саме, але потрібен shebang + chmod +x</span>
+</span></span><span style="display:flex;"><span>source script.sh  <span style="color:#75715e"># Виконує В ПОТОЧНОМУ shell! Змінні, cd — все впливає</span>
+</span></span><span style="display:flex;"><span>. script.sh       <span style="color:#75715e"># Те саме, що source (POSIX-сумісний синтаксис)</span>
+</span></span></code></pre></div><blockquote>
+<p><strong>Питання:</strong> Чому <code>cd</code> у скрипті не змінює директорію в терміналі?
+<strong>Відповідь:</strong> Скрипт виконується в subshell. Після завершення subshell зникає разом зі своїм <code>$PWD</code>. Використовуйте <code>source</code> або функцію.</p>
+</blockquote>
+<h3 id="спеціальні-змінні-оточення">Спеціальні змінні оточення</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$0    <span style="color:#75715e"># Ім&#39;я скрипта</span>
+</span></span><span style="display:flex;"><span>$1–$9 <span style="color:#75715e"># Позиційні параметри</span>
+</span></span><span style="display:flex;"><span>$@    <span style="color:#75715e"># Всі аргументи як окремі слова (зберігає пробіли!)</span>
+</span></span><span style="display:flex;"><span>$*    <span style="color:#75715e"># Всі аргументи як один рядок (не використовуйте)</span>
+</span></span><span style="display:flex;"><span>$#    <span style="color:#75715e"># Кількість аргументів</span>
+</span></span><span style="display:flex;"><span>$?    <span style="color:#75715e"># Код виходу останньої команди</span>
+</span></span><span style="display:flex;"><span>$$    <span style="color:#75715e"># PID поточного процесу</span>
+</span></span><span style="display:flex;"><span>$!    <span style="color:#75715e"># PID останнього фонового процесу</span>
+</span></span><span style="display:flex;"><span>$_    <span style="color:#75715e"># Останній аргумент попередньої команди</span>
+</span></span><span style="display:flex;"><span>$-    <span style="color:#75715e"># Поточні флаги shell (himBHs...)</span>
+</span></span><span style="display:flex;"><span>$IFS  <span style="color:#75715e"># Internal Field Separator (за замовчуванням: пробіл, таб, новий рядок)</span>
+</span></span></code></pre></div><hr>
+<h2 id="змінні">Змінні та підстановки</h2>
+<h3 id="присвоєння-та-scope">Присвоєння та scope</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ВАЖЛИВО: без пробілів навколо =</span>
+</span></span><span style="display:flex;"><span>VAR<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;hello&#34;</span>     <span style="color:#75715e"># OK</span>
+</span></span><span style="display:flex;"><span>VAR <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hello&#34;</span>   <span style="color:#75715e"># ПОМИЛКА — bash спробує виконати команду &#39;VAR&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># local — тільки всередині функції</span>
+</span></span><span style="display:flex;"><span>my_func<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    local var<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;local&#34;</span>   <span style="color:#75715e"># не виходить за межі функції</span>
+</span></span><span style="display:flex;"><span>    global_var<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;global&#34;</span> <span style="color:#75715e"># доступна ззовні!</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># export — передає в дочірні процеси</span>
+</span></span><span style="display:flex;"><span>export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$PATH<span style="color:#e6db74">:/opt/bin&#34;</span>
+</span></span><span style="display:flex;"><span>export -f my_func  <span style="color:#75715e"># Експортувати функцію!</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># readonly — незмінна</span>
+</span></span><span style="display:flex;"><span>readonly CONFIG_FILE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/etc/app/config&#34;</span>
+</span></span><span style="display:flex;"><span>CONFIG_FILE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;other&#34;</span>  <span style="color:#75715e"># bash: CONFIG_FILE: readonly variable</span>
+</span></span></code></pre></div><h3 id="parameter-expansion--найважливіше">Parameter Expansion — найважливіше</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>VAR<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Hello World&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Базові</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR<span style="color:#e6db74">}</span>            <span style="color:#75715e"># &#34;Hello World&#34; (явні межі)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${#</span>VAR<span style="color:#e6db74">}</span>           <span style="color:#75715e"># 11 (довжина рядка)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Значення за замовчуванням</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR<span style="color:#66d9ef">:-</span>default<span style="color:#e6db74">}</span>   <span style="color:#75715e"># якщо VAR порожня або не встановлена → &#34;default&#34; (VAR не змінюється)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR:=default<span style="color:#e6db74">}</span>   <span style="color:#75715e"># якщо VAR порожня → встановлює VAR=&#34;default&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR:+other<span style="color:#e6db74">}</span>     <span style="color:#75715e"># якщо VAR встановлена → &#34;other&#34; (інвертоване)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR:?error msg<span style="color:#e6db74">}</span> <span style="color:#75715e"># якщо VAR порожня → виводить помилку і виходить</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Підрядки</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR:0:5<span style="color:#e6db74">}</span>        <span style="color:#75715e"># &#34;Hello&#34; (від позиції 0, довжина 5)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR:6<span style="color:#e6db74">}</span>          <span style="color:#75715e"># &#34;World&#34; (від позиції 6 до кінця)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR: -5<span style="color:#e6db74">}</span>        <span style="color:#75715e"># &#34;World&#34; (УВАГА: пробіл перед -5 обов&#39;язковий!)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Видалення підрядків (globbing)</span>
+</span></span><span style="display:flex;"><span>FILE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;archive.tar.gz&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>FILE#*.<span style="color:#e6db74">}</span>        <span style="color:#75715e"># &#34;tar.gz&#34;  (видалити найкоротший збіг з початку)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>FILE##*.<span style="color:#e6db74">}</span>       <span style="color:#75715e"># &#34;gz&#34;      (видалити найдовший збіг з початку)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>FILE%.*<span style="color:#e6db74">}</span>        <span style="color:#75715e"># &#34;archive.tar&#34; (видалити найкоротший збіг з кінця)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>FILE%%.*<span style="color:#e6db74">}</span>       <span style="color:#75715e"># &#34;archive&#34; (видалити найдовший збіг з кінця)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Заміна</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR/World/Bash<span style="color:#e6db74">}</span> <span style="color:#75715e"># &#34;Hello Bash&#34; (перше входження)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR//l/L<span style="color:#e6db74">}</span>       <span style="color:#75715e"># &#34;HeLLo WorLd&#34; (всі входження)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR/#Hello/Hi<span style="color:#e6db74">}</span>  <span style="color:#75715e"># &#34;Hi World&#34; (тільки на початку)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR/%World/!<span style="color:#e6db74">}</span>   <span style="color:#75715e"># &#34;Hello !&#34; (тільки в кінці)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Зміна регістру (bash 4+)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR,,<span style="color:#e6db74">}</span>          <span style="color:#75715e"># &#34;hello world&#34; (все малими)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR^^<span style="color:#e6db74">}</span>          <span style="color:#75715e"># &#34;HELLO WORLD&#34; (все великими)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR,<span style="color:#e6db74">}</span>           <span style="color:#75715e"># &#34;hello World&#34; (перша буква малою)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">${</span>VAR^<span style="color:#e6db74">}</span>           <span style="color:#75715e"># &#34;Hello World&#34; (перша буква великою)</span>
+</span></span></code></pre></div><h3 id="підстановка-команд">Підстановка команд</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Сучасний синтаксис (рекомендований, підтримує вкладення)</span>
+</span></span><span style="display:flex;"><span>NOW<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>date +%Y-%m-%d<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>FILES<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>find /var/log -name <span style="color:#e6db74">&#34;*.log&#34;</span> -newer <span style="color:#66d9ef">$(</span>date -d <span style="color:#e6db74">&#34;7 days ago&#34;</span> +%Y-%m-%d<span style="color:#66d9ef">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Старий синтаксис з backticks (уникайте)</span>
+</span></span><span style="display:flex;"><span>NOW<span style="color:#f92672">=</span><span style="color:#e6db74">`</span>date +%Y-%m-%d<span style="color:#e6db74">`</span>  <span style="color:#75715e"># Важко читати, погано вкладається</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Арифметика</span>
+</span></span><span style="display:flex;"><span>COUNT<span style="color:#f92672">=</span><span style="color:#66d9ef">$((</span><span style="color:#ae81ff">10</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">5</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span><span style="color:#66d9ef">))</span>   <span style="color:#75715e"># 20</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#66d9ef">$((</span><span style="color:#ae81ff">2</span><span style="color:#f92672">**</span><span style="color:#ae81ff">10</span><span style="color:#66d9ef">))</span>          <span style="color:#75715e"># 1024</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#66d9ef">$((</span><span style="color:#ae81ff">16#</span>FF<span style="color:#66d9ef">))</span>          <span style="color:#75715e"># 255 (hex → decimal)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#66d9ef">$((</span><span style="color:#ae81ff">8#77</span><span style="color:#66d9ef">))</span>           <span style="color:#75715e"># 63  (octal → decimal)</span>
+</span></span></code></pre></div><hr>
+<h2 id="умови">Умови та тести</h2>
+<h3 id="--і----різниця-принципова"><code>[</code>, <code>[[</code> і <code>(( ))</code> — різниця принципова</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># [ ] — POSIX, виклик команди /usr/bin/[ або shell builtin</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Потребує лапок навколо змінних!</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$VAR<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;value&#34;</span> <span style="color:#f92672">]</span>   <span style="color:#75715e"># OK</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> $VAR <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;value&#34;</span> <span style="color:#f92672">]</span>     <span style="color:#75715e"># НЕБЕЗПЕЧНО: якщо VAR містить пробіли — помилка</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [[ ]] — bash keyword (не команда), безпечніше</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Не потребує лапок для більшості випадків</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Підтримує &amp;&amp; || без екранування</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Підтримує regex =~</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> $VAR <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;value&#34;</span> <span style="color:#f92672">]]</span>   <span style="color:#75715e"># OK, навіть без лапок</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> $VAR <span style="color:#f92672">==</span> val* <span style="color:#f92672">]]</span>     <span style="color:#75715e"># Glob-matching (не regex!)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> $VAR <span style="color:#f92672">=</span>~ ^<span style="color:#f92672">[</span>0-9<span style="color:#f92672">]</span>+$ <span style="color:#f92672">]]</span> <span style="color:#75715e"># Regex! Без лапок навколо pattern</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (( )) — арифметичні умови</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">((</span> <span style="color:#ae81ff">5</span> &gt; <span style="color:#ae81ff">3</span> <span style="color:#f92672">))</span>           <span style="color:#75715e"># true (exit 0)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">((</span> count++ <span style="color:#f92672">))</span>         <span style="color:#75715e"># increment і перевірка (0 = false в арифметиці!)</span>
+</span></span></code></pre></div><h3 id="флаги-тестів">Флаги тестів</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Файлові тести</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -e FILE <span style="color:#f92672">]</span>   <span style="color:#75715e"># exists (будь-який тип)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -f FILE <span style="color:#f92672">]</span>   <span style="color:#75715e"># regular file</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -d FILE <span style="color:#f92672">]</span>   <span style="color:#75715e"># directory</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -L FILE <span style="color:#f92672">]</span>   <span style="color:#75715e"># symbolic link</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -r FILE <span style="color:#f92672">]</span>   <span style="color:#75715e"># readable</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -w FILE <span style="color:#f92672">]</span>   <span style="color:#75715e"># writable</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -x FILE <span style="color:#f92672">]</span>   <span style="color:#75715e"># executable</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -s FILE <span style="color:#f92672">]</span>   <span style="color:#75715e"># size &gt; 0 (не порожній)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -S FILE <span style="color:#f92672">]</span>   <span style="color:#75715e"># socket</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -p FILE <span style="color:#f92672">]</span>   <span style="color:#75715e"># named pipe</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> FILE1 -nt FILE2 <span style="color:#f92672">]</span>  <span style="color:#75715e"># newer than</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> FILE1 -ot FILE2 <span style="color:#f92672">]</span>  <span style="color:#75715e"># older than</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> FILE1 -ef FILE2 <span style="color:#f92672">]</span>  <span style="color:#75715e"># same inode (hardlink)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Рядкові тести</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -z <span style="color:#e6db74">&#34;</span>$STR<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>   <span style="color:#75715e"># zero length (порожній)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -n <span style="color:#e6db74">&#34;</span>$STR<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>   <span style="color:#75715e"># non-zero length (не порожній)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$A<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span>$B<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span> <span style="color:#75715e"># рівні (POSIX)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$A<span style="color:#e6db74">&#34;</span> !<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span>$B<span style="color:#e6db74">&#34;</span><span style="color:#f92672">]</span> <span style="color:#75715e"># не рівні</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Числові тести (тільки цілі числа!)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$A<span style="color:#e6db74">&#34;</span> -eq <span style="color:#e6db74">&#34;</span>$B<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>  <span style="color:#75715e"># equal</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$A<span style="color:#e6db74">&#34;</span> -ne <span style="color:#e6db74">&#34;</span>$B<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>  <span style="color:#75715e"># not equal</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$A<span style="color:#e6db74">&#34;</span> -lt <span style="color:#e6db74">&#34;</span>$B<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>  <span style="color:#75715e"># less than</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$A<span style="color:#e6db74">&#34;</span> -le <span style="color:#e6db74">&#34;</span>$B<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>  <span style="color:#75715e"># less or equal</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$A<span style="color:#e6db74">&#34;</span> -gt <span style="color:#e6db74">&#34;</span>$B<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>  <span style="color:#75715e"># greater than</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$A<span style="color:#e6db74">&#34;</span> -ge <span style="color:#e6db74">&#34;</span>$B<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>  <span style="color:#75715e"># greater or equal</span>
+</span></span></code></pre></div><h3 id="case-statement">case statement</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span> in
+</span></span><span style="display:flex;"><span>    start|begin<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        echo <span style="color:#e6db74">&#34;Starting...&#34;</span>
+</span></span><span style="display:flex;"><span>        ;;
+</span></span><span style="display:flex;"><span>    stop|halt<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        echo <span style="color:#e6db74">&#34;Stopping...&#34;</span>
+</span></span><span style="display:flex;"><span>        ;;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[</span>0-9<span style="color:#f92672">]</span>*<span style="color:#f92672">)</span>             <span style="color:#75715e"># glob pattern!</span>
+</span></span><span style="display:flex;"><span>        echo <span style="color:#e6db74">&#34;Got a number: </span>$1<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        ;;
+</span></span><span style="display:flex;"><span>    *<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        echo <span style="color:#e6db74">&#34;Unknown: </span>$1<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>        ;;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">esac</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># bash 4.0+: ;&amp; (fall-through), ;;&amp; (continue matching)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;</span>$char<span style="color:#e6db74">&#34;</span> in
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[</span>A-Z<span style="color:#f92672">])</span>
+</span></span><span style="display:flex;"><span>        echo <span style="color:#e6db74">&#34;Upper&#34;</span>
+</span></span><span style="display:flex;"><span>        ;;&amp;   <span style="color:#75715e"># продовжити перевірку наступних патернів!</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[</span>A-Za-z<span style="color:#f92672">])</span>
+</span></span><span style="display:flex;"><span>        echo <span style="color:#e6db74">&#34;Letter&#34;</span>
+</span></span><span style="display:flex;"><span>        ;;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">esac</span>
+</span></span></code></pre></div><hr>
+<h2 id="цикли">Цикли</h2>
+<h3 id="for-loop">for loop</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># C-style (арифметика)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#f92672">((</span>i<span style="color:#f92672">=</span>0; i&lt;10; i++<span style="color:#f92672">))</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;</span>$i<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ітерація по словах</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> item in one two three; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;</span>$item<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ітерація по файлах (правильний спосіб)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> file in /var/log/*.log; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[[</span> -f <span style="color:#e6db74">&#34;</span>$file<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span> <span style="color:#f92672">||</span> <span style="color:#66d9ef">continue</span>  <span style="color:#75715e"># захист від порожнього glob</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Processing: </span>$file<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ітерація по масиву</span>
+</span></span><span style="display:flex;"><span>arr<span style="color:#f92672">=(</span><span style="color:#e6db74">&#34;a&#34;</span> <span style="color:#e6db74">&#34;b&#34;</span> <span style="color:#e6db74">&#34;c&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> item in <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>arr[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">do</span>  <span style="color:#75715e"># Лапки обов&#39;язкові!</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;</span>$item<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># По рядках файлу (ПРАВИЛЬНО)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> IFS<span style="color:#f92672">=</span> read -r line; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Line: </span>$line<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span> &lt; /etc/passwd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># По виводу команди (обережно з IFS!)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> IFS<span style="color:#f92672">=</span> read -r line; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;</span>$line<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span> &lt; &lt;<span style="color:#f92672">(</span>find /etc -name <span style="color:#e6db74">&#34;*.conf&#34;</span> 2&gt;/dev/null<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt; &lt;(...) — process substitution, не subshell як | while</span>
+</span></span></code></pre></div><h3 id="while-та-until">while та until</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># while: виконується поки умова true</span>
+</span></span><span style="display:flex;"><span>count<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> <span style="color:#f92672">((</span> count &lt; <span style="color:#ae81ff">5</span> <span style="color:#f92672">))</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;</span>$count<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">((</span> count++ <span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># until: виконується поки умова false</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">until</span> ping -c1 -W1 8.8.8.8 &amp;&gt;/dev/null; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Waiting for network...&#34;</span>
+</span></span><span style="display:flex;"><span>    sleep <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Нескінченний цикл з break</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> true; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    read -r input
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;</span>$input<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;quit&#34;</span> <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> break
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;You said: </span>$input<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># continue — пропустити ітерацію</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i in <span style="color:#f92672">{</span>1..10<span style="color:#f92672">}</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">((</span> i % 2 <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">))</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#66d9ef">continue</span>  <span style="color:#75715e"># пропустити парні</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Odd: </span>$i<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><blockquote>
+<p><strong>Каверза:</strong> <code>while read</code> всередині pipe виконується в subshell — змінні не видно ззовні!</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># НЕПРАВИЛЬНО:</span>
+</span></span><span style="display:flex;"><span>cat file.txt | <span style="color:#66d9ef">while</span> read line; <span style="color:#66d9ef">do</span> count<span style="color:#f92672">=</span><span style="color:#66d9ef">$((</span>count+1<span style="color:#66d9ef">))</span>; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>echo $count  <span style="color:#75715e"># 0! subshell</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ПРАВИЛЬНО:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> read line; <span style="color:#66d9ef">do</span> count<span style="color:#f92672">=</span><span style="color:#66d9ef">$((</span>count+1<span style="color:#66d9ef">))</span>; <span style="color:#66d9ef">done</span> &lt; file.txt
+</span></span><span style="display:flex;"><span>echo $count  <span style="color:#75715e"># правильне значення</span>
+</span></span></code></pre></div></blockquote>
+<hr>
+<h2 id="функції">Функції</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Два еквівалентних синтаксиси</span>
+</span></span><span style="display:flex;"><span>my_func<span style="color:#f92672">()</span> <span style="color:#f92672">{</span> ... <span style="color:#f92672">}</span>      <span style="color:#75715e"># POSIX</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> my_func <span style="color:#f92672">{</span> ... <span style="color:#f92672">}</span> <span style="color:#75715e"># Bash-specific</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Параметри функції — як скрипта: $1, $2, $@</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Але $0 — це ім&#39;я скрипта, не функції!</span>
+</span></span><span style="display:flex;"><span>greet<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    local name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>1<span style="color:#66d9ef">:-</span>World<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>  <span style="color:#75715e"># default value</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Hello, </span>$name<span style="color:#e6db74">!&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>  <span style="color:#75715e"># return — тільки для числового exit code (0-255)!</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#75715e"># Не для повернення рядків!</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Повернення значень з функції</span>
+</span></span><span style="display:flex;"><span>get_hostname<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Варіант 1: через stdout (найпоширеніший)</span>
+</span></span><span style="display:flex;"><span>    hostname -f
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>FQDN<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>get_hostname<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>get_user_count<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Варіант 2: через глобальну змінну (побічний ефект)</span>
+</span></span><span style="display:flex;"><span>    USER_COUNT<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>wc -l &lt; /etc/passwd<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Варіант 3: через nameref (bash 4.3+)</span>
+</span></span><span style="display:flex;"><span>get_value<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    local -n result_ref<span style="color:#f92672">=</span>$1  <span style="color:#75715e"># nameref!</span>
+</span></span><span style="display:flex;"><span>    result_ref<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;the value&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>get_value my_var
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span>$my_var<span style="color:#e6db74">&#34;</span>  <span style="color:#75715e"># &#34;the value&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Рекурсія (обережно: bash повільний)</span>
+</span></span><span style="display:flex;"><span>factorial<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    local n<span style="color:#f92672">=</span>$1
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">((</span> n &lt;<span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">))</span> <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#ae81ff">1</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#66d9ef">$((</span> n <span style="color:#f92672">*</span> <span style="color:#66d9ef">$(</span>factorial <span style="color:#66d9ef">$((</span>n-1<span style="color:#66d9ef">)))</span> <span style="color:#66d9ef">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><hr>
+<h2 id="коди-виходу">Обробка помилок та коди виходу</h2>
+<h3 id="стандартні-коди-виходу">Стандартні коди виходу</h3>
+<table>
+<thead>
+<tr>
+<th>Код</th>
+<th>Значення</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Успіх</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Загальна помилка</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Неправильне використання shell builtin</td>
+</tr>
+<tr>
+<td>126</td>
+<td>Команда не виконувана (немає прав)</td>
+</tr>
+<tr>
+<td>127</td>
+<td>Команда не знайдена</td>
+</tr>
+<tr>
+<td>128</td>
+<td>Невалідний аргумент для exit</td>
+</tr>
+<tr>
+<td>128+N</td>
+<td>Завершення через сигнал N (напр. 130 = Ctrl+C / SIGINT)</td>
+</tr>
+<tr>
+<td>130</td>
+<td>Завершено через SIGINT (128+2)</td>
+</tr>
+<tr>
+<td>137</td>
+<td>Завершено через SIGKILL (128+9) — OOM killer</td>
+</tr>
+<tr>
+<td>139</td>
+<td>Segmentation fault (128+11)</td>
+</tr>
+<tr>
+<td>255</td>
+<td>Exit code out of range</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Перевірка виходу</span>
+</span></span><span style="display:flex;"><span>command
+</span></span><span style="display:flex;"><span>echo $?    <span style="color:#75715e"># код виходу</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Умовне виконання</span>
+</span></span><span style="display:flex;"><span>command <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;OK&#34;</span> <span style="color:#f92672">||</span> echo <span style="color:#e6db74">&#34;FAIL&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Правильна перевірка (не з &amp;&amp;||, бо маємо три стани)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> command; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;OK&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;FAIL: </span>$?<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><h3 id="set--e-set--u-set--o-pipefail--обовязково-знати"><code>set -e</code>, <code>set -u</code>, <code>set -o pipefail</code> — обов&rsquo;язково знати</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>set -euo pipefail
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># set -e: виход при будь-якій помилці (exit code != 0)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># set -u: помилка при використанні невстановленої змінної</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># set -o pipefail: pipe завершується з кодом першої команди що впала</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Також корисно для дебагу:</span>
+</span></span><span style="display:flex;"><span>set -x  <span style="color:#75715e"># трасування всіх команд</span>
+</span></span><span style="display:flex;"><span>set -v  <span style="color:#75715e"># вивід кожного рядка перед виконанням</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>IFS<span style="color:#f92672">=</span><span style="color:#e6db74">$&#39;\n\t&#39;</span>  <span style="color:#75715e"># безпечний IFS (прибирає пробіл)</span>
+</span></span></code></pre></div><p><strong>Підводні камені <code>set -e</code>:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>set -e
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ПРОБЛЕМА: false в умові не перерве скрипт</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> false; <span style="color:#66d9ef">then</span> echo <span style="color:#e6db74">&#34;never&#34;</span>; <span style="color:#66d9ef">fi</span>   <span style="color:#75715e"># OK, бо це умовний вираз</span>
+</span></span><span style="display:flex;"><span>false <span style="color:#f92672">||</span> true                      <span style="color:#75715e"># OK</span>
+</span></span><span style="display:flex;"><span>false <span style="color:#f92672">&amp;&amp;</span> true                      <span style="color:#75715e"># OK (false — це умова)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ПРОБЛЕМА: функції теж підпадають під set -e</span>
+</span></span><span style="display:flex;"><span>might_fail<span style="color:#f92672">()</span> <span style="color:#f92672">{</span> <span style="color:#66d9ef">return</span> 1; <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>might_fail   <span style="color:#75715e"># → EXIT! якщо не обгорнути</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Правильно:</span>
+</span></span><span style="display:flex;"><span>might_fail <span style="color:#f92672">||</span> true        <span style="color:#75715e"># ігнорувати помилку</span>
+</span></span><span style="display:flex;"><span>might_fail <span style="color:#f92672">||</span> handle_err  <span style="color:#75715e"># або обробити</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> might_fail; <span style="color:#66d9ef">then</span> ...; <span style="color:#66d9ef">fi</span>  <span style="color:#75715e"># або перевірити</span>
+</span></span></code></pre></div><h3 id="trap--перехоплення-сигналів">trap — перехоплення сигналів</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Cleanup при виході (будь-якому!)</span>
+</span></span><span style="display:flex;"><span>cleanup<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Cleaning up...&#34;</span>
+</span></span><span style="display:flex;"><span>    rm -f /tmp/myapp_lock
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Не викликай exit тут!</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>trap cleanup EXIT  <span style="color:#75715e"># виконається при будь-якому exit</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Обробка сигналів</span>
+</span></span><span style="display:flex;"><span>handle_sigterm<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Got SIGTERM, graceful shutdown...&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># зупинити дочірні процеси</span>
+</span></span><span style="display:flex;"><span>    kill <span style="color:#66d9ef">$(</span>jobs -p<span style="color:#66d9ef">)</span> 2&gt;/dev/null
+</span></span><span style="display:flex;"><span>    exit <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>trap handle_sigterm SIGTERM SIGINT
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ігнорувати сигнал</span>
+</span></span><span style="display:flex;"><span>trap <span style="color:#e6db74">&#39;&#39;</span> SIGHUP  <span style="color:#75715e"># ігнорувати SIGHUP (як nohup)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Скинути обробник до дефолтного</span>
+</span></span><span style="display:flex;"><span>trap - SIGTERM
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Дебаг: вивід команди перед виконанням</span>
+</span></span><span style="display:flex;"><span>trap <span style="color:#e6db74">&#39;echo &#34;Line $LINENO: $BASH_COMMAND&#34;&#39;</span> DEBUG
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перехопити ERR (помилки)</span>
+</span></span><span style="display:flex;"><span>trap <span style="color:#e6db74">&#39;echo &#34;Error at line $LINENO, exit code: $?&#34;&#39;</span> ERR
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Типовий production-ready шаблон:</span>
+</span></span><span style="display:flex;"><span>set -euo pipefail
+</span></span><span style="display:flex;"><span>TMPDIR<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>mktemp -d<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>trap <span style="color:#e6db74">&#39;rm -rf &#34;$TMPDIR&#34;&#39;</span> EXIT
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ... основна логіка використовує $TMPDIR ...</span>
+</span></span></code></pre></div><hr>
+<h2 id="перенаправлення">Перенаправлення та pipe</h2>
+<h3 id="file-descriptors">File Descriptors</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Стандартні FD:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 0 = stdin</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1 = stdout</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2 = stderr</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Базові перенаправлення</span>
+</span></span><span style="display:flex;"><span>command &gt; file     <span style="color:#75715e"># stdout → file (перезапис)</span>
+</span></span><span style="display:flex;"><span>command &gt;&gt; file    <span style="color:#75715e"># stdout → file (дописати)</span>
+</span></span><span style="display:flex;"><span>command 2&gt; file    <span style="color:#75715e"># stderr → file</span>
+</span></span><span style="display:flex;"><span>command 2&gt;&amp;<span style="color:#ae81ff">1</span>       <span style="color:#75715e"># stderr → куди йде stdout</span>
+</span></span><span style="display:flex;"><span>command &amp;&gt; file    <span style="color:#75715e"># і stdout, і stderr → file (bash 4+)</span>
+</span></span><span style="display:flex;"><span>command 1&gt;/dev/null 2&gt;&amp;<span style="color:#ae81ff">1</span>  <span style="color:#75715e"># заглушити все</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ВАЖЛИВО: порядок має значення!</span>
+</span></span><span style="display:flex;"><span>command 2&gt;&amp;<span style="color:#ae81ff">1</span> &gt; file   <span style="color:#75715e"># НЕПРАВИЛЬНО: stderr йде в старий stdout (термінал)</span>
+</span></span><span style="display:flex;"><span>command &gt; file 2&gt;&amp;<span style="color:#ae81ff">1</span>   <span style="color:#75715e"># ПРАВИЛЬНО: спочатку redirect stdout, потім stderr до нього</span>
+</span></span></code></pre></div><h3 id="process-substitution">Process Substitution</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># &lt; (...) — читати вивід команди як файл</span>
+</span></span><span style="display:flex;"><span>diff &lt;<span style="color:#f92672">(</span>sort file1.txt<span style="color:#f92672">)</span> &lt;<span style="color:#f92672">(</span>sort file2.txt<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &gt; (...) — записати в процес як у файл</span>
+</span></span><span style="display:flex;"><span>tee &gt;<span style="color:#f92672">(</span>gzip &gt; output.gz<span style="color:#f92672">)</span> &gt;<span style="color:#f92672">(</span>wc -l<span style="color:#f92672">)</span> &gt; /dev/null
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Чому це краще ніж pipe?</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Pipe створює subshell — змінні не видно після</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> read line; <span style="color:#66d9ef">do</span> count<span style="color:#f92672">=</span><span style="color:#66d9ef">$((</span>count+1<span style="color:#66d9ef">))</span>; <span style="color:#66d9ef">done</span> &lt; &lt;<span style="color:#f92672">(</span>command<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>echo $count  <span style="color:#75715e"># Працює! process substitution не subshell для батька</span>
+</span></span></code></pre></div><h3 id="here-documents-та-here-strings">Here Documents та Here Strings</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Here document</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">This is line 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Variables: $HOME
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Без розкриття змінних (лапки навколо маркера)</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;&#39;EOF&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">No expansion: $HOME stays literal
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># З відступом (&lt;&lt;-, прибирає провідні таби, не пробіли!)</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;-EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">	Line with tab indent
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">	Another line
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Here string — подати рядок на stdin</span>
+</span></span><span style="display:flex;"><span>grep <span style="color:#e6db74">&#34;pattern&#34;</span> <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;</span>$variable<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>base64 <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;encode me&#34;</span>
+</span></span><span style="display:flex;"><span>read -r first rest <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;one two three&#34;</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span>$first<span style="color:#e6db74">&#34;</span>  <span style="color:#75715e"># &#34;one&#34;</span>
+</span></span></code></pre></div><h3 id="named-pipes-fifo">Named Pipes (FIFO)</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkfifo /tmp/mypipe
+</span></span><span style="display:flex;"><span>command1 &gt; /tmp/mypipe &amp;
+</span></span><span style="display:flex;"><span>command2 &lt; /tmp/mypipe
+</span></span><span style="display:flex;"><span>rm /tmp/mypipe
+</span></span></code></pre></div><hr>
+<h2 id="масиви">Масиви та асоціативні масиви</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Indexed arrays</span>
+</span></span><span style="display:flex;"><span>arr<span style="color:#f92672">=(</span>one two <span style="color:#e6db74">&#34;three four&#34;</span> five<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>arr[0]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>        <span style="color:#75715e"># &#34;one&#34;</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>arr[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>        <span style="color:#75715e"># всі елементи (окремо)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>arr[*]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>        <span style="color:#75715e"># всі елементи (один рядок з IFS)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${#</span>arr[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>       <span style="color:#75715e"># 4 (кількість елементів)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>!arr[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>       <span style="color:#75715e"># 0 1 2 3 (індекси)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>arr[@]:1:2<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>    <span style="color:#75715e"># &#34;two&#34; &#34;three four&#34; (slice)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Додавання</span>
+</span></span><span style="display:flex;"><span>arr<span style="color:#f92672">+=(</span>six seven<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>arr<span style="color:#f92672">[</span>10<span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;ten&#34;</span>           <span style="color:#75715e"># sparse array — пропуск індексів OK</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Видалення</span>
+</span></span><span style="display:flex;"><span>unset arr<span style="color:#f92672">[</span>1<span style="color:#f92672">]</span>            <span style="color:#75715e"># видалити елемент (але індекс залишиться &#34;дірою&#34;!)</span>
+</span></span><span style="display:flex;"><span>unset arr               <span style="color:#75715e"># видалити весь масив</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Iterate (правильно)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> item in <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>arr[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">do</span>  <span style="color:#75715e"># ЗАВЖДИ лапки!</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;</span>$item<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Асоціативні масиви (bash 4+)</span>
+</span></span><span style="display:flex;"><span>declare -A map
+</span></span><span style="display:flex;"><span>map<span style="color:#f92672">[</span>key<span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;value&#34;</span>
+</span></span><span style="display:flex;"><span>map<span style="color:#f92672">=([</span>foo<span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;bar&#34;</span> <span style="color:#f92672">[</span>baz<span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;qux&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>map[foo]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>      <span style="color:#75715e"># &#34;bar&#34;</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>!map[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>       <span style="color:#75715e"># всі ключі (порядок непередбачуваний!)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>map[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>        <span style="color:#75715e"># всі значення</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірити наявність ключа</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> -v map<span style="color:#f92672">[</span>key<span style="color:#f92672">]</span> <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;exists&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Типовий use case: підрахунок</span>
+</span></span><span style="display:flex;"><span>declare -A count
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> read -r word; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">((</span> count<span style="color:#f92672">[</span>$word<span style="color:#f92672">]</span>++ <span style="color:#f92672">))</span> <span style="color:#f92672">||</span> true
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span> &lt; words.txt
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> word in <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>!count[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>count[$word]<span style="color:#e6db74">}</span><span style="color:#e6db74"> </span>$word<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span> | sort -rn
+</span></span></code></pre></div><hr>
+<h2 id="рядки">Рядкові операції</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Довжина</span>
+</span></span><span style="display:flex;"><span>str<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Hello, World!&#34;</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">${#</span>str<span style="color:#e6db74">}</span>           <span style="color:#75715e"># 13</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Підрядок (substring)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>str:7:5<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>      <span style="color:#75715e"># &#34;World&#34;</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>str: -6<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>      <span style="color:#75715e"># &#34;orld!&#34; (від кінця, пробіл важливий!)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Пошук і заміна</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>str/World/Bash<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>   <span style="color:#75715e"># &#34;Hello, Bash!&#34;</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>str//l/L<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>         <span style="color:#75715e"># &#34;HeLLo, WorLd!&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Видалення (prefix/suffix)</span>
+</span></span><span style="display:flex;"><span>path<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/usr/local/bin/bash&#34;</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>path##*/<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>         <span style="color:#75715e"># &#34;bash&#34; (basename)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>path%/*<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>          <span style="color:#75715e"># &#34;/usr/local/bin&#34; (dirname)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Порівняння</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;abc&#34;</span> &lt; <span style="color:#e6db74">&#34;abd&#34;</span> <span style="color:#f92672">]]</span>   <span style="color:#75715e"># лексикографічне порівняння (тільки [[]])</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;abc&#34;</span> <span style="color:#f92672">==</span> ab* <span style="color:#f92672">]]</span>    <span style="color:#75715e"># glob matching</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Regex (тільки [[]])</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;2024-01-15&#34;</span> <span style="color:#f92672">=</span>~ ^<span style="color:#f92672">([</span>0-9<span style="color:#f92672">]{</span>4<span style="color:#f92672">})</span>-<span style="color:#f92672">([</span>0-9<span style="color:#f92672">]{</span>2<span style="color:#f92672">})</span>-<span style="color:#f92672">([</span>0-9<span style="color:#f92672">]{</span>2<span style="color:#f92672">})</span>$ <span style="color:#f92672">]]</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>BASH_REMATCH[0]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>  <span style="color:#75715e"># вся відповідність: &#34;2024-01-15&#34;</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>BASH_REMATCH[1]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>  <span style="color:#75715e"># перша група: &#34;2024&#34;</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>BASH_REMATCH[2]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>  <span style="color:#75715e"># друга група: &#34;01&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Split рядка</span>
+</span></span><span style="display:flex;"><span>IFS<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;,&#39;</span> read -ra parts <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;one,two,three&#34;</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>parts[1]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>  <span style="color:#75715e"># &#34;two&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Trim пробілів (немає вбудованого!)</span>
+</span></span><span style="display:flex;"><span>trim<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    local var<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    var<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var#<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var%%[![:space:]]*<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>   <span style="color:#75715e"># ltrim</span>
+</span></span><span style="display:flex;"><span>    var<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var%<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var##*[![:space:]]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>   <span style="color:#75715e"># rtrim</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;</span>$var<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># printf для форматування</span>
+</span></span><span style="display:flex;"><span>printf <span style="color:#e6db74">&#34;%-20s %5d\n&#34;</span> <span style="color:#e6db74">&#34;Server&#34;</span> <span style="color:#ae81ff">42</span>
+</span></span><span style="display:flex;"><span>printf <span style="color:#e6db74">&#34;%08.2f\n&#34;</span> 3.14159   <span style="color:#75715e"># &#34;00003.14&#34;</span>
+</span></span><span style="display:flex;"><span>printf <span style="color:#e6db74">&#34;%b&#34;</span> <span style="color:#e6db74">&#34;\x41\x42\x43&#34;</span>  <span style="color:#75715e"># &#34;ABC&#34; (escape sequences)</span>
+</span></span></code></pre></div><hr>
+<h2 id="процеси">Процеси та сигнали</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Фонові процеси</span>
+</span></span><span style="display:flex;"><span>command &amp;           <span style="color:#75715e"># запустити у фоні</span>
+</span></span><span style="display:flex;"><span>pid<span style="color:#f92672">=</span>$!              <span style="color:#75715e"># PID останнього фонового процесу</span>
+</span></span><span style="display:flex;"><span>wait $pid           <span style="color:#75715e"># чекати завершення</span>
+</span></span><span style="display:flex;"><span>wait                <span style="color:#75715e"># чекати всіх дочірніх</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Job control</span>
+</span></span><span style="display:flex;"><span>sleep <span style="color:#ae81ff">100</span> &amp;
+</span></span><span style="display:flex;"><span>jobs                <span style="color:#75715e"># список фонових задач</span>
+</span></span><span style="display:flex;"><span>fg %1               <span style="color:#75715e"># перевести задачу 1 на передній план</span>
+</span></span><span style="display:flex;"><span>bg %1               <span style="color:#75715e"># продовжити зупинену задачу у фоні</span>
+</span></span><span style="display:flex;"><span>kill %1             <span style="color:#75715e"># вбити job 1</span>
+</span></span><span style="display:flex;"><span>disown %1           <span style="color:#75715e"># від&#39;єднати від shell (не отримає SIGHUP)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Таблиця сигналів (обов&#39;язково знати)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SIGHUP  (1)  — термінал закрито; перезавантаження конфігу (за конвенцією)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SIGINT  (2)  — Ctrl+C</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SIGQUIT (3)  — Ctrl+\ (+ core dump)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SIGKILL (9)  — неперехоплюваний! Ядро вбиває примусово</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SIGTERM (15) — стандартний &#34;зупинись&#34; (перехоплюється!)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SIGUSR1 (10) — користувацький сигнал 1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SIGUSR2 (12) — користувацький сигнал 2</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SIGCHLD (17) — дочірній процес змінив стан</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SIGSTOP (19) — неперехоплюваний! Зупинити процес</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SIGCONT (18) — продовжити зупинений</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Надсилання сигналів</span>
+</span></span><span style="display:flex;"><span>kill -15 $PID        <span style="color:#75715e"># SIGTERM (default)</span>
+</span></span><span style="display:flex;"><span>kill -9 $PID         <span style="color:#75715e"># SIGKILL (last resort!)</span>
+</span></span><span style="display:flex;"><span>kill -HUP $PID       <span style="color:#75715e"># SIGHUP (reload config)</span>
+</span></span><span style="display:flex;"><span>kill -0 $PID         <span style="color:#75715e"># перевірити чи процес існує (не надсилає сигнал)</span>
+</span></span><span style="display:flex;"><span>killall nginx        <span style="color:#75715e"># за ім&#39;ям</span>
+</span></span><span style="display:flex;"><span>pkill -f <span style="color:#e6db74">&#34;python.*myapp&#34;</span>  <span style="color:#75715e"># regex по cmdline</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Subshell vs child process</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span> cd /tmp <span style="color:#f92672">&amp;&amp;</span> ls <span style="color:#f92672">)</span>    <span style="color:#75715e"># subshell: зміни не впливають на батьківський shell</span>
+</span></span><span style="display:flex;"><span>bash -c <span style="color:#e6db74">&#34;cd /tmp &amp;&amp; ls&#34;</span>  <span style="color:#75715e"># child process: теж ізольований</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># exec — замінює поточний процес</span>
+</span></span><span style="display:flex;"><span>exec python3 myapp.py  <span style="color:#75715e"># bash process стає python3, no return!</span>
+</span></span><span style="display:flex;"><span>exec 3&gt; /tmp/logfile   <span style="color:#75715e"># відкрити FD 3 для запису</span>
+</span></span><span style="display:flex;"><span>exec 3&gt;&amp;-              <span style="color:#75715e"># закрити FD 3</span>
+</span></span></code></pre></div><hr>
+<h2 id="відлагодження">Відлагодження</h2>
+<h3 id="інструменти-відлагодження-bash">Інструменти відлагодження bash</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># set -x: трасування (виводить кожну команду перед виконанням)</span>
+</span></span><span style="display:flex;"><span>set -x
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ... код ...</span>
+</span></span><span style="display:flex;"><span>set +x  <span style="color:#75715e"># вимкнути</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Запуск з трасуванням без зміни скрипта</span>
+</span></span><span style="display:flex;"><span>bash -x script.sh
+</span></span><span style="display:flex;"><span>bash -xv script.sh  <span style="color:#75715e"># -v також виводить вихідний код</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Тільки частина скрипта</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    set -x
+</span></span><span style="display:flex;"><span>    problematic_function
+</span></span><span style="display:flex;"><span>    set +x
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span> 2&gt;&amp;<span style="color:#ae81ff">1</span> | tee debug.log
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Показати рядок помилки</span>
+</span></span><span style="display:flex;"><span>trap <span style="color:#e6db74">&#39;echo &#34;Error at line $LINENO: $BASH_COMMAND&#34; &gt;&amp;2&#39;</span> ERR
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Повний debug output</span>
+</span></span><span style="display:flex;"><span>PS4<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }&#39;</span>
+</span></span><span style="display:flex;"><span>set -x
+</span></span></code></pre></div><h3 id="типові-помилки-та-їх-діагностика">Типові помилки та їх діагностика</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 1. &#34;command not found&#34; (127)</span>
+</span></span><span style="display:flex;"><span>which command          <span style="color:#75715e"># чи є в PATH?</span>
+</span></span><span style="display:flex;"><span>type -a command        <span style="color:#75715e"># де знаходиться і який тип?</span>
+</span></span><span style="display:flex;"><span>echo $PATH             <span style="color:#75715e"># перевірити PATH</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. Проблеми з IFS і пробілами</span>
+</span></span><span style="display:flex;"><span>IFS<span style="color:#f92672">=</span><span style="color:#e6db74">$&#39;\n\t&#39;</span>           <span style="color:#75715e"># безпечний IFS</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> file in *; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;File: &#39;</span>$file<span style="color:#e6db74">&#39;&#34;</span>  <span style="color:#75715e"># лапки щоб бачити пробіли</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3. Glob expansion у порожній директорії</span>
+</span></span><span style="display:flex;"><span>ls /empty/*
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># bash: /empty/*: No such file or directory</span>
+</span></span><span style="display:flex;"><span>shopt -s nullglob     <span style="color:#75715e"># повертає порожній список замість помилки</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 4. Перевірка типу змінної</span>
+</span></span><span style="display:flex;"><span>declare -p VAR        <span style="color:#75715e"># виводить тип і значення: declare -a VAR=&#39;(...)&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 5. Помилки арифметики</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#66d9ef">$((</span><span style="color:#ae81ff">10</span><span style="color:#f92672">/</span><span style="color:#ae81ff">0</span><span style="color:#66d9ef">))</span>        <span style="color:#75715e"># division by zero — EXIT при set -e!</span>
+</span></span><span style="display:flex;"><span>result<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#34;scale=2; 10/3&#34;</span> | bc<span style="color:#66d9ef">)</span>  <span style="color:#75715e"># float division через bc</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 6. Проблеми з кодуванням</span>
+</span></span><span style="display:flex;"><span>file script.sh        <span style="color:#75715e"># перевірити encoding</span>
+</span></span><span style="display:flex;"><span>cat -A script.sh      <span style="color:#75715e"># бачити \r (^M) — Windows line endings</span>
+</span></span><span style="display:flex;"><span>dos2unix script.sh    <span style="color:#75715e"># виправити</span>
+</span></span><span style="display:flex;"><span>hexdump -C script.sh | head  <span style="color:#75715e"># побачити байти</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 7. Subshell variable scope</span>
+</span></span><span style="display:flex;"><span>result<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>command | <span style="color:#66d9ef">while</span> read line; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    result<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$line<span style="color:#e6db74">&#34;</span>   <span style="color:#75715e"># ВТРАЧАЄТЬСЯ! subshell</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span>$result<span style="color:#e6db74">&#34;</span>  <span style="color:#75715e"># порожній!</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Правильно:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> read line; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    result<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$line<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span> &lt; &lt;<span style="color:#f92672">(</span>command<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span>$result<span style="color:#e6db74">&#34;</span>  <span style="color:#75715e"># OK!</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 8. bashdb — повноцінний дебагер</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># apt install bashdb</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># bashdb script.sh</span>
+</span></span></code></pre></div><h3 id="shellcheck--статичний-аналіз">ShellCheck — статичний аналіз</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Встановити</span>
+</span></span><span style="display:flex;"><span>apt install shellcheck   <span style="color:#75715e"># Ubuntu</span>
+</span></span><span style="display:flex;"><span>brew install shellcheck  <span style="color:#75715e"># macOS</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірити скрипт</span>
+</span></span><span style="display:flex;"><span>shellcheck script.sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Найчастіші попередження ShellCheck:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SC2006: Use $(...) instead of backticks</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SC2046: Quote this to prevent word splitting</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SC2086: Double quote to prevent globbing and word splitting  ← найчастіше!</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SC2181: Check exit code directly, not $?</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SC2236: Use -n instead of ! -z</span>
+</span></span></code></pre></div><hr>
+<h2 id="каверзні-питання">Каверзні питання</h2>
+<h3 id="питання-1-що-виведе">Питання 1: Що виведе?</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>x<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">((</span> x++ <span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>echo $?
+</span></span></code></pre></div><p><strong>Відповідь:</strong> <code>1</code>!</p>
+<p>Арифметичний вираз <code>(( x++ ))</code> повертає <strong>exit code 1</strong> якщо результат 0. Тут <code>x++</code> повертає старе значення — <code>5</code>, що є ненульовим, тому <code>$?</code> = 0. Але:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>x<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">((</span> x++ <span style="color:#f92672">))</span>  <span style="color:#75715e"># повертає 0 (старе значення x), тому exit code = 1!</span>
+</span></span><span style="display:flex;"><span>echo $?    <span style="color:#75715e"># 1 ← ПАСТКА! Якщо set -e — скрипт упаде!</span>
+</span></span></code></pre></div><hr>
+<h3 id="питання-2-різниця-між---і--">Питання 2: Різниця між <code>[ ]</code> і <code>[[ ]]</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Що станеться?</span>
+</span></span><span style="display:flex;"><span>FILE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -f $FILE <span style="color:#f92672">]</span> <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;exists&#34;</span>    <span style="color:#75715e"># Що виведе?</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> -f $FILE <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;exists&#34;</span>  <span style="color:#75715e"># А тут?</span>
+</span></span></code></pre></div><p><strong>Відповідь:</strong> Перший варіант — помилка синтаксису при порожньому <code>$FILE</code>:
+<code>[ -f  ]</code> → <code>[ -f ]</code> (без аргументу) → може поводитись несподівано.
+Другий: безпечно, <code>[[ -f &quot;&quot; ]]</code> → false, нічого не виводить.</p>
+<hr>
+<h3 id="питання-3-чому-це-не-працює">Питання 3: Чому це не працює?</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>set -e
+</span></span><span style="display:flex;"><span>count<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>let count++    <span style="color:#75715e"># ← ПРОБЛЕМА!</span>
+</span></span><span style="display:flex;"><span>echo $count
+</span></span></code></pre></div><p><strong>Відповідь:</strong> <code>let count++</code> повертає exit code <code>1</code> коли результат є <code>0</code> (false в арифметиці). Оскільки <code>count=0</code>, <code>let count++</code> повертає попереднє значення <code>0</code> → exit code <code>1</code> → <code>set -e</code> завершує скрипт!</p>
+<p>Правильно:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">((</span> count++ <span style="color:#f92672">))</span> <span style="color:#f92672">||</span> true   <span style="color:#75715e"># безпечно</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">((</span> ++count <span style="color:#f92672">))</span>           <span style="color:#75715e"># pre-increment завжди &gt; 0 (якщо не overflow)</span>
+</span></span><span style="display:flex;"><span>count<span style="color:#f92672">=</span><span style="color:#66d9ef">$((</span> count <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">))</span>  <span style="color:#75715e"># найбезпечніший варіант</span>
+</span></span></code></pre></div><hr>
+<h3 id="питання-4-uuoc--useless-use-of-cat">Питання 4: UUOC — Useless Use of Cat</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Погано (зайвий процес):</span>
+</span></span><span style="display:flex;"><span>cat file.txt | grep <span style="color:#e6db74">&#34;pattern&#34;</span>
+</span></span><span style="display:flex;"><span>cat file.txt | wc -l
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Правильно:</span>
+</span></span><span style="display:flex;"><span>grep <span style="color:#e6db74">&#34;pattern&#34;</span> file.txt
+</span></span><span style="display:flex;"><span>wc -l &lt; file.txt
+</span></span></code></pre></div><hr>
+<h3 id="питання-5-лапки-і-glob">Питання 5: Лапки і glob</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Що виведе якщо є файли foo1.txt, foo2.txt?</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;foo*.txt&#34;</span>   <span style="color:#75715e"># літерально: foo*.txt (в лапках немає glob!)</span>
+</span></span><span style="display:flex;"><span>echo foo*.txt     <span style="color:#75715e"># foo1.txt foo2.txt (glob спрацьовує)</span>
+</span></span><span style="display:flex;"><span>ls <span style="color:#e6db74">&#34;foo*.txt&#34;</span>     <span style="color:#75715e"># ПОМИЛКА: no such file (glob в лапках не розкривається)</span>
+</span></span></code></pre></div><hr>
+<h3 id="питання-6--vs--vs-n">Питання 6: <code>&amp;&amp;</code> vs <code>;</code> vs <code>\n</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cmd1 <span style="color:#f92672">&amp;&amp;</span> cmd2   <span style="color:#75715e"># cmd2 виконується тільки якщо cmd1 успішна</span>
+</span></span><span style="display:flex;"><span>cmd1 <span style="color:#f92672">||</span> cmd2   <span style="color:#75715e"># cmd2 виконується тільки якщо cmd1 провалилась</span>
+</span></span><span style="display:flex;"><span>cmd1; cmd2     <span style="color:#75715e"># cmd2 виконується завжди (незалежно від cmd1)</span>
+</span></span><span style="display:flex;"><span>cmd1 &amp;; cmd2   <span style="color:#75715e"># ПОМИЛКА синтаксису</span>
+</span></span><span style="display:flex;"><span>cmd1 &amp; cmd2    <span style="color:#75715e"># cmd1 у фоні, cmd2 одразу</span>
+</span></span></code></pre></div><hr>
+<h3 id="питання-7-різниця--і-">Питання 7: Різниця <code>$@</code> і <code>$*</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>args_test<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Using \$@:&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> arg in <span style="color:#e6db74">&#34;</span>$@<span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;  [</span>$arg<span style="color:#e6db74">]&#34;</span>; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Using \$*:&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> arg in <span style="color:#e6db74">&#34;</span>$*<span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;  [</span>$arg<span style="color:#e6db74">]&#34;</span>; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>args_test <span style="color:#e6db74">&#34;hello world&#34;</span> <span style="color:#e6db74">&#34;foo&#34;</span> <span style="color:#e6db74">&#34;bar baz&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Вивід:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Using $@:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   [hello world]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   [foo]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   [bar baz]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Using $*:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   [hello world foo bar baz]   ← один рядок!</span>
+</span></span></code></pre></div><p><code>&quot;$@&quot;</code> — розкривається у <strong>окремі слова</strong>, зберігаючи пробіли всередині аргументів.
+<code>&quot;$*&quot;</code> — розкривається в <strong>один рядок</strong>, слова з&rsquo;єднані <code>$IFS</code>.</p>
+<hr>
+<h3 id="питання-8-що-означає-21-1devnull">Питання 8: Що означає <code>2&gt;&amp;1 1&gt;/dev/null</code>?</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>command 2&gt;&amp;<span style="color:#ae81ff">1</span> 1&gt;/dev/null   <span style="color:#75715e"># НЕПРАВИЛЬНО!</span>
+</span></span><span style="display:flex;"><span>command 1&gt;/dev/null 2&gt;&amp;<span style="color:#ae81ff">1</span>   <span style="color:#75715e"># ПРАВИЛЬНО</span>
+</span></span></code></pre></div><p>Перенаправлення обробляються зліва направо. У першому варіанті: спочатку <code>stderr → stdout</code> (ще термінал), потім <code>stdout → /dev/null</code>. В результаті stderr залишається на терміналі! Правильно: спочатку направити stdout в /dev/null, потім stderr туди ж.</p>
+<hr>
+<h3 id="питання-9-безпечне-видалення-файлів">Питання 9: Безпечне видалення файлів</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># НЕБЕЗПЕЧНО:</span>
+</span></span><span style="display:flex;"><span>dir<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/var/log/myapp&#34;</span>
+</span></span><span style="display:flex;"><span>rm -rf $dir/    <span style="color:#75715e"># Якщо $dir порожній → rm -rf / !!!</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># БЕЗПЕЧНО:</span>
+</span></span><span style="display:flex;"><span>rm -rf <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>dir:?Variable is empty<span style="color:#e6db74">}</span><span style="color:#e6db74">/&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Або:</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> -n <span style="color:#e6db74">&#34;</span>$dir<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> rm -rf <span style="color:#e6db74">&#34;</span>$dir<span style="color:#e6db74">/&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Або (bash 4.3+):</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> -v dir <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> rm -rf <span style="color:#e6db74">&#34;</span>$dir<span style="color:#e6db74">/&#34;</span>
+</span></span></code></pre></div><hr>
+<h3 id="питання-10-printf-vs-echo">Питання 10: printf vs echo</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;line1\nline2&#34;</span>      <span style="color:#75715e"># -e не POSIX, не скрізь працює</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;line1\nline2&#34;</span>         <span style="color:#75715e"># На деяких системах виведе літерально \n</span>
+</span></span><span style="display:flex;"><span>printf <span style="color:#e6db74">&#34;line1\nline2\n&#34;</span>     <span style="color:#75715e"># ЗАВЖДИ правильно (POSIX)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo -n <span style="color:#e6db74">&#34;no newline&#34;</span>        <span style="color:#75715e"># -n не POSIX</span>
+</span></span><span style="display:flex;"><span>printf <span style="color:#e6db74">&#34;%s&#34;</span> <span style="color:#e6db74">&#34;no newline&#34;</span>    <span style="color:#75715e"># Портабельно</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># printf підтримує форматування:</span>
+</span></span><span style="display:flex;"><span>printf <span style="color:#e6db74">&#34;%-10s %5.2f%%\n&#34;</span> <span style="color:#e6db74">&#34;CPU:&#34;</span> 87.6
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CPU:       87.60%</span>
+</span></span></code></pre></div><hr>
+<h2 id="задачі">Реальні задачі зі співбесід</h2>
+<h3 id="задача-1-парсинг-логів">Задача 1: Парсинг логів</h3>
+<p><strong>Завдання:</strong> Знайти топ-10 IP адрес у Nginx лозі.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e"># Рішення 1: класика (швидке)</span>
+</span></span><span style="display:flex;"><span>awk <span style="color:#e6db74">&#39;{print $1}&#39;</span> /var/log/nginx/access.log <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    | sort <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    | uniq -c <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    | sort -rn <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    | head -10
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Рішення 2: bash-only (повільніше, але показує знання)</span>
+</span></span><span style="display:flex;"><span>declare -A ip_count
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> IFS<span style="color:#f92672">=</span> read -r line; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    ip<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>line%% *<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>  <span style="color:#75715e"># перше слово</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">((</span> ip_count<span style="color:#f92672">[</span>$ip<span style="color:#f92672">]</span>++ <span style="color:#f92672">))</span> <span style="color:#f92672">||</span> true
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span> &lt; /var/log/nginx/access.log
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> ip in <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>!ip_count[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>ip_count[$ip]<span style="color:#e6db74">}</span><span style="color:#e6db74"> </span>$ip<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span> | sort -rn | head -10
+</span></span></code></pre></div><hr>
+<h3 id="задача-2-rotate-logs-з-архівацією">Задача 2: Rotate logs з архівацією</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>set -euo pipefail
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>LOG_DIR<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/var/log/myapp&#34;</span>
+</span></span><span style="display:flex;"><span>MAX_LOGS<span style="color:#f92672">=</span><span style="color:#ae81ff">7</span>
+</span></span><span style="display:flex;"><span>DATE<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>date +%Y%m%d_%H%M%S<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Rotate</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -f <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>LOG_DIR<span style="color:#e6db74">}</span><span style="color:#e6db74">/app.log&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    mv <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>LOG_DIR<span style="color:#e6db74">}</span><span style="color:#e6db74">/app.log&#34;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>LOG_DIR<span style="color:#e6db74">}</span><span style="color:#e6db74">/app_</span><span style="color:#e6db74">${</span>DATE<span style="color:#e6db74">}</span><span style="color:#e6db74">.log&#34;</span>
+</span></span><span style="display:flex;"><span>    gzip <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>LOG_DIR<span style="color:#e6db74">}</span><span style="color:#e6db74">/app_</span><span style="color:#e6db74">${</span>DATE<span style="color:#e6db74">}</span><span style="color:#e6db74">.log&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Прибрати старі (більше MAX_LOGS)</span>
+</span></span><span style="display:flex;"><span>mapfile -t old_logs &lt; &lt;<span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>    ls -t <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>LOG_DIR<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>/app_*.log.gz 2&gt;/dev/null
+</span></span><span style="display:flex;"><span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">((</span> <span style="color:#e6db74">${#</span>old_logs[@]<span style="color:#e6db74">}</span> &gt; MAX_LOGS <span style="color:#f92672">))</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> old in <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>old_logs[@]:$MAX_LOGS<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>        rm -f <span style="color:#e6db74">&#34;</span>$old<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        echo <span style="color:#e6db74">&#34;Removed: </span>$old<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><hr>
+<h3 id="задача-3-retry-з-backoff">Задача 3: Retry з backoff</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>retry<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    local max_attempts<span style="color:#f92672">=</span>$1
+</span></span><span style="display:flex;"><span>    local delay<span style="color:#f92672">=</span>$2
+</span></span><span style="display:flex;"><span>    local cmd<span style="color:#f92672">=(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>@:3<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    local attempt<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> <span style="color:#f92672">((</span> attempt &lt;<span style="color:#f92672">=</span> max_attempts <span style="color:#f92672">))</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>cmd[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>        echo <span style="color:#e6db74">&#34;Attempt </span>$attempt<span style="color:#e6db74">/</span>$max_attempts<span style="color:#e6db74"> failed. Retrying in </span><span style="color:#e6db74">${</span>delay<span style="color:#e6db74">}</span><span style="color:#e6db74">s...&#34;</span> &gt;&amp;<span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>        sleep <span style="color:#e6db74">&#34;</span>$delay<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        delay<span style="color:#f92672">=</span><span style="color:#66d9ef">$((</span> delay <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span> <span style="color:#66d9ef">))</span>  <span style="color:#75715e"># exponential backoff</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">((</span> attempt++ <span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;All </span>$max_attempts<span style="color:#e6db74"> attempts failed.&#34;</span> &gt;&amp;<span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Використання:</span>
+</span></span><span style="display:flex;"><span>retry <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">1</span> curl -sf https://api.example.com/health
+</span></span></code></pre></div><hr>
+<h3 id="задача-4-mutex--lock-file">Задача 4: Mutex / lock file</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>LOCKFILE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/var/run/myapp.lock&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>acquire_lock<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Атомарне створення lock файлу з PID</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> set -C; echo $$ &gt; <span style="color:#e6db74">&#34;</span>$LOCKFILE<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">)</span> 2&gt;/dev/null; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>        trap <span style="color:#e6db74">&#39;rm -f &#34;$LOCKFILE&#34;&#39;</span> EXIT
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Перевірити чи процес живий</span>
+</span></span><span style="display:flex;"><span>    local old_pid
+</span></span><span style="display:flex;"><span>    old_pid<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>&lt;<span style="color:#e6db74">&#34;</span>$LOCKFILE<span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> kill -0 <span style="color:#e6db74">&#34;</span>$old_pid<span style="color:#e6db74">&#34;</span> 2&gt;/dev/null; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>        echo <span style="color:#e6db74">&#34;Already running (PID: </span>$old_pid<span style="color:#e6db74">)&#34;</span> &gt;&amp;<span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Stale lock — перезаписати</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Removing stale lock (PID: </span>$old_pid<span style="color:#e6db74">)&#34;</span> &gt;&amp;<span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>    rm -f <span style="color:#e6db74">&#34;</span>$LOCKFILE<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    acquire_lock
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>acquire_lock <span style="color:#f92672">||</span> exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Running with PID </span>$$<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ... основна логіка ...</span>
+</span></span></code></pre></div><hr>
+<h3 id="задача-5-паралельне-виконання-з-обмеженням">Задача 5: Паралельне виконання з обмеженням</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e"># Паралельно обробити файли, але не більше N одночасно</span>
+</span></span><span style="display:flex;"><span>MAX_JOBS<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>process_file<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    local file<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Processing: </span>$file<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    sleep <span style="color:#66d9ef">$((</span>RANDOM <span style="color:#f92672">%</span> <span style="color:#ae81ff">3</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span><span style="color:#66d9ef">))</span>  <span style="color:#75715e"># імітація роботи</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>active_jobs<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> file in /data/*.csv; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    process_file <span style="color:#e6db74">&#34;</span>$file<span style="color:#e6db74">&#34;</span> &amp;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">((</span> active_jobs++ <span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">((</span> active_jobs &gt;<span style="color:#f92672">=</span> MAX_JOBS <span style="color:#f92672">))</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>        wait -n 2&gt;/dev/null <span style="color:#f92672">||</span> wait  <span style="color:#75715e"># wait for any child (bash 4.3+)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">((</span> active_jobs-- <span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>wait  <span style="color:#75715e"># дочекатися всіх решти</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;All done&#34;</span>
+</span></span></code></pre></div><hr>
+<h3 id="задача-6-читання-конфіга">Задача 6: Читання конфіга</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e"># Безпечно читати простий key=value конфіг</span>
+</span></span><span style="display:flex;"><span>load_config<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    local config_file<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[[</span> -f <span style="color:#e6db74">&#34;</span>$config_file<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span> <span style="color:#f92672">||</span> <span style="color:#f92672">{</span> echo <span style="color:#e6db74">&#34;Config not found: </span>$config_file<span style="color:#e6db74">&#34;</span> &gt;&amp;2; <span style="color:#66d9ef">return</span> 1; <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> IFS<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;=&#39;</span> read -r key value; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Пропустити коментарі та порожні рядки</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;</span>$key<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">=</span>~ ^<span style="color:#f92672">[[</span>:space:<span style="color:#f92672">]]</span>*# <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">[[</span> -z <span style="color:#e6db74">&#34;</span>$key<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Trim пробілів</span>
+</span></span><span style="display:flex;"><span>        key<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>key// /<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        value<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>value%%#*<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>  <span style="color:#75715e"># видалити inline коментарі</span>
+</span></span><span style="display:flex;"><span>        value<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>value%<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>value##*[![:space:]]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>  <span style="color:#75715e"># rtrim</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Тільки дозволені символи в ключі (безпека!)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;</span>$key<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">=</span>~ ^<span style="color:#f92672">[</span>A-Za-z_<span style="color:#f92672">][</span>A-Za-z0-9_<span style="color:#f92672">]</span>*$ <span style="color:#f92672">]]</span> <span style="color:#f92672">||</span> <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        declare -g <span style="color:#e6db74">&#34;</span>$key<span style="color:#e6db74">=</span>$value<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">done</span> &lt; <span style="color:#e6db74">&#34;</span>$config_file<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>load_config /etc/myapp.conf
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Host: </span>$DB_HOST<span style="color:#e6db74">, Port: </span>$DB_PORT<span style="color:#e6db74">&#34;</span>
+</span></span></code></pre></div><hr>
+<h2 id="корисні-one-liners-для-devops">Корисні one-liners для DevOps</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Перевірити чи порт відкритий (без netcat)</span>
+</span></span><span style="display:flex;"><span>timeout <span style="color:#ae81ff">1</span> bash -c <span style="color:#e6db74">&#39;cat &lt; /dev/null &gt; /dev/tcp/host/port&#39;</span> <span style="color:#f92672">&amp;&amp;</span> echo open
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Швидкий HTTP сервер (Python)</span>
+</span></span><span style="display:flex;"><span>python3 -m http.server <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Encode/decode base64</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;hello&#34;</span> | base64
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;aGVsbG8K&#34;</span> | base64 -d
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Генерація паролю</span>
+</span></span><span style="display:flex;"><span>tr -dc <span style="color:#e6db74">&#39;A-Za-z0-9!@#$%&#39;</span> &lt; /dev/urandom | head -c <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Знайти процес на порту</span>
+</span></span><span style="display:flex;"><span>ss -tlnp | grep :80
+</span></span><span style="display:flex;"><span>fuser 80/tcp
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Рекурсивна заміна в файлах</span>
+</span></span><span style="display:flex;"><span>find /etc -name <span style="color:#e6db74">&#34;*.conf&#34;</span> -exec sed -i <span style="color:#e6db74">&#39;s/old/new/g&#39;</span> <span style="color:#f92672">{}</span> +
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Видалити файли старіше N днів</span>
+</span></span><span style="display:flex;"><span>find /var/log -name <span style="color:#e6db74">&#34;*.log&#34;</span> -mtime +30 -delete
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Прогрес-бар для cp</span>
+</span></span><span style="display:flex;"><span>rsync -ah --progress source dest
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірити SSL сертифікат</span>
+</span></span><span style="display:flex;"><span>echo | openssl s_client -connect host:443 2&gt;/dev/null | openssl x509 -noout -dates
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Diff двох директорій</span>
+</span></span><span style="display:flex;"><span>diff &lt;<span style="color:#f92672">(</span>ls dir1/<span style="color:#f92672">)</span> &lt;<span style="color:#f92672">(</span>ls dir2/<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># JSON pretty-print</span>
+</span></span><span style="display:flex;"><span>cat file.json | python3 -m json.tool
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Watch з кольорами diff</span>
+</span></span><span style="display:flex;"><span>watch -d -n <span style="color:#ae81ff">1</span> <span style="color:#e6db74">&#39;ss -s&#39;</span>
+</span></span></code></pre></div><hr>
+<h2 id="чеклист-для-підготовки">Чеклист для підготовки</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Знати різницю <code>[</code>, <code>[[</code>, <code>(())</code></li>
+<li><input disabled="" type="checkbox"> Розуміти <code>$@</code> vs <code>$*</code> (з лапками і без)</li>
+<li><input disabled="" type="checkbox"> <code>set -euo pipefail</code> — коли потрібен і підводні камені</li>
+<li><input disabled="" type="checkbox"> <code>trap</code> — EXIT, ERR, сигнали</li>
+<li><input disabled="" type="checkbox"> Перенаправлення: порядок <code>2&gt;&amp;1</code> vs <code>&gt;&amp;2</code></li>
+<li><input disabled="" type="checkbox"> Process substitution <code>&lt; &lt;()</code> та <code>&gt; &gt;()</code></li>
+<li><input disabled="" type="checkbox"> Масиви: indexed та associative (declare -A)</li>
+<li><input disabled="" type="checkbox"> Parameter expansion: <code>${var:-default}</code>, <code>${var##*/}</code>, <code>${var//x/y}</code></li>
+<li><input disabled="" type="checkbox"> <code>local</code> у функціях, <code>export</code>, <code>declare</code></li>
+<li><input disabled="" type="checkbox"> Код виходу 126, 127, 128+N</li>
+<li><input disabled="" type="checkbox"> <code>shellcheck</code> — вміти пояснити типові попередження</li>
+<li><input disabled="" type="checkbox"> <code>bash -x</code> для дебагу</li>
+<li><input disabled="" type="checkbox"> <code>mktemp</code>, lock files, cleanup через trap</li>
+</ul>
+<hr>
+
+</content>
+
+
+
+<p>
+  
+  <a href="//localhost:1313/tags/bash/">#Bash</a>
+  
+  <a href="//localhost:1313/tags/linux/">#Linux</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

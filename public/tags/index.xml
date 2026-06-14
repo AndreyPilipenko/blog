@@ -6,8 +6,78 @@
     <description>Recent content in Tags on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 02 May 2026 00:00:00 +0300</lastBuildDate>
+    <lastBuildDate>Sun, 14 Jun 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Bash</title>
+      <link>//localhost:1313/tags/bash/</link>
+      <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/bash/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Leetcode</title>
+      <link>//localhost:1313/tags/leetcode/</link>
+      <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/leetcode/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Linux</title>
+      <link>//localhost:1313/tags/linux/</link>
+      <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/linux/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Алгоритми</title>
+      <link>//localhost:1313/tags/%D0%B0%D0%BB%D0%B3%D0%BE%D1%80%D0%B8%D1%82%D0%BC%D0%B8/</link>
+      <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/%D0%B0%D0%BB%D0%B3%D0%BE%D1%80%D0%B8%D1%82%D0%BC%D0%B8/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Corosync</title>
+      <link>//localhost:1313/tags/corosync/</link>
+      <pubDate>Thu, 04 Jun 2026 00:00:00 +0300</pubDate>
+      <guid>//localhost:1313/tags/corosync/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>DevOps</title>
+      <link>//localhost:1313/tags/devops/</link>
+      <pubDate>Thu, 04 Jun 2026 00:00:00 +0300</pubDate>
+      <guid>//localhost:1313/tags/devops/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>HA</title>
+      <link>//localhost:1313/tags/ha/</link>
+      <pubDate>Thu, 04 Jun 2026 00:00:00 +0300</pubDate>
+      <guid>//localhost:1313/tags/ha/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Infrastructure</title>
+      <link>//localhost:1313/tags/infrastructure/</link>
+      <pubDate>Thu, 04 Jun 2026 00:00:00 +0300</pubDate>
+      <guid>//localhost:1313/tags/infrastructure/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Proxmox</title>
+      <link>//localhost:1313/tags/proxmox/</link>
+      <pubDate>Thu, 04 Jun 2026 00:00:00 +0300</pubDate>
+      <guid>//localhost:1313/tags/proxmox/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Virtualization</title>
+      <link>//localhost:1313/tags/virtualization/</link>
+      <pubDate>Thu, 04 Jun 2026 00:00:00 +0300</pubDate>
+      <guid>//localhost:1313/tags/virtualization/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Monitoring</title>
       <link>//localhost:1313/tags/monitoring/</link>
@@ -32,15 +102,8 @@
     <item>
       <title>Debug</title>
       <link>//localhost:1313/tags/debug/</link>
-      <pubDate>Fri, 01 May 2026 00:00:00 +0300</pubDate>
+      <pubDate>Sun, 04 Jan 2026 00:00:00 +0300</pubDate>
       <guid>//localhost:1313/tags/debug/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Linux</title>
-      <link>//localhost:1313/tags/linux/</link>
-      <pubDate>Fri, 01 May 2026 00:00:00 +0300</pubDate>
-      <guid>//localhost:1313/tags/linux/</guid>
       <description></description>
     </item>
   </channel>

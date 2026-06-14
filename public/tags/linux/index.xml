@@ -6,19 +6,26 @@
     <description>Recent content in Linux on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 01 May 2026 00:00:00 +0300</lastBuildDate>
+    <lastBuildDate>Sun, 14 Jun 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:1313/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>eBash</title>
+      <link>//localhost:1313/blog/bash/</link>
+      <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/bash/</guid>
+      <description>Зміст Основи, які обов&amp;rsquo;язково знати Змінні та підстановки Умови та тести Цикли Функції Обробка помилок та коди виходу Перенаправлення та pipe Масиви та асоціативні масиви Рядкові операції Процеси та сигнали Відлагодження Каверзні питання Реальні задачі зі співбесід Основи Shebang та режими запуску #!/bin/bash # Явний bash #!/usr/bin/env bash # Кращий варіант — шукає bash в $PATH (portable) #!/bin/sh # POSIX sh — без bashisms! Різниця між bash script.sh, ./script.sh і source script.</description>
+    </item>
     <item>
       <title>Kubernetes Cheatsheet</title>
       <link>//localhost:1313/blog/kubernetes-cheatsheet/</link>
-      <pubDate>Fri, 01 May 2026 00:00:00 +0300</pubDate>
+      <pubDate>Sun, 04 Jan 2026 00:00:00 +0300</pubDate>
       <guid>//localhost:1313/blog/kubernetes-cheatsheet/</guid>
       <description>This is a page about »Kubernetes Cheatsheet«.</description>
     </item>
     <item>
       <title>Top commands to diagnose Linux system load</title>
       <link>//localhost:1313/blog/linux-load/</link>
-      <pubDate>Sat, 10 Jan 2026 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/blog/linux-load/</guid>
       <description>Top commands to diagnose Linux system load&#xA;iotop -o — shows processes that are currently performing disk I/O journalctl --disk-usage — displays how much disk space is used by systemd logs journalctl --vacuum-size=500M — truncates systemd logs to 500 MB ps aux --sort=-%cpu | head — top processes by CPU usage ps aux --sort=-%mem | head — top processes by RAM usage systemctl list-units --failed — services that failed or did not start Additional useful commands iotop -a — shows total disk read/write per process since startup vmstat -SM 5 — memory, swap, and CPU statistics updated every 5 seconds df -hT — disk usage by filesystem with filesystem type glances — real-time overview of CPU, memory, disk, network, and processes </description>
     </item>
