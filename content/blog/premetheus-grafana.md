@@ -1,6 +1,6 @@
 +++
 title = "Prometheus + Grafana + Alertmanager"
-date = 1993-66-17
+date = 1993-02-17
 draft = false
 tags = ["prometheus", "grafana", "alertmanager", "monitoring", "devops", "observability"]
 categories = ["monitoring"]
