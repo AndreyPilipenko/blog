@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prometheus &#43; Grafana &#43; Alertmanager | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="Prometheus &#43; Grafana &#43; Alertmanager" />
+<meta name="description" content="Повний розбір стеку Prometheus/Grafana/Alertmanager: як влаштована база даних часових рядів, типи метрик (Counter, Gauge, Histogram, Summary), PromQL функції rate/increase/irate, побудова дашбордів і алертів — з реальними прикладами кожного рядка." />
+<meta name="keywords" content="prometheus,grafana,alertmanager,monitoring,devops,observability," />
+
+
+<meta property="og:title" content="Prometheus &#43; Grafana &#43; Alertmanager" />
+<meta property="og:description" content="Повний розбір стеку Prometheus/Grafana/Alertmanager: як влаштована база даних часових рядів, типи метрик (Counter, Gauge, Histogram, Summary), PromQL функції rate/increase/irate, побудова дашбордів і алертів — з реальними прикладами кожного рядка." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/blog/premetheus-grafana/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="1993-02-17T00:00:00+00:00" />
+<meta property="article:modified_time" content="1993-02-17T00:00:00+00:00" />
+
+
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Prometheus &#43; Grafana &#43; Alertmanager"/>
+<meta name="twitter:description" content="Повний розбір стеку Prometheus/Grafana/Alertmanager: як влаштована база даних часових рядів, типи метрик (Counter, Gauge, Histogram, Summary), PromQL функції rate/increase/irate, побудова дашбордів і алертів — з реальними прикладами кожного рядка."/>
+
+
+
+<meta itemprop="name" content="Prometheus &#43; Grafana &#43; Alertmanager">
+<meta itemprop="description" content="Повний розбір стеку Prometheus/Grafana/Alertmanager: як влаштована база даних часових рядів, типи метрик (Counter, Gauge, Histogram, Summary), PromQL функції rate/increase/irate, побудова дашбордів і алертів — з реальними прикладами кожного рядка."><meta itemprop="datePublished" content="1993-02-17T00:00:00+00:00" />
+<meta itemprop="dateModified" content="1993-02-17T00:00:00+00:00" />
+<meta itemprop="wordCount" content="3457">
+<meta itemprop="keywords" content="prometheus,grafana,alertmanager,monitoring,devops,observability," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</h2>
+</a>
+<nav>
+<a href="/">Home</a>
+
+<a href="/blog/">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Prometheus &#43; Grafana &#43; Alertmanager</h1>
+<p>
+  <i>
+    <time datetime='1993-02-17'>
+      17 Feb, 1993
+    </time>
+  </i>
+</p>
+
+<content>
+  <hr>
+<h2 id="1-архітектура-стеку-хто-що-робить">1. Архітектура стеку: хто що робить</h2>
+<pre tabindex="0"><code>[ Targets ]  ←── scrape ──  [ Prometheus ]  ──→  [ Grafana ]
+                                   │
+                              [ Alertmanager ]  ──→  Slack / PagerDuty / Email
+</code></pre><table>
+<thead>
+<tr>
+<th>Компонент</th>
+<th>Роль</th>
+<th>Протокол</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Prometheus</strong></td>
+<td>Збір, зберігання, обчислення</td>
+<td>HTTP pull (scrape)</td>
+</tr>
+<tr>
+<td><strong>Grafana</strong></td>
+<td>Візуалізація, дашборди</td>
+<td>HTTP API до Prometheus</td>
+</tr>
+<tr>
+<td><strong>Alertmanager</strong></td>
+<td>Роутинг, дедублікація, мовчання алертів</td>
+<td>HTTP від Prometheus</td>
+</tr>
+<tr>
+<td><strong>Exporter</strong></td>
+<td>Конвертує метрики у Prometheus-формат</td>
+<td>HTTP <code>/metrics</code> endpoint</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ключовий принцип — pull model</strong>: Prometheus сам ходить до таргетів кожні N секунд (за замовчуванням 15 секунд). Це протилежність push-моделі (StatsD, InfluxDB Telegraf). Pull дає:</p>
+<ul>
+<li>централізований контроль над конфігурацією scrape</li>
+<li>легкий health-check (якщо таргет недоступний — Prometheus це знає)</li>
+<li>простіше troubleshoot мережевих проблем</li>
+</ul>
+<hr>
+<h2 id="2-що-таке-метрика-в-prometheus-ключ-значення-зсередини">2. Що таке метрика в Prometheus: ключ-значення зсередини</h2>
+<h3 id="21-формат-exposition-текстовий">2.1 Формат exposition (текстовий)</h3>
+<p>Кожен <code>/metrics</code> endpoint повертає plain text:</p>
+<pre tabindex="0"><code># HELP http_requests_total Total HTTP requests received
+# TYPE http_requests_total counter
+http_requests_total{method=&#34;GET&#34;,status=&#34;200&#34;,handler=&#34;/api/users&#34;} 1847
+http_requests_total{method=&#34;POST&#34;,status=&#34;201&#34;,handler=&#34;/api/users&#34;} 312
+http_requests_total{method=&#34;GET&#34;,status=&#34;404&#34;,handler=&#34;/api/unknown&#34;} 23
+</code></pre><p>Розбір по рядках:</p>
+<pre tabindex="0"><code># HELP http_requests_total Total HTTP requests received
+^      ^                   ^
+│      │                   └── Опис метрики (опціонально, але обов&#39;язково для хорошого коду)
+│      └── Ім&#39;я метрики
+└── Директива HELP
+
+# TYPE http_requests_total counter
+^      ^                   ^
+│      │                   └── Тип метрики: counter | gauge | histogram | summary | untyped
+│      └── Ім&#39;я метрики
+└── Директива TYPE
+
+http_requests_total{method=&#34;GET&#34;,status=&#34;200&#34;,handler=&#34;/api/users&#34;} 1847
+^                   ^                                                ^
+│                   │                                                └── Поточне значення (float64)
+│                   └── Labels: ключ-значення пари — саме вони утворюють унікальний time series
+└── Metric name
+</code></pre><h3 id="22-як-prometheus-зберігає-дані-tsdb">2.2 Як Prometheus зберігає дані: TSDB</h3>
+<p>Prometheus використовує власну <strong>Time Series Database (TSDB)</strong>, оптимізовану для append-only запису.</p>
+<p><strong>Ідентифікація time series</strong> — це пара:</p>
+<pre tabindex="0"><code>metric_name + sorted set of labels = унікальний series
+</code></pre><p>Приклад: наступні три рядки — це <strong>три різних time series</strong>:</p>
+<pre tabindex="0"><code>http_requests_total{method=&#34;GET&#34;,  status=&#34;200&#34;} 1847
+http_requests_total{method=&#34;POST&#34;, status=&#34;200&#34;} 312
+http_requests_total{method=&#34;GET&#34;,  status=&#34;404&#34;} 23
+</code></pre><p><strong>Що зберігається на диску:</strong></p>
+<p>Prometheus зберігає дані у блоках (blocks), кожен блок охоплює 2 години:</p>
+<pre tabindex="0"><code>/prometheus/data/
+├── 01GK4XY.../          ← block (2h chunk)
+│   ├── chunks/          ← стиснуті дані (XOR delta encoding)
+│   ├── index            ← inverted index label→series
+│   └── meta.json
+├── 01GK6AB.../
+└── wal/                 ← Write-Ahead Log (останні ~2 години в пам&#39;яті)
+</code></pre><p><strong>WAL (Write-Ahead Log)</strong>: свіжі дані спочатку пишуться в WAL (пам&rsquo;ять + диск), потім кожні 2 години компактуються у block. Це захищає від втрати даних при падінні.</p>
+<p><strong>Cardinality</strong> — головна причина OOM у Prometheus:</p>
+<pre tabindex="0"><code># Кількість унікальних time series = кросс-добуток унікальних label values
+# Наприклад:
+# method: GET, POST, PUT, DELETE = 4 значення
+# status: 200, 201, 404, 500 = 4 значення  
+# handler: 50 різних ендпоінтів
+# Разом: 4 × 4 × 50 = 800 time series для одної метрики
+</code></pre><p><strong>Погана практика</strong> — динамічні labels з високою кардинальністю:</p>
+<pre tabindex="0"><code># НІКОЛИ так не робіть:
+http_requests_total{user_id=&#34;12345&#34;} 1   # user_id може мати мільйони значень!
+http_requests_total{request_id=&#34;abc-123-xyz&#34;} 1  # унікальний на кожен запит — катастрофа
+</code></pre><hr>
+<h2 id="3-типи-метрик-counter-gauge-histogram-summary">3. Типи метрик: Counter, Gauge, Histogram, Summary</h2>
+<h3 id="31-counter--лічильник-що-тільки-зростає">3.1 Counter — лічильник, що тільки зростає</h3>
+<p><strong>Визначення</strong>: монотонно зростаюче значення. Скидається тільки при рестарті процесу.</p>
+<p><strong>Конвенція</strong>: суфікс <code>_total</code> у назві.</p>
+<pre tabindex="0"><code># HELP http_requests_total Total number of HTTP requests
+# TYPE http_requests_total counter
+http_requests_total{method=&#34;GET&#34;,status=&#34;200&#34;} 182947
+http_requests_total{method=&#34;GET&#34;,status=&#34;500&#34;} 47
+</code></pre><p><strong>Що відбувається при рестарті</strong>: значення скидається до 0. Саме тому <strong>ніколи не використовуйте сирий counter у графіках</strong> — ви побачите вертикальне падіння при кожному деплої.</p>
+<p><strong>Правильне використання</strong> — завжди через <code>rate()</code> або <code>increase()</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># Кількість запитів на секунду (за останні 5 хвилин)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Кількість запитів за останні 5 хвилин (абсолютна кількість)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">increase</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p><strong>Де застосовується</strong>:</p>
+<ul>
+<li>кількість HTTP запитів</li>
+<li>кількість помилок</li>
+<li>кількість оброблених завдань</li>
+<li>байти отримані/надіслані (node_network_receive_bytes_total)</li>
+</ul>
+<hr>
+<h3 id="32-gauge--поточне-значення">3.2 Gauge — поточне значення</h3>
+<p><strong>Визначення</strong>: значення, яке може зростати і зменшуватись довільно. Відображає поточний стан.</p>
+<pre tabindex="0"><code># HELP node_memory_MemAvailable_bytes Available memory in bytes
+# TYPE node_memory_MemAvailable_bytes gauge
+node_memory_MemAvailable_bytes 2.147e+09
+
+# HELP go_goroutines Number of goroutines
+# TYPE go_goroutines gauge
+go_goroutines 42
+
+# HELP node_load1 1-minute load average
+# TYPE node_load1 gauge
+node_load1 0.85
+</code></pre><p><strong>Ключова різниця від Counter</strong>: gauge <strong>можна використовувати напряму</strong> без <code>rate()</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># Пряме використання — правильно для gauge:</span>
+</span></span><span style="display:flex;"><span>node_memory_MemAvailable_bytes
+</span></span><span style="display:flex;"><span>node_load1
+</span></span><span style="display:flex;"><span>go_goroutines
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Обчислення % використання пам&#39;яті:</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>node_memory_MemTotal_bytes <span style="color:#f92672">-</span> node_memory_MemAvailable_bytes<span style="color:#f92672">)</span> <span style="color:#f92672">/</span> node_memory_MemTotal_bytes <span style="color:#f92672">*</span> <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Тренд gauge за час (похідна):</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">deriv</span><span style="color:#f92672">(</span>node_load1[<span style="color:#e6db74">10m</span>]<span style="color:#f92672">)</span>   <span style="color:#75715e"># чи зростає навантаження?</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">predict_linear</span><span style="color:#f92672">(</span>node_disk_free_bytes[<span style="color:#e6db74">1h</span>], <span style="color:#ae81ff">4</span><span style="color:#f92672">*</span><span style="color:#ae81ff">3600</span><span style="color:#f92672">)</span>  <span style="color:#75715e"># прогноз місця на диску через 4 години</span>
+</span></span></code></pre></div><p><strong>Де застосовується</strong>:</p>
+<ul>
+<li>використання CPU, пам&rsquo;яті, диску</li>
+<li>кількість активних з&rsquo;єднань</li>
+<li>кількість горутин/потоків</li>
+<li>температура</li>
+<li>довжина черги</li>
+</ul>
+<hr>
+<h3 id="33-histogram--розподіл-значень">3.3 Histogram — розподіл значень</h3>
+<p><strong>Визначення</strong>: автоматично групує спостереження у попередньо визначені bucket-и (відра). Дозволяє обчислювати <strong>перцентилі</strong> на стороні Prometheus/Grafana.</p>
+<p><strong>Histogram генерує 3 метрики автоматично:</strong></p>
+<pre tabindex="0"><code># Для метрики http_request_duration_seconds histogram:
+
+# 1. _bucket — кількість запитів, що вклалися у ≤ N секунд
+http_request_duration_seconds_bucket{le=&#34;0.005&#34;} 24
+http_request_duration_seconds_bucket{le=&#34;0.01&#34;}  36
+http_request_duration_seconds_bucket{le=&#34;0.025&#34;} 89
+http_request_duration_seconds_bucket{le=&#34;0.05&#34;}  120
+http_request_duration_seconds_bucket{le=&#34;0.1&#34;}   142
+http_request_duration_seconds_bucket{le=&#34;0.25&#34;}  155
+http_request_duration_seconds_bucket{le=&#34;0.5&#34;}   158
+http_request_duration_seconds_bucket{le=&#34;1&#34;}     159
+http_request_duration_seconds_bucket{le=&#34;2.5&#34;}   160
+http_request_duration_seconds_bucket{le=&#34;+Inf&#34;}  160  ← завжди є, = total count
+
+# 2. _count — загальна кількість спостережень
+http_request_duration_seconds_count 160
+
+# 3. _sum — сума всіх спостережень
+http_request_duration_seconds_sum 12.34
+</code></pre><p><strong>Як читати bucket-и</strong>: кожен bucket є <strong>кумулятивним</strong> (le = &ldquo;less or equal&rdquo;). <code>le=&quot;0.1&quot;</code> означає &ldquo;скільки запитів тривали ≤ 100ms&rdquo;.</p>
+<p><strong>Обчислення перцентилів у PromQL:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># p50 (медіана) латентності за останні 5 хвилин</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">histogram_quantile</span><span style="color:#f92672">(</span><span style="color:#ae81ff">0.50</span>, <span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_request_duration_seconds_bucket[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># p95 — 95% запитів вклалися у це значення</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">histogram_quantile</span><span style="color:#f92672">(</span><span style="color:#ae81ff">0.95</span>, <span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_request_duration_seconds_bucket[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># p99 — &#34;довгий хвіст&#34;, критично для SLA</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">histogram_quantile</span><span style="color:#f92672">(</span><span style="color:#ae81ff">0.99</span>, <span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_request_duration_seconds_bucket[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Середнє значення (з суми та кількості):</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_request_duration_seconds_sum[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span> <span style="color:#f92672">/</span> <span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_request_duration_seconds_count[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p><strong>Чому важливо правильно задати bucket-и:</strong></p>
+<p>Bucket-и задаються при оголошенні метрики у коді. Якщо ваші запити тривають від 1ms до 10s, але bucket-и задані для 0..1s — перцентилі будуть неточними. Загальне правило: bucket-и мають покривати 95%+ очікуваних значень з достатньою деталізацією.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Приклад у Python (prometheus_client):</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> prometheus_client <span style="color:#f92672">import</span> Histogram
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>REQUEST_LATENCY <span style="color:#f92672">=</span> Histogram(
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;http_request_duration_seconds&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;HTTP request duration&#39;</span>,
+</span></span><span style="display:flex;"><span>    buckets<span style="color:#f92672">=</span>[<span style="color:#ae81ff">.005</span>, <span style="color:#ae81ff">.01</span>, <span style="color:#ae81ff">.025</span>, <span style="color:#ae81ff">.05</span>, <span style="color:#ae81ff">.1</span>, <span style="color:#ae81ff">.25</span>, <span style="color:#ae81ff">.5</span>, <span style="color:#ae81ff">1.0</span>, <span style="color:#ae81ff">2.5</span>, <span style="color:#ae81ff">5.0</span>, <span style="color:#ae81ff">10.0</span>]
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p><strong>Де застосовується</strong>: латентність запитів, розмір payload, час виконання черги.</p>
+<hr>
+<h3 id="34-summary--клієнтські-перцентилі">3.4 Summary — клієнтські перцентилі</h3>
+<p><strong>Визначення</strong>: схожий на Histogram, але перцентилі <strong>обчислюються на стороні клієнта</strong> (в самому застосунку), а не в Prometheus.</p>
+<pre tabindex="0"><code># HELP go_gc_duration_seconds A summary of GC invocation durations
+# TYPE go_gc_duration_seconds summary
+go_gc_duration_seconds{quantile=&#34;0&#34;} 4.9351e-05
+go_gc_duration_seconds{quantile=&#34;0.25&#34;} 7.5552e-05
+go_gc_duration_seconds{quantile=&#34;0.5&#34;} 0.000116
+go_gc_duration_seconds{quantile=&#34;0.75&#34;} 0.000181
+go_gc_duration_seconds{quantile=&#34;0.99&#34;} 0.001445
+go_gc_duration_seconds_sum 0.35
+go_gc_duration_seconds_count 2693
+</code></pre><p><strong>Порівняння Histogram vs Summary:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Аспект</th>
+<th>Histogram</th>
+<th>Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Де рахуються квантилі</td>
+<td>Сервер (Prometheus)</td>
+<td>Клієнт (застосунок)</td>
+</tr>
+<tr>
+<td>Агрегація across instances</td>
+<td>✅ Можливо</td>
+<td>❌ Неможливо</td>
+</tr>
+<tr>
+<td>Точність квантилів</td>
+<td>Залежить від bucket-ів</td>
+<td>Висока</td>
+</tr>
+<tr>
+<td>Навантаження на клієнт</td>
+<td>Мінімальне</td>
+<td>Помірне</td>
+</tr>
+<tr>
+<td>Рекомендація 2024</td>
+<td><strong>Використовувати</strong></td>
+<td>Тільки якщо точність критична</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Критична різниця — агрегація:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># Histogram — можна агрегувати по всіх інстансах:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">histogram_quantile</span><span style="color:#f92672">(</span><span style="color:#ae81ff">0.95</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">sum</span><span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_request_duration_seconds_bucket[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">))</span> <span style="color:#66d9ef">by</span> <span style="color:#f92672">(</span>le<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Summary — НЕ можна агрегувати квантилі по інстансах:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># avg(go_gc_duration_seconds{quantile=&#34;0.99&#34;}) — математично НЕКОРЕКТНО!</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Середнє перцентилів ≠ перцентиль всієї вибірки</span>
+</span></span></code></pre></div><hr>
+<h2 id="4-promql-rate-increase-irate-та-інші-функції">4. PromQL: rate, increase, irate та інші функції</h2>
+<h3 id="41-rate--швидкість-зміни-counter">4.1 rate() — швидкість зміни counter</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p><strong>Що робить</strong>: обчислює середню швидкість зміни counter за вказаний часовий інтервал.</p>
+<p><strong>Алгоритм під капотом</strong>:</p>
+<ol>
+<li>Знаходить усі scrape-точки у вікні <code>[5m]</code></li>
+<li>Обробляє reset-и counter (якщо значення впало — значить був рестарт)</li>
+<li>Обчислює: <code>(last_value - first_value) / duration_in_seconds</code></li>
+<li>Результат: значення <strong>в одиницях на секунду</strong></li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># rate(http_requests_total[5m]) = 2.3</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Означає: в середньому 2.3 запити/секунду за останні 5 хвилин</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Для отримання запитів/хвилину:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">60</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Відсоток помилок:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total{status<span style="color:#f92672">=~</span>&#34;<span style="color:#e6db74">5..</span>&#34;}[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span> <span style="color:#f92672">/</span> <span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">100</span>
+</span></span></code></pre></div><p><strong>Правило вибору інтервалу</strong>: інтервал <code>[Xm]</code> має бути мінімум у <strong>4 рази більший</strong> за scrape interval.</p>
+<ul>
+<li>scrape_interval = 15s → мінімальний інтервал <code>[1m]</code>, рекомендований <code>[5m]</code></li>
+<li>scrape_interval = 60s → мінімальний <code>[4m]</code>, рекомендований <code>[10m]</code></li>
+</ul>
+<p>Занадто малий інтервал → нестабільні результати (мало точок для обчислення).</p>
+<hr>
+<h3 id="42-increase--абсолютне-збільшення-за-інтервал">4.2 increase() — абсолютне збільшення за інтервал</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#66d9ef">increase</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">1h</span>]<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p><strong>Що робить</strong>: скільки разів counter збільшився за вказаний час.</p>
+<p><strong>Математика</strong>: <code>increase(m[d]) = rate(m[d]) * duration_in_seconds</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># Кількість запитів за останню годину:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">increase</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">1h</span>]<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Кількість 5xx помилок за останні 24 години:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">increase</span><span style="color:#f92672">(</span>http_requests_total{status<span style="color:#f92672">=~</span>&#34;<span style="color:#e6db74">5..</span>&#34;}[<span style="color:#e6db74">24h</span>]<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Кількість failed jobs за останній день:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">increase</span><span style="color:#f92672">(</span>batch_jobs_failed_total[<span style="color:#e6db74">24h</span>]<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p><strong>Важливо</strong>: <code>increase()</code> також обробляє reset-и counter, тобто якщо процес перезапустився — це не псує результат.</p>
+<hr>
+<h3 id="43-irate--миттєва-швидкість-остання-пара-точок">4.3 irate() — миттєва швидкість (остання пара точок)</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#66d9ef">irate</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p><strong>Що робить</strong>: обчислює rate тільки <strong>між двома останніми</strong> scrape-точками у вікні.</p>
+<p><strong>Різниця від rate():</strong></p>
+<pre tabindex="0"><code>Часові точки:  t=0   t=15s   t=30s   t=45s   t=60s   t=75s
+Значення:      100   115     130     160     161     163
+
+rate([5m]) = середнє за всі точки = плавний результат
+irate([5m]) = (163 - 161) / 15 = 0.13/s  (тільки останні 2 точки)
+</code></pre><table>
+<thead>
+<tr>
+<th>Функція</th>
+<th>Переваги</th>
+<th>Недоліки</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rate()</code></td>
+<td>Плавна, стабільна, добре для алертів</td>
+<td>Може &ldquo;замилювати&rdquo; піки</td>
+</tr>
+<tr>
+<td><code>irate()</code></td>
+<td>Реагує на різкі піки</td>
+<td>Нестабільна, шумна; погана для алертів</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Коли використовувати irate()</strong>: тільки для графіків реального часу, де потрібно бачити піки. <strong>Ніколи</strong> у правилах алертів.</p>
+<hr>
+<h3 id="44-інші-важливі-функції">4.4 Інші важливі функції</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># --- Агрегаційні оператори ---</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Сума по всіх інстансах:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sum</span><span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Сума, зберігаючи тільки label &#34;job&#34;:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sum</span> <span style="color:#66d9ef">by</span> <span style="color:#f92672">(</span>job<span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Сума, прибираючи тільки label &#34;instance&#34;:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sum</span> <span style="color:#66d9ef">without</span> <span style="color:#f92672">(</span>instance<span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Максимум по всіх інстансах:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">max</span> <span style="color:#66d9ef">by</span> <span style="color:#f92672">(</span>instance<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>node_load1<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Топ-5 найзавантаженіших хостів:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">topk</span><span style="color:#f92672">(</span><span style="color:#ae81ff">5</span>, node_load1<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Функції часу ---</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Скільки секунд тому відбувся останній scrape (для виявлення &#34;мертвих&#34; таргетів):</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">time</span><span style="color:#f92672">()</span> <span style="color:#f92672">-</span> node_boot_time_seconds  <span style="color:#75715e"># uptime в секундах</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Прогноз вільного місця (лінійна екстраполяція):</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">predict_linear</span><span style="color:#f92672">(</span>node_filesystem_free_bytes{mountpoint<span style="color:#f92672">=</span>&#34;<span style="color:#e6db74">/</span>&#34;}[<span style="color:#e6db74">6h</span>], <span style="color:#ae81ff">24</span><span style="color:#f92672">*</span><span style="color:#ae81ff">3600</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &#34;Якщо тренд останніх 6h продовжиться — скільки байт буде через 24h&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Зміна у часі ---</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Різниця між поточним і N секунд тому (для gauge):</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">delta</span><span style="color:#f92672">(</span>node_load1[<span style="color:#e6db74">10m</span>]<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Похідна (trend):</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">deriv</span><span style="color:#f92672">(</span>node_load1[<span style="color:#e6db74">10m</span>]<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Відбір по значенню ---</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Тільки інстанси з load &gt; 2.0:</span>
+</span></span><span style="display:flex;"><span>node_load1 <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">2.0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Тільки інстанси де є помилки (rate &gt; 0):</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total{status<span style="color:#f92672">=~</span>&#34;<span style="color:#e6db74">5..</span>&#34;}[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span> <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Умовний вираз — якщо error rate &gt; 0.01, повернути значення, інакше nothing:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total{status<span style="color:#f92672">=~</span>&#34;<span style="color:#e6db74">5..</span>&#34;}[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span> <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.01</span>
+</span></span></code></pre></div><hr>
+<h2 id="5-label-matching-та-vector-matching">5. Label matching та Vector matching</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># Бінарні операції між метриками вимагають збігу labels</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Відсоток вільної пам&#39;яті (обидві метрики мають label &#34;instance&#34;):</span>
+</span></span><span style="display:flex;"><span>node_memory_MemAvailable_bytes <span style="color:#f92672">/</span> node_memory_MemTotal_bytes <span style="color:#f92672">*</span> <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Якщо labels не збігаються — потрібен ignoring або on:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Помилки на запит (метрики мають різні sets labels):</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_errors_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span> <span style="color:#f92672">/</span> <span style="color:#66d9ef">ignoring</span><span style="color:#f92672">(</span>error_type<span style="color:#f92672">)</span> <span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># group_left — many-to-one join (додати label з іншої метрики):</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">*</span> <span style="color:#66d9ef">on</span><span style="color:#f92672">(</span>instance<span style="color:#f92672">)</span> <span style="color:#66d9ef">group_left</span><span style="color:#f92672">(</span>datacenter<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>node_meta_info  <span style="color:#75715e"># метрика з додатковим label &#34;datacenter&#34;</span>
+</span></span></code></pre></div><hr>
+<h2 id="6-grafana-побудова-дашбордів">6. Grafana: побудова дашбордів</h2>
+<h3 id="61-типи-панелей-і-коли-які-використовувати">6.1 Типи панелей і коли які використовувати</h3>
+<table>
+<thead>
+<tr>
+<th>Тип панелі</th>
+<th>Використання</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Time series</strong></td>
+<td>Будь-які метрики у часі (CPU, latency, RPS)</td>
+</tr>
+<tr>
+<td><strong>Stat</strong></td>
+<td>Одне поточне значення (uptime, поточний RPS)</td>
+</tr>
+<tr>
+<td><strong>Gauge</strong></td>
+<td>Значення у відсотках з кольоровими зонами</td>
+</tr>
+<tr>
+<td><strong>Bar chart</strong></td>
+<td>Порівняння між сутностями (топ хостів)</td>
+</tr>
+<tr>
+<td><strong>Heatmap</strong></td>
+<td>Розподіл histogram по часу</td>
+</tr>
+<tr>
+<td><strong>Table</strong></td>
+<td>Детальні дані (список алертів, топ помилок)</td>
+</tr>
+<tr>
+<td><strong>Logs</strong></td>
+<td>Loki logs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-приклад-http-rps-дашборд">6.2 Приклад: HTTP RPS дашборд</h3>
+<p><strong>Панель: Requests per second by status</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># Query A — успішні запити:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sum</span> <span style="color:#66d9ef">by</span> <span style="color:#f92672">(</span>status<span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total{job<span style="color:#f92672">=</span>&#34;<span style="color:#e6db74">my-api</span>&#34;}[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Legend: {{status}}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Visualization: Time series, Fill opacity: 20</span>
+</span></span></code></pre></div><p><strong>Панель: Error rate %</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#66d9ef">sum</span><span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total{status<span style="color:#f92672">=~</span>&#34;<span style="color:#e6db74">5..</span>&#34;}[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">/</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sum</span><span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">*</span> <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Unit: Percent (0-100)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Thresholds: 0=green, 1=yellow, 5=red</span>
+</span></span></code></pre></div><p><strong>Панель: p50/p95/p99 latency</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># Query A — p50:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">histogram_quantile</span><span style="color:#f92672">(</span><span style="color:#ae81ff">0.50</span>, <span style="color:#66d9ef">sum</span> <span style="color:#66d9ef">by</span> <span style="color:#f92672">(</span>le<span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_request_duration_seconds_bucket{job<span style="color:#f92672">=</span>&#34;<span style="color:#e6db74">my-api</span>&#34;}[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Query B — p95:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">histogram_quantile</span><span style="color:#f92672">(</span><span style="color:#ae81ff">0.95</span>, <span style="color:#66d9ef">sum</span> <span style="color:#66d9ef">by</span> <span style="color:#f92672">(</span>le<span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_request_duration_seconds_bucket{job<span style="color:#f92672">=</span>&#34;<span style="color:#e6db74">my-api</span>&#34;}[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Query C — p99:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">histogram_quantile</span><span style="color:#f92672">(</span><span style="color:#ae81ff">0.99</span>, <span style="color:#66d9ef">sum</span> <span style="color:#66d9ef">by</span> <span style="color:#f92672">(</span>le<span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_request_duration_seconds_bucket{job<span style="color:#f92672">=</span>&#34;<span style="color:#e6db74">my-api</span>&#34;}[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Legend: p{{quantile_label}}   (або задати вручну: p50, p95, p99)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Unit: seconds (s)</span>
+</span></span></code></pre></div><h3 id="63-template-variables-для-динамічних-дашбордів">6.3 Template variables для динамічних дашбордів</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># У Settings → Variables:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Variable 1:</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Name</span>: <span style="color:#ae81ff">instance</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Type</span>: <span style="color:#ae81ff">Query</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Query</span>: <span style="color:#ae81ff">label_values(node_cpu_seconds_total, instance)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Тепер у запитах використовуємо: {instance=&#34;$instance&#34;}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Variable 2:</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Name</span>: <span style="color:#ae81ff">interval</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Type</span>: <span style="color:#ae81ff">Interval</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Values</span>: <span style="color:#ae81ff">1m,5m,10m,30m,1h</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Default</span>: <span style="color:#ae81ff">5m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Використовуємо: rate(metric[$interval])</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># З variables — динамічний запит:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total{instance<span style="color:#f92672">=</span>&#34;<span style="color:#e6db74">$instance</span>&#34;, job<span style="color:#f92672">=</span>&#34;<span style="color:#e6db74">$job</span>&#34;}[<span style="color:#960050;background-color:#1e0010">$interval</span>]<span style="color:#f92672">)</span>
+</span></span></code></pre></div><h3 id="64-heatmap-для-histogram">6.4 Heatmap для Histogram</h3>
+<p>Heatmap — найкращий спосіб візуалізувати розподіл латентності у часі:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># Query для Heatmap панелі:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sum</span><span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_request_duration_seconds_bucket{job<span style="color:#f92672">=</span>&#34;<span style="color:#e6db74">my-api</span>&#34;}[<span style="color:#960050;background-color:#1e0010">$interval</span>]<span style="color:#f92672">))</span> <span style="color:#66d9ef">by</span> <span style="color:#f92672">(</span>le<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Format: Heatmap</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Bucket bound: Upper (тому що le = less-or-equal, тобто верхня межа)</span>
+</span></span></code></pre></div><hr>
+<h2 id="7-alertmanager-маршрутизація-і-дедублікація">7. Alertmanager: маршрутизація і дедублікація</h2>
+<h3 id="71-правила-алертів-у-prometheus">7.1 Правила алертів у Prometheus</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># /etc/prometheus/rules/api.yml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">groups</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">api.alerts</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">interval: 1m  # як часто перевіряти (default</span>: <span style="color:#ae81ff">global evaluation_interval)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Алерт на high error rate</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">HighErrorRate</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">expr</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          sum(rate(http_requests_total{status=~&#34;5..&#34;}[5m]))
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          /
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          sum(rate(http_requests_total[5m]))
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          * 100 &gt; 5</span>          
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">for</span>: <span style="color:#ae81ff">5m</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># ^ &#34;for&#34; — алерт спрацьовує тільки якщо умова TRUE протягом 5 хвилин безперервно.</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Без &#34;for&#34;: будь-який спайк → негайний алерт (багато false positives)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">critical</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">team</span>: <span style="color:#ae81ff">backend</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">summary</span>: <span style="color:#e6db74">&#34;High error rate on {{ $labels.job }}&#34;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">description</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            Error rate is {{ $value | printf &#34;%.2f&#34; }}% 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            for job {{ $labels.job }} on instance {{ $labels.instance }}.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            Current threshold: 5%</span>            
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Алерт на latency</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">HighLatencyP99</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">expr</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          histogram_quantile(0.99,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            sum by (le, job) (rate(http_request_duration_seconds_bucket[5m]))
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          ) &gt; 1.0</span>          
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">for</span>: <span style="color:#ae81ff">10m</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">warning</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">summary</span>: <span style="color:#e6db74">&#34;p99 latency &gt; 1s for {{ $labels.job }}&#34;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">description</span>: <span style="color:#e6db74">&#34;p99 = {{ $value | printf \&#34;%.3f\&#34; }}s&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Алерт на відсутність метрик (dead exporter)</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">ExporterDown</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">up == 0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">for</span>: <span style="color:#ae81ff">2m</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">critical</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">summary</span>: <span style="color:#e6db74">&#34;Exporter down: {{ $labels.instance }}&#34;</span>
+</span></span></code></pre></div><p><strong>Цикл стану алерту:</strong></p>
+<pre tabindex="0"><code>INACTIVE → PENDING → FIRING → RESOLVED
+           ^          ^
+           │          └── умова true &gt; for duration
+           └── умова стала true
+</code></pre><h3 id="72-конфігурація-alertmanager">7.2 Конфігурація Alertmanager</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># /etc/alertmanager/alertmanager.yml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">global</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">smtp_smarthost</span>: <span style="color:#e6db74">&#39;smtp.gmail.com:587&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">smtp_from</span>: <span style="color:#e6db74">&#39;alerts@company.com&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">slack_api_url</span>: <span style="color:#e6db74">&#39;https://hooks.slack.com/services/T.../B.../xxx&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Шаблони повідомлень</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">templates</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#e6db74">&#39;/etc/alertmanager/templates/*.tmpl&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Дерево маршрутизації</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">route</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">receiver</span>: <span style="color:#e6db74">&#39;default-receiver&#39;</span>  <span style="color:#75715e"># fallback</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">group_by</span>: [<span style="color:#e6db74">&#39;alertname&#39;</span>, <span style="color:#e6db74">&#39;job&#39;</span>]
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ^ групувати алерти з однаковим alertname+job в одне повідомлення</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">group_wait</span>: <span style="color:#ae81ff">30s</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ^ чекати 30s перед відправкою першої нотифікації (щоб зібрати групу)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">group_interval</span>: <span style="color:#ae81ff">5m</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ^ мінімальний інтервал між повідомленнями для тієї ж групи</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">repeat_interval</span>: <span style="color:#ae81ff">4h</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ^ якщо алерт не resolved — повторювати кожні 4h</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">routes</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Critical → Slack #alerts-critical + PagerDuty</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">match</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">critical</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">receiver</span>: <span style="color:#e6db74">&#39;critical-receiver&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">continue</span>: <span style="color:#66d9ef">false</span>  <span style="color:#75715e"># не передавати далі по дереву</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Warning → Slack #alerts-warning тільки в робочий час</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">match</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">warning</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">receiver</span>: <span style="color:#e6db74">&#39;warning-receiver&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">active_time_intervals</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#ae81ff">business_hours</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Конкретна команда</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">match_re</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">team</span>: <span style="color:#ae81ff">^(backend|api)$</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">receiver</span>: <span style="color:#e6db74">&#39;backend-team&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">time_intervals</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">business_hours</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">time_intervals</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">weekdays</span>: [<span style="color:#e6db74">&#39;monday:friday&#39;</span>]
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">times</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">start_time</span>: <span style="color:#e6db74">&#39;09:00&#39;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">end_time</span>: <span style="color:#e6db74">&#39;18:00&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">location</span>: <span style="color:#e6db74">&#39;Europe/Kyiv&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">receivers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#39;default-receiver&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">slack_configs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">channel</span>: <span style="color:#e6db74">&#39;#alerts-general&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">send_resolved</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">title</span>: <span style="color:#e6db74">&#39;{{ template &#34;slack.title&#34; . }}&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">text</span>: <span style="color:#e6db74">&#39;{{ template &#34;slack.text&#34; . }}&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#39;critical-receiver&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">slack_configs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">channel</span>: <span style="color:#e6db74">&#39;#alerts-critical&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">send_resolved</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">pagerduty_configs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">service_key</span>: <span style="color:#e6db74">&#39;&lt;YOUR_PD_KEY&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#39;backend-team&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">slack_configs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">channel</span>: <span style="color:#e6db74">&#39;#backend-alerts&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">inhibit_rules</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Якщо instance Down — не посилати інші алерти для цього instance</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">source_match</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">alertname</span>: <span style="color:#ae81ff">InstanceDown</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">target_match_re</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">alertname</span>: <span style="color:#ae81ff">.+</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">equal</span>: [<span style="color:#e6db74">&#39;instance&#39;</span>]
+</span></span></code></pre></div><h3 id="73-silence--заглушення-алертів">7.3 Silence — заглушення алертів</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># CLI через amtool:</span>
+</span></span><span style="display:flex;"><span>amtool silence add <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --alertmanager.url<span style="color:#f92672">=</span>http://alertmanager:9093 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --duration<span style="color:#f92672">=</span>2h <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --comment<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Planned maintenance window&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  alertname<span style="color:#f92672">=</span>HighErrorRate <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  job<span style="color:#f92672">=</span>my-api
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Переглянути активні silences:</span>
+</span></span><span style="display:flex;"><span>amtool silence query --alertmanager.url<span style="color:#f92672">=</span>http://alertmanager:9093
+</span></span></code></pre></div><hr>
+<h2 id="8-prometheus-конфігурація-scrape-та-service-discovery">8. Prometheus конфігурація: scrape та service discovery</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># /etc/prometheus/prometheus.yml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">global</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">scrape_interval</span>: <span style="color:#ae81ff">15s        </span> <span style="color:#75715e"># як часто збирати метрики</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">evaluation_interval</span>: <span style="color:#ae81ff">15s    </span> <span style="color:#75715e"># як часто обчислювати alerting rules</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">scrape_timeout</span>: <span style="color:#ae81ff">10s         </span> <span style="color:#75715e"># timeout для одного scrape</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Правила та алерти</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">rule_files</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#e6db74">&#34;/etc/prometheus/rules/*.yml&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Alertmanager</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">alerting</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">alertmanagers</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">static_configs</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">targets</span>: [<span style="color:#e6db74">&#39;alertmanager:9093&#39;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">scrape_configs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># --- Prometheus сам себе ---</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">job_name</span>: <span style="color:#e6db74">&#39;prometheus&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">static_configs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">targets</span>: [<span style="color:#e6db74">&#39;localhost:9090&#39;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># --- Node Exporter ---</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">job_name</span>: <span style="color:#e6db74">&#39;node&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">static_configs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">targets</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#e6db74">&#39;server1.example.com:9100&#39;</span>
+</span></span><span style="display:flex;"><span>          - <span style="color:#e6db74">&#39;server2.example.com:9100&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">relabel_configs</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Замінити instance label на короткий hostname:</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">source_labels</span>: [<span style="color:#ae81ff">__address__]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">target_label</span>: <span style="color:#ae81ff">__param_target</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">source_labels</span>: [<span style="color:#ae81ff">__address__]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">regex</span>: <span style="color:#e6db74">&#39;([^:]+):.*&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">target_label</span>: <span style="color:#ae81ff">instance</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">replacement</span>: <span style="color:#e6db74">&#39;$1&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># --- HAProxy exporter ---</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">job_name</span>: <span style="color:#e6db74">&#39;haproxy&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">static_configs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">targets</span>: [<span style="color:#e6db74">&#39;haproxy-host:8405&#39;</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">datacenter</span>: <span style="color:#e6db74">&#39;nj&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># --- File-based service discovery (динамічне оновлення без рестарту) ---</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">job_name</span>: <span style="color:#e6db74">&#39;dynamic-targets&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">file_sd_configs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">files</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#e6db74">&#39;/etc/prometheus/targets/*.json&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">refresh_interval</span>: <span style="color:#ae81ff">30s</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># --- Blackbox exporter (зовнішній моніторинг HTTP) ---</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">job_name</span>: <span style="color:#e6db74">&#39;blackbox-http&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metrics_path</span>: <span style="color:#ae81ff">/probe</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">params</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">module</span>: [<span style="color:#ae81ff">http_2xx]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">static_configs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">targets</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#e6db74">&#39;https://api.example.com/health&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">relabel_configs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">source_labels</span>: [<span style="color:#ae81ff">__address__]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">target_label</span>: <span style="color:#ae81ff">__param_target</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">source_labels</span>: [<span style="color:#ae81ff">__param_target]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">target_label</span>: <span style="color:#ae81ff">instance</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">target_label</span>: <span style="color:#ae81ff">__address__</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">replacement</span>: <span style="color:#ae81ff">blackbox-exporter:9115</span>
+</span></span></code></pre></div><p><strong>File-based SD — приклад файлу:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>[
+</span></span><span style="display:flex;"><span>  {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;targets&#34;</span>: [<span style="color:#e6db74">&#34;server10.dc1.example.com:9100&#34;</span>, <span style="color:#e6db74">&#34;server11.dc1.example.com:9100&#34;</span>],
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;labels&#34;</span>: {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;datacenter&#34;</span>: <span style="color:#e6db74">&#34;dc1&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;role&#34;</span>: <span style="color:#e6db74">&#34;proxy&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>]
+</span></span></code></pre></div><hr>
+<h2 id="9-recording-rules--pre-computed-метрики">9. Recording Rules — pre-computed метрики</h2>
+<p>Recording rules дозволяють <strong>попередньо обчислити</strong> важкі запити і зберегти результат як нову метрику.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># /etc/prometheus/rules/recording.yml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">groups</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">api_recording_rules</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">interval</span>: <span style="color:#ae81ff">1m</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Pre-compute error rate по job:</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">record</span>: <span style="color:#ae81ff">job:http_request_errors:rate5m</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">expr</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          sum by (job) (rate(http_requests_total{status=~&#34;5..&#34;}[5m]))
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          /
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          sum by (job) (rate(http_requests_total[5m]))</span>          
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Pre-compute p99 latency по job:</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">record</span>: <span style="color:#ae81ff">job:http_request_duration_p99:rate5m</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">expr</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          histogram_quantile(0.99,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            sum by (job, le) (rate(http_request_duration_seconds_bucket[5m]))
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          )</span>          
+</span></span></code></pre></div><p><strong>Конвенція найменування</strong>: <code>level:metric:operations</code></p>
+<ul>
+<li><code>level</code> — рівень агрегації (job, instance, datacenter)</li>
+<li><code>metric</code> — базова метрика</li>
+<li><code>operations</code> — застосовані функції (rate5m, p99, etc.)</li>
+</ul>
+<p><strong>Коли використовувати recording rules:</strong></p>
+<ul>
+<li>запит виконується у &gt; 100ms (важкий для Grafana)</li>
+<li>запит використовується на кількох дашбордах/алертах</li>
+<li>потрібна довгострокова агрегація (тижні/місяці)</li>
+</ul>
+<hr>
+<h2 id="10-best-practices-практичний-чеклист">10. Best Practices: практичний чеклист</h2>
+<h3 id="101-найменування-метрик">10.1 Найменування метрик</h3>
+<pre tabindex="0"><code># Правила:
+# 1. snake_case
+# 2. Суфікс одиниці виміру:
+#    _seconds, _bytes, _total, _ratio, _celsius, _info
+# 3. Counter → _total суфікс
+# 4. Не включати label name у metric name
+
+# Добре:
+http_request_duration_seconds
+node_memory_free_bytes
+http_requests_total
+
+# Погано:
+httpRequestDuration      # camelCase
+http_request_time        # немає одиниці
+http_get_requests_total  # метод (GET) краще як label
+</code></pre><h3 id="102-labels-що-варто-і-що-не-варто">10.2 Labels: що варто і що не варто</h3>
+<pre tabindex="0"><code># Добре — низька кардинальність, постійні значення:
+{method=&#34;GET&#34;, status=&#34;200&#34;, datacenter=&#34;us-east-1&#34;}
+
+# Погано — висока кардинальність:
+{user_id=&#34;12345&#34;}          # мільйони користувачів
+{url=&#34;/api/users/12345&#34;}   # унікальний URL
+{request_id=&#34;abc-xyz&#34;}     # унікальний на запит
+{timestamp=&#34;2024-01-01&#34;}   # унікальне значення
+</code></pre><h3 id="103-кардинальність-моніторинг-і-контроль">10.3 Кардинальність: моніторинг і контроль</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># Скільки активних time series у Prometheus:</span>
+</span></span><span style="display:flex;"><span>prometheus_tsdb_head_series
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Топ метрик за кардинальністю:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">topk</span><span style="color:#f92672">(</span><span style="color:#ae81ff">10</span>, <span style="color:#66d9ef">count</span> <span style="color:#66d9ef">by</span> <span style="color:#f92672">(</span>__name__<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>{__name__<span style="color:#f92672">=~</span>&#34;<span style="color:#e6db74">.+</span>&#34;}<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Кількість series на метрику:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">count</span> <span style="color:#66d9ef">by</span> <span style="color:#f92672">(</span>__name__<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>{__name__<span style="color:#f92672">=</span>&#34;<span style="color:#e6db74">http_requests_total</span>&#34;}<span style="color:#f92672">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># Обмеження кардинальності на рівні scrape:</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">scrape_configs</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">job_name</span>: <span style="color:#e6db74">&#39;my-app&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">sample_limit</span>: <span style="color:#ae81ff">5000</span>  <span style="color:#75715e"># якщо &gt; 5000 samples — весь scrape відкидається</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">label_limit</span>: <span style="color:#ae81ff">30</span>     <span style="color:#75715e"># максимум labels на серію</span>
+</span></span></code></pre></div><h3 id="104-retention-та-storage">10.4 Retention та Storage</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># prometheus.yml запуск:</span>
+</span></span><span style="display:flex;"><span>--<span style="color:#ae81ff">storage.tsdb.retention.time=30d   </span> <span style="color:#75715e"># зберігати 30 днів</span>
+</span></span><span style="display:flex;"><span>--<span style="color:#ae81ff">storage.tsdb.retention.size=50GB  </span> <span style="color:#75715e"># або до 50GB (спрацьовує перший)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Оцінка розміру (приблизна формула):</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># needed_disk = retention_seconds * ingested_samples_per_second * bytes_per_sample</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># bytes_per_sample ≈ 1-2 байти (після стиснення XOR delta encoding)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Приклад: 30d × 10,000 samples/s × 2 bytes = ~51GB</span>
+</span></span></code></pre></div><h3 id="105-rateincrease-типові-помилки">10.5 Rate/Increase: типові помилки</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># ПОМИЛКА: rate на gauge</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>node_memory_MemAvailable_bytes[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span>  <span style="color:#75715e"># ❌ безглуздо — gauge не counter</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ПОМИЛКА: irate в alerting rule</span>
+</span></span><span style="display:flex;"><span>alert<span style="color:#960050;background-color:#1e0010">:</span> HighRPS
+</span></span><span style="display:flex;"><span>expr<span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#66d9ef">irate</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span> <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1000</span>  <span style="color:#75715e"># ❌ нестабільний результат</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ПОМИЛКА: занадто малий інтервал</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">30s</span>]<span style="color:#f92672">)</span>  <span style="color:#75715e"># ❌ якщо scrape_interval=15s — тільки 2 точки!</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ПРАВИЛЬНО:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span>   <span style="color:#75715e"># ✅ плавно, 20 точок при scrape 15s</span>
+</span></span></code></pre></div><h3 id="106-алерти-проти-anti-patterns">10.6 Алерти: проти anti-patterns</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># ПОГАНО: алерт без &#34;for&#34; → шквал false positives</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">HighCPU</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">node_load1 &gt; 2.0</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ← немає &#34;for&#34;! Будь-який секундний спайк = алерт</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ДОБРЕ: з обґрунтованим &#34;for&#34;</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">HighCPU</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">node_load1 &gt; 2.0</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">for</span>: <span style="color:#ae81ff">10m </span> <span style="color:#75715e"># проблема має бути стабільною</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ПОГАНО: алерт на сирий counter</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">ErrorsSpike</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">http_requests_total{status=&#34;500&#34;} &gt; 100 </span> <span style="color:#75715e"># ❌</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ДОБРЕ: алерт на rate</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">ErrorsSpike</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">rate(http_requests_total{status=&#34;500&#34;}[5m]) &gt; 0.1 </span> <span style="color:#75715e"># ✅</span>
+</span></span></code></pre></div><h3 id="107-grafana-ux-та-організація">10.7 Grafana: UX та організація</h3>
+<pre tabindex="0"><code>Dashboard структура (рекомендована):
+├── Row: Overview (Stat/Gauge панелі — одне число)
+│   ├── Current RPS
+│   ├── Error rate %
+│   └── p99 Latency
+├── Row: Traffic (Time series)
+│   ├── RPS by status code
+│   └── Bandwidth in/out
+├── Row: Latency (Time series + Heatmap)
+│   ├── p50/p95/p99 over time
+│   └── Latency distribution heatmap
+├── Row: Errors (Time series + Table)
+│   ├── Error rate over time
+│   └── Top errors (Table)
+└── Row: Infrastructure
+    ├── CPU / Memory
+    └── Network I/O
+</code></pre><hr>
+<h2 id="11-повний-робочий-приклад-моніторинг-haproxy">11. Повний робочий приклад: моніторинг HAProxy</h2>
+<blockquote>
+<p>Реальний приклад для HAProxy native Prometheus exporter (порт 8405)</p>
+</blockquote>
+<h3 id="метрики-haproxy">Метрики HAProxy</h3>
+<pre tabindex="0"><code># Поточні з&#39;єднання (gauge):
+haproxy_frontend_current_sessions{proxy=&#34;http-in&#34;}
+
+# Запити (counter):
+haproxy_frontend_http_requests_total{proxy=&#34;http-in&#34;}
+
+# HTTP відповіді по кодах (counter):
+haproxy_frontend_http_responses_total{proxy=&#34;http-in&#34;, code=&#34;1xx&#34;}
+haproxy_frontend_http_responses_total{proxy=&#34;http-in&#34;, code=&#34;5xx&#34;}
+
+# Байти in/out (counter):
+haproxy_frontend_bytes_in_total
+haproxy_frontend_bytes_out_total
+
+# Backend servers up/down (gauge, 0 або 1):
+haproxy_server_status{proxy=&#34;backend&#34;, server=&#34;app1&#34;}
+</code></pre><h3 id="promql-запити-для-дашборду">PromQL запити для дашборду</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># RPS по бекенду:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sum</span> <span style="color:#66d9ef">by</span> <span style="color:#f92672">(</span>proxy<span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>haproxy_frontend_http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Error rate 5xx:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sum</span><span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>haproxy_frontend_http_responses_total{code<span style="color:#f92672">=</span>&#34;<span style="color:#e6db74">5xx</span>&#34;}[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">/</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sum</span><span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>haproxy_frontend_http_requests_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">*</span> <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Кількість живих серверів у кожному бекенді:</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sum</span> <span style="color:#66d9ef">by</span> <span style="color:#f92672">(</span>proxy<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>haproxy_server_status <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Пропускна здатність (Мбіт/с):</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sum</span><span style="color:#f92672">(</span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>haproxy_frontend_bytes_in_total[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">))</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">8</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">1</span>e6
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Активні з&#39;єднання vs максимум:</span>
+</span></span><span style="display:flex;"><span>haproxy_frontend_current_sessions <span style="color:#f92672">/</span> haproxy_frontend_limit_sessions <span style="color:#f92672">*</span> <span style="color:#ae81ff">100</span>
+</span></span></code></pre></div><h3 id="alerting-rules-для-haproxy">Alerting rules для HAProxy</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">groups</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">haproxy</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Сервер виключився з ротації</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">HAProxyServerDown</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">haproxy_server_status == 0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">for</span>: <span style="color:#ae81ff">1m</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">critical</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">summary</span>: <span style="color:#e6db74">&#34;HAProxy server {{ $labels.server }} is DOWN in {{ $labels.proxy }}&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Більше 50% серверів бекенду недоступні</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">HAProxyBackendHalfDown</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">expr</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          sum by (proxy) (haproxy_server_status == 0)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          /
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          sum by (proxy) (haproxy_server_status)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          &gt; 0.5</span>          
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">for</span>: <span style="color:#ae81ff">2m</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">critical</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">summary</span>: <span style="color:#e6db74">&#34;More than 50% servers down in backend {{ $labels.proxy }}&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Висока кількість 5xx помилок</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">HAProxyHighErrorRate</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">expr</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          sum by (proxy) (rate(haproxy_frontend_http_responses_total{code=&#34;5xx&#34;}[5m]))
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          /
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          sum by (proxy) (rate(haproxy_frontend_http_requests_total[5m]))
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          * 100 &gt; 5</span>          
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">for</span>: <span style="color:#ae81ff">5m</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">warning</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">summary</span>: <span style="color:#e6db74">&#34;HAProxy 5xx error rate &gt; 5% on {{ $labels.proxy }}&#34;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">description</span>: <span style="color:#e6db74">&#34;Current rate: {{ $value | printf \&#34;%.2f\&#34; }}%&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Насичення з&#39;єднань</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">HAProxySessionSaturation</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">expr</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          haproxy_frontend_current_sessions
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          / haproxy_frontend_limit_sessions
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          * 100 &gt; 80</span>          
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">for</span>: <span style="color:#ae81ff">5m</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">warning</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">summary</span>: <span style="color:#e6db74">&#34;HAProxy session limit at {{ $value | printf \&#34;%.0f\&#34; }}%&#34;</span>
+</span></span></code></pre></div><hr>
+<h2 id="12-діагностика-та-troubleshooting">12. Діагностика та troubleshooting</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># --- Prometheus UI (порт 9090) ---</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /graph         — PromQL playground</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /targets       — стан всіх таргетів (UP/DOWN)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /rules         — стан recording/alerting rules</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /alerts        — активні алерти та їх стан</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /tsdb-status   — кардинальність, топ series за розміром</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /config        — поточна конфігурація</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Перевірка конфігурації перед застосуванням ---</span>
+</span></span><span style="display:flex;"><span>promtool check config /etc/prometheus/prometheus.yml
+</span></span><span style="display:flex;"><span>promtool check rules /etc/prometheus/rules/*.yml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Валідація alertmanager конфігу ---</span>
+</span></span><span style="display:flex;"><span>amtool check-config /etc/alertmanager/alertmanager.yml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Тест алерту (симуляція firing) ---</span>
+</span></span><span style="display:flex;"><span>amtool alert add <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --alertmanager.url<span style="color:#f92672">=</span>http://alertmanager:9093 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  alertname<span style="color:#f92672">=</span>TestAlert <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  severity<span style="color:#f92672">=</span>warning <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  summary<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Test alert from CLI&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Розмір TSDB на диску ---</span>
+</span></span><span style="display:flex;"><span>du -sh /var/lib/prometheus/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- API для отримання series ---</span>
+</span></span><span style="display:flex;"><span>curl <span style="color:#e6db74">&#39;http://localhost:9090/api/v1/series?match[]=http_requests_total&amp;start=2024-01-01T00:00:00Z&amp;end=2024-01-01T01:00:00Z&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --- Скільки samples ingested/s ---</span>
+</span></span><span style="display:flex;"><span>curl -s <span style="color:#e6db74">&#39;http://localhost:9090/api/v1/query?query=rate(prometheus_tsdb_head_samples_appended_total[1m])&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  | python3 -m json.tool
+</span></span></code></pre></div><hr>
+<h2 id="підсумок">Підсумок</h2>
+<table>
+<thead>
+<tr>
+<th>Концепція</th>
+<th>Ключовий висновок</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pull model</strong></td>
+<td>Prometheus сам ходить до таргетів — централізований контроль</td>
+</tr>
+<tr>
+<td><strong>Time series</strong></td>
+<td>Унікальний ряд = metric name + набір labels</td>
+</tr>
+<tr>
+<td><strong>Counter</strong></td>
+<td>Тільки зростає → завжди використовувати <code>rate()</code>/<code>increase()</code></td>
+</tr>
+<tr>
+<td><strong>Gauge</strong></td>
+<td>Поточний стан → використовувати напряму</td>
+</tr>
+<tr>
+<td><strong>Histogram</strong></td>
+<td>Buckets + server-side quantiles → агрегується між інстансами</td>
+</tr>
+<tr>
+<td><strong>Summary</strong></td>
+<td>Client-side quantiles → НЕ агрегується між інстансами</td>
+</tr>
+<tr>
+<td><strong>rate()</strong></td>
+<td>Плавна середня швидкість → для алертів і дашбордів</td>
+</tr>
+<tr>
+<td><strong>irate()</strong></td>
+<td>Миттєва швидкість між 2 точками → тільки для live графіків</td>
+</tr>
+<tr>
+<td><strong>Cardinality</strong></td>
+<td>Головна небезпека OOM → уникати dynamic labels</td>
+</tr>
+<tr>
+<td><strong>for: у alertах</strong></td>
+<td>Захист від false positives → мінімум 2-5 хвилин</td>
+</tr>
+<tr>
+<td><strong>Recording rules</strong></td>
+<td>Pre-compute важких запитів → пришвидшують Grafana</td>
+</tr>
+<tr>
+<td><strong>inhibit_rules</strong></td>
+<td>Пригнічення похідних алертів → менше шуму</td>
+</tr>
+</tbody>
+</table>
+
+</content>
+
+
+
+<p>
+  
+  <a href="//localhost:1313/tags/prometheus/">#Prometheus</a>
+  
+  <a href="//localhost:1313/tags/grafana/">#Grafana</a>
+  
+  <a href="//localhost:1313/tags/alertmanager/">#Alertmanager</a>
+  
+  <a href="//localhost:1313/tags/monitoring/">#Monitoring</a>
+  
+  <a href="//localhost:1313/tags/devops/">#DevOps</a>
+  
+  <a href="//localhost:1313/tags/observability/">#Observability</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

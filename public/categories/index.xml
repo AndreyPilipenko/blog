@@ -43,5 +43,12 @@
       <guid>//localhost:1313/categories/interview-prep/</guid>
       <description></description>
     </item>
+    <item>
+      <title>Monitoring</title>
+      <link>//localhost:1313/categories/monitoring/</link>
+      <pubDate>Wed, 17 Feb 1993 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/categories/monitoring/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>

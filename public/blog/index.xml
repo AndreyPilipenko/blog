@@ -93,11 +93,25 @@
       <description>Linux Commands Cheatsheet&#xA;Особистий довідник по адмініструванню Linux-серверів&#xA;📦 Диски та файлова система # Огляд дисків та розділів lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID fdisk -l smartctl --scan # Визначити фізичні диски (якщо /dev/sda — залізний сервер) # Місце на диску df -h # Файлові системи df -hi # По inode du -h --max-depth=1 /var/virtualizor/ | sort -h du -sh /home # Вага директорії du -sch .[!.]* * | sort -h # З прихованими директоріями sudo du -h -d1 /root/ | sort -nr ncdu -e # Інтерактивно + приховані директорії inode vs файловий дескриптор</description>
     </item>
     <item>
+      <title>Python для співбесіди: повна база з поясненнями та прикладами</title>
+      <link>//localhost:1313/blog/python/</link>
+      <pubDate>Fri, 16 Jun 2023 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/python/</guid>
+      <description>Ця стаття — не просто список команд. Кожна концепція пояснена з відповіддю на питання &amp;ldquo;чому саме так?&amp;rdquo; — щоб ти розумів логіку, а не просто запам&amp;rsquo;ятав синтаксис.&#xA;🧠 1. Основи Python Змінні та типи даних Python — динамічно типізована мова. Це означає: тип змінної визначається автоматично в момент присвоєння, не треба писати int x = 5 як у Java.&#xA;# Числа age = 25 # int — ціле число price = 19.</description>
+    </item>
+    <item>
       <title>Git зсередини: GitOps, Git Flow, Cherry-pick, Trunk-based</title>
       <link>//localhost:1313/blog/git-workflow/</link>
       <pubDate>Tue, 14 Jun 2022 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/blog/git-workflow/</guid>
       <description>Що таке GitOps GitOps — це операційна модель, де Git є єдиним джерелом правди (single source of truth) для інфраструктури та застосунків. Будь-яка зміна в системі проходить через PR/MR у репозиторій, а не через ручні команди на сервері.&#xA;Ключові принципи:&#xA;Декларативність — стан системи описаний у Git (Kubernetes manifests, Terraform, Helm charts) Версійність — кожен git commit = знімок стану інфраструктури Автоматична синхронізація — агент (ArgoCD, Flux) постійно порівнює бажаний стан (Git) з реальним (кластер) і вирівнює їх Аудит — git log — це повний журнал операцій Різниця GitOps від CI/CD:</description>
+    </item>
+    <item>
+      <title>Prometheus &#43; Grafana &#43; Alertmanager</title>
+      <link>//localhost:1313/blog/premetheus-grafana/</link>
+      <pubDate>Wed, 17 Feb 1993 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/premetheus-grafana/</guid>
+      <description>1. Архітектура стеку: хто що робить [ Targets ] ←── scrape ── [ Prometheus ] ──→ [ Grafana ] │ [ Alertmanager ] ──→ Slack / PagerDuty / Email Компонент Роль Протокол Prometheus Збір, зберігання, обчислення HTTP pull (scrape) Grafana Візуалізація, дашборди HTTP API до Prometheus Alertmanager Роутинг, дедублікація, мовчання алертів HTTP від Prometheus Exporter Конвертує метрики у Prometheus-формат HTTP /metrics endpoint Ключовий принцип — pull model: Prometheus сам ходить до таргетів кожні N секунд (за замовчуванням 15 секунд).</description>
     </item>
     <item>
       <title>Top commands to diagnose Linux system load</title>

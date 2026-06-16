@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Grafana on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+    <link>//localhost:1313/tags/grafana/</link>
+    <description>Recent content in Grafana on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 17 Feb 1993 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/tags/grafana/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Prometheus &#43; Grafana &#43; Alertmanager</title>
+      <link>//localhost:1313/blog/premetheus-grafana/</link>
+      <pubDate>Wed, 17 Feb 1993 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/premetheus-grafana/</guid>
+      <description>1. Архітектура стеку: хто що робить [ Targets ] ←── scrape ── [ Prometheus ] ──→ [ Grafana ] │ [ Alertmanager ] ──→ Slack / PagerDuty / Email Компонент Роль Протокол Prometheus Збір, зберігання, обчислення HTTP pull (scrape) Grafana Візуалізація, дашборди HTTP API до Prometheus Alertmanager Роутинг, дедублікація, мовчання алертів HTTP від Prometheus Exporter Конвертує метрики у Prometheus-формат HTTP /metrics endpoint Ключовий принцип — pull model: Prometheus сам ходить до таргетів кожні N секунд (за замовчуванням 15 секунд).</description>
+    </item>
+  </channel>
+</rss>

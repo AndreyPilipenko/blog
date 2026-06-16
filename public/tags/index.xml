@@ -156,10 +156,45 @@
       <description></description>
     </item>
     <item>
+      <title>Programming</title>
+      <link>//localhost:1313/tags/programming/</link>
+      <pubDate>Fri, 16 Jun 2023 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/programming/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Python</title>
+      <link>//localhost:1313/tags/python/</link>
+      <pubDate>Fri, 16 Jun 2023 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/python/</guid>
+      <description></description>
+    </item>
+    <item>
       <title>Git</title>
       <link>//localhost:1313/tags/git/</link>
       <pubDate>Tue, 14 Jun 2022 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/tags/git/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Alertmanager</title>
+      <link>//localhost:1313/tags/alertmanager/</link>
+      <pubDate>Wed, 17 Feb 1993 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/alertmanager/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Grafana</title>
+      <link>//localhost:1313/tags/grafana/</link>
+      <pubDate>Wed, 17 Feb 1993 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/grafana/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Prometheus</title>
+      <link>//localhost:1313/tags/prometheus/</link>
+      <pubDate>Wed, 17 Feb 1993 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/prometheus/</guid>
       <description></description>
     </item>
   </channel>

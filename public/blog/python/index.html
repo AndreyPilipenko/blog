@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Python для співбесіди: повна база з поясненнями та прикладами | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="Python для співбесіди: повна база з поясненнями та прикладами" />
+<meta name="description" content="Все що треба знати з Python щоб впевнено пройти технічну співбесіду: змінні, структури даних, ООП, бібліотеки, REST API. З поясненнями чому саме так і реальними прикладами." />
+<meta name="keywords" content="python,programming," />
+
+
+<meta property="og:title" content="Python для співбесіди: повна база з поясненнями та прикладами" />
+<meta property="og:description" content="Все що треба знати з Python щоб впевнено пройти технічну співбесіду: змінні, структури даних, ООП, бібліотеки, REST API. З поясненнями чому саме так і реальними прикладами." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/blog/python/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2023-06-16T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-06-16T00:00:00+00:00" />
+
+
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Python для співбесіди: повна база з поясненнями та прикладами"/>
+<meta name="twitter:description" content="Все що треба знати з Python щоб впевнено пройти технічну співбесіду: змінні, структури даних, ООП, бібліотеки, REST API. З поясненнями чому саме так і реальними прикладами."/>
+
+
+
+<meta itemprop="name" content="Python для співбесіди: повна база з поясненнями та прикладами">
+<meta itemprop="description" content="Все що треба знати з Python щоб впевнено пройти технічну співбесіду: змінні, структури даних, ООП, бібліотеки, REST API. З поясненнями чому саме так і реальними прикладами."><meta itemprop="datePublished" content="2023-06-16T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-06-16T00:00:00+00:00" />
+<meta itemprop="wordCount" content="3158">
+<meta itemprop="keywords" content="python,programming," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</h2>
+</a>
+<nav>
+<a href="/">Home</a>
+
+<a href="/blog/">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Python для співбесіди: повна база з поясненнями та прикладами</h1>
+<p>
+  <i>
+    <time datetime='2023-06-16'>
+      16 Jun, 2023
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>Ця стаття — не просто список команд. Кожна концепція пояснена з відповіддю на питання <strong>&ldquo;чому саме так?&rdquo;</strong> — щоб ти розумів логіку, а не просто запам&rsquo;ятав синтаксис.</p>
+<hr>
+<h2 id="-1-основи-python">🧠 1. Основи Python</h2>
+<h3 id="змінні-та-типи-даних">Змінні та типи даних</h3>
+<p>Python — <strong>динамічно типізована</strong> мова. Це означає: тип змінної визначається автоматично в момент присвоєння, не треба писати <code>int x = 5</code> як у Java.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Числа</span>
+</span></span><span style="display:flex;"><span>age <span style="color:#f92672">=</span> <span style="color:#ae81ff">25</span>          <span style="color:#75715e"># int — ціле число</span>
+</span></span><span style="display:flex;"><span>price <span style="color:#f92672">=</span> <span style="color:#ae81ff">19.99</span>     <span style="color:#75715e"># float — число з крапкою</span>
+</span></span><span style="display:flex;"><span>big <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span> <span style="color:#f92672">**</span> <span style="color:#ae81ff">18</span>    <span style="color:#75715e"># Python не має обмеження на розмір int (на відміну від C)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Рядки</span>
+</span></span><span style="display:flex;"><span>name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Andrii&#34;</span>
+</span></span><span style="display:flex;"><span>greeting <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Hello, </span><span style="color:#e6db74">{</span>name<span style="color:#e6db74">}</span><span style="color:#e6db74">!&#34;</span>   <span style="color:#75715e"># f-string — найсучасніший спосіб форматування</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Булевий тип</span>
+</span></span><span style="display:flex;"><span>is_active <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>is_empty <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># None — відсутність значення (аналог null в інших мовах)</span>
+</span></span><span style="display:flex;"><span>result <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span></code></pre></div><blockquote>
+<p><strong>Чому f-string, а не <code>%s</code> або <code>.format()</code>?</strong><br>
+f-string — читається найлегше, виконується найшвидше, підтримує будь-які вирази прямо в <code>{}</code>. Завжди використовуй f-string у Python 3.6+.</p>
+</blockquote>
+<p><strong>Перевірка типу:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>print(type(age))      <span style="color:#75715e"># &lt;class &#39;int&#39;&gt;</span>
+</span></span><span style="display:flex;"><span>print(isinstance(age, int))   <span style="color:#75715e"># True — правильний спосіб перевірки типу</span>
+</span></span></code></pre></div><blockquote>
+<p><code>isinstance()</code> краще ніж <code>type() ==</code>, бо враховує наслідування класів.</p>
+</blockquote>
+<hr>
+<h3 id="умови-if--elif--else">Умови <code>if / elif / else</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>score <span style="color:#f92672">=</span> <span style="color:#ae81ff">75</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> score <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">90</span>:
+</span></span><span style="display:flex;"><span>    grade <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;A&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">elif</span> score <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">75</span>:
+</span></span><span style="display:flex;"><span>    grade <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;B&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">elif</span> score <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">60</span>:
+</span></span><span style="display:flex;"><span>    grade <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;C&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>    grade <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;F&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Оцінка: </span><span style="color:#e6db74">{</span>grade<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)   <span style="color:#75715e"># Оцінка: B</span>
+</span></span></code></pre></div><p><strong>Тернарний оператор</strong> (одна умова в одному рядку):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>status <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;active&#34;</span> <span style="color:#66d9ef">if</span> score <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">60</span> <span style="color:#66d9ef">else</span> <span style="color:#e6db74">&#34;failed&#34;</span>
+</span></span></code></pre></div><blockquote>
+<p>Використовуй тернарний оператор лише для простих умов — складна логіка в одному рядку стає нечитабельною.</p>
+</blockquote>
+<hr>
+<h3 id="цикли-for-і-while">Цикли <code>for</code> і <code>while</code></h3>
+<p><strong><code>for</code> — коли знаєш кількість ітерацій або ітеруєш по колекції:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>fruits <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;apple&#34;</span>, <span style="color:#e6db74">&#34;banana&#34;</span>, <span style="color:#e6db74">&#34;cherry&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> fruit <span style="color:#f92672">in</span> fruits:
+</span></span><span style="display:flex;"><span>    print(fruit)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># З індексом — використовуй enumerate(), НЕ range(len(...))</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i, fruit <span style="color:#f92672">in</span> enumerate(fruits):
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>i<span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">{</span>fruit<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># range() — числовий діапазон</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">5</span>):       <span style="color:#75715e"># 0, 1, 2, 3, 4</span>
+</span></span><span style="display:flex;"><span>    print(i)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">2</span>):  <span style="color:#75715e"># 2, 4, 6, 8 (start, stop, step)</span>
+</span></span><span style="display:flex;"><span>    print(i)
+</span></span></code></pre></div><p><strong><code>while</code> — коли умова зупинки невідома заздалегідь:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>attempts <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>max_attempts <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> attempts <span style="color:#f92672">&lt;</span> max_attempts:
+</span></span><span style="display:flex;"><span>    user_input <span style="color:#f92672">=</span> input(<span style="color:#e6db74">&#34;Введи пароль: &#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> user_input <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;secret&#34;</span>:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;Доступ надано&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>    attempts <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># else у while виконується якщо цикл завершився БЕЗ break</span>
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Доступ заблоковано&#34;</span>)
+</span></span></code></pre></div><blockquote>
+<p><strong><code>break</code></strong> — зупиняє цикл негайно.<br>
+<strong><code>continue</code></strong> — пропускає поточну ітерацію, переходить до наступної.<br>
+<strong><code>else</code> після циклу</strong> — маловідома фіча: виконується якщо цикл завершився природньо (без <code>break</code>).</p>
+</blockquote>
+<hr>
+<h3 id="функції">Функції</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Базова функція</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">greet</span>(name):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Hello, </span><span style="color:#e6db74">{</span>name<span style="color:#e6db74">}</span><span style="color:#e6db74">!&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Аргументи зі значенням за замовчуванням</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">connect</span>(host, port<span style="color:#f92672">=</span><span style="color:#ae81ff">5432</span>, timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">30</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Connecting to </span><span style="color:#e6db74">{</span>host<span style="color:#e6db74">}</span><span style="color:#e6db74">:</span><span style="color:#e6db74">{</span>port<span style="color:#e6db74">}</span><span style="color:#e6db74"> (timeout=</span><span style="color:#e6db74">{</span>timeout<span style="color:#e6db74">}</span><span style="color:#e6db74">s)&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Виклик — можна передавати іменовані аргументи в будь-якому порядку</span>
+</span></span><span style="display:flex;"><span>connect(<span style="color:#e6db74">&#34;localhost&#34;</span>)                    <span style="color:#75715e"># використає дефолтні port і timeout</span>
+</span></span><span style="display:flex;"><span>connect(<span style="color:#e6db74">&#34;db.prod&#34;</span>, port<span style="color:#f92672">=</span><span style="color:#ae81ff">3306</span>)          <span style="color:#75715e"># перевизначаємо тільки port</span>
+</span></span><span style="display:flex;"><span>connect(host<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;db.prod&#34;</span>, timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">60</span>)   <span style="color:#75715e"># іменовані аргументи</span>
+</span></span></code></pre></div><p><strong><code>*args</code> і <code>**kwargs</code></strong> — коли кількість аргументів невідома:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">sum_all</span>(<span style="color:#f92672">*</span>args):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># args — це tuple з усіх переданих позиційних аргументів</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> sum(args)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(sum_all(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>))   <span style="color:#75715e"># 10</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">log_event</span>(event, <span style="color:#f92672">**</span>kwargs):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># kwargs — це dict з іменованих аргументів</span>
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Event: </span><span style="color:#e6db74">{</span>event<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> key, value <span style="color:#f92672">in</span> kwargs<span style="color:#f92672">.</span>items():
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;  </span><span style="color:#e6db74">{</span>key<span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">{</span>value<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>log_event(<span style="color:#e6db74">&#34;login&#34;</span>, user<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;andrii&#34;</span>, ip<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;192.168.1.1&#34;</span>, status<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>)
+</span></span></code></pre></div><p><strong>Lambda</strong> — анонімна функція для простих операцій:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>square <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> x: x <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>print(square(<span style="color:#ae81ff">5</span>))   <span style="color:#75715e"># 25</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Найчастіше використовується як аргумент sorted/filter/map</span>
+</span></span><span style="display:flex;"><span>numbers <span style="color:#f92672">=</span> [<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">9</span>, <span style="color:#ae81ff">2</span>]
+</span></span><span style="display:flex;"><span>sorted_nums <span style="color:#f92672">=</span> sorted(numbers, key<span style="color:#f92672">=</span><span style="color:#66d9ef">lambda</span> x: <span style="color:#f92672">-</span>x)  <span style="color:#75715e"># сортування від більшого</span>
+</span></span><span style="display:flex;"><span>print(sorted_nums)  <span style="color:#75715e"># [9, 5, 4, 3, 2, 1, 1]</span>
+</span></span></code></pre></div><hr>
+<h3 id="робота-з-файлами">Робота з файлами</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Запис у файл</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#34;data.txt&#34;</span>, <span style="color:#e6db74">&#34;w&#34;</span>, encoding<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>    f<span style="color:#f92672">.</span>write(<span style="color:#e6db74">&#34;Рядок перший</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    f<span style="color:#f92672">.</span>write(<span style="color:#e6db74">&#34;Рядок другий</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Читання всього файлу</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#34;data.txt&#34;</span>, <span style="color:#e6db74">&#34;r&#34;</span>, encoding<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>    content <span style="color:#f92672">=</span> f<span style="color:#f92672">.</span>read()
+</span></span><span style="display:flex;"><span>    print(content)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Читання рядок за рядком (ефективно для великих файлів)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#34;data.txt&#34;</span>, <span style="color:#e6db74">&#34;r&#34;</span>, encoding<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> line <span style="color:#f92672">in</span> f:
+</span></span><span style="display:flex;"><span>        print(line<span style="color:#f92672">.</span>strip())   <span style="color:#75715e"># strip() прибирає \n в кінці</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Додавання до файлу (не перезаписуючи)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#34;data.txt&#34;</span>, <span style="color:#e6db74">&#34;a&#34;</span>, encoding<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>    f<span style="color:#f92672">.</span>write(<span style="color:#e6db74">&#34;Рядок третій</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><blockquote>
+<p><strong>Чому <code>with open(...)</code>, а не <code>f = open(...)</code>?</strong><br>
+<code>with</code> автоматично закриває файл навіть якщо виникне виняток. Це <strong>контекстний менеджер</strong> — він гарантує cleanup. Завжди використовуй <code>with</code>.</p>
+</blockquote>
+<hr>
+<h3 id="обробка-помилок-try--except">Обробка помилок <code>try / except</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Базовий try/except</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>    result <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> <span style="color:#a6e22e">ZeroDivisionError</span>:
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Ділення на нуль!&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Кілька типів винятків</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>    value <span style="color:#f92672">=</span> int(<span style="color:#e6db74">&#34;not a number&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> <span style="color:#a6e22e">ValueError</span> <span style="color:#66d9ef">as</span> e:
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Невірне значення: </span><span style="color:#e6db74">{</span>e<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> <span style="color:#a6e22e">TypeError</span> <span style="color:#66d9ef">as</span> e:
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Невірний тип: </span><span style="color:#e6db74">{</span>e<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># finally — виконується ЗАВЖДИ (і при помилці, і без)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Типове використання: закриття з&#39;єднань, файлів</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>    conn <span style="color:#f92672">=</span> open_db_connection()
+</span></span><span style="display:flex;"><span>    conn<span style="color:#f92672">.</span>execute(<span style="color:#e6db74">&#34;SELECT 1&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Помилка: </span><span style="color:#e6db74">{</span>e<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">finally</span>:
+</span></span><span style="display:flex;"><span>    conn<span style="color:#f92672">.</span>close()   <span style="color:#75715e"># завжди закриємо з&#39;єднання</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># else — виконується тільки якщо помилки НЕ було</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>    data <span style="color:#f92672">=</span> fetch_data()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> RequestError <span style="color:#66d9ef">as</span> e:
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Не вдалося отримати дані: </span><span style="color:#e6db74">{</span>e<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>    process(data)   <span style="color:#75715e"># виконується тільки при успіху</span>
+</span></span></code></pre></div><p><strong>Власні виключення:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ValidationError</span>(<span style="color:#a6e22e">Exception</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Виняток для помилок валідації даних.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">pass</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">validate_age</span>(age):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> age <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">or</span> age <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">150</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">raise</span> ValidationError(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Невірний вік: </span><span style="color:#e6db74">{</span>age<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> age
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>    validate_age(<span style="color:#f92672">-</span><span style="color:#ae81ff">5</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> ValidationError <span style="color:#66d9ef">as</span> e:
+</span></span><span style="display:flex;"><span>    print(e)   <span style="color:#75715e"># Невірний вік: -5</span>
+</span></span></code></pre></div><hr>
+<h3 id="імпорти">Імпорти</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Повний імпорт модуля</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> os
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> sys
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Імпорт конкретних функцій/класів</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> pathlib <span style="color:#f92672">import</span> Path
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> datetime <span style="color:#f92672">import</span> datetime, timedelta
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Аліас для довгих назв</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> json <span style="color:#66d9ef">as</span> j
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># НЕ рекомендується (забруднює namespace):</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> os <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+</span></span></code></pre></div><hr>
+<h2 id="-2-структури-даних">🧱 2. Структури даних</h2>
+<h3 id="list-список">List (список)</h3>
+<p><strong>Список</strong> — впорядкована, змінювана колекція. Дозволяє дублікати.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>servers <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;web-01&#34;</span>, <span style="color:#e6db74">&#34;web-02&#34;</span>, <span style="color:#e6db74">&#34;db-01&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Основні операції</span>
+</span></span><span style="display:flex;"><span>servers<span style="color:#f92672">.</span>append(<span style="color:#e6db74">&#34;cache-01&#34;</span>)       <span style="color:#75715e"># додати в кінець: O(1)</span>
+</span></span><span style="display:flex;"><span>servers<span style="color:#f92672">.</span>insert(<span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#34;web-00&#34;</span>)      <span style="color:#75715e"># вставити за індексом: O(n)</span>
+</span></span><span style="display:flex;"><span>servers<span style="color:#f92672">.</span>remove(<span style="color:#e6db74">&#34;db-01&#34;</span>)          <span style="color:#75715e"># видалити перший збіг: O(n)</span>
+</span></span><span style="display:flex;"><span>popped <span style="color:#f92672">=</span> servers<span style="color:#f92672">.</span>pop()           <span style="color:#75715e"># видалити та повернути останній: O(1)</span>
+</span></span><span style="display:flex;"><span>popped <span style="color:#f92672">=</span> servers<span style="color:#f92672">.</span>pop(<span style="color:#ae81ff">0</span>)          <span style="color:#75715e"># видалити та повернути за індексом: O(n)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Зрізи (slicing) — повертають новий список</span>
+</span></span><span style="display:flex;"><span>first_two <span style="color:#f92672">=</span> servers[:<span style="color:#ae81ff">2</span>]          <span style="color:#75715e"># перші два елементи</span>
+</span></span><span style="display:flex;"><span>last_two <span style="color:#f92672">=</span> servers[<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>:]          <span style="color:#75715e"># останні два</span>
+</span></span><span style="display:flex;"><span>reversed_list <span style="color:#f92672">=</span> servers[::<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]    <span style="color:#75715e"># реверс</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Корисні методи</span>
+</span></span><span style="display:flex;"><span>print(len(servers))              <span style="color:#75715e"># довжина</span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;web-01&#34;</span> <span style="color:#f92672">in</span> servers)       <span style="color:#75715e"># перевірка наявності: O(n)</span>
+</span></span><span style="display:flex;"><span>servers<span style="color:#f92672">.</span>sort()                   <span style="color:#75715e"># сортування на місці</span>
+</span></span><span style="display:flex;"><span>sorted_copy <span style="color:#f92672">=</span> sorted(servers)    <span style="color:#75715e"># новий відсортований список</span>
+</span></span><span style="display:flex;"><span>servers<span style="color:#f92672">.</span>reverse()                <span style="color:#75715e"># реверс на місці</span>
+</span></span></code></pre></div><p><strong>Коли використовувати list:</strong></p>
+<ul>
+<li>потрібен порядок елементів</li>
+<li>потрібен доступ за індексом</li>
+<li>елементи можуть повторюватися</li>
+</ul>
+<hr>
+<h3 id="tuple-кортеж">Tuple (кортеж)</h3>
+<p><strong>Tuple</strong> — впорядкована, <strong>незмінна</strong> колекція.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Незмінний — після створення не можна змінити</span>
+</span></span><span style="display:flex;"><span>coordinates <span style="color:#f92672">=</span> (<span style="color:#ae81ff">50.4501</span>, <span style="color:#ae81ff">30.5234</span>)  <span style="color:#75715e"># широта/довгота Києва</span>
+</span></span><span style="display:flex;"><span>rgb <span style="color:#f92672">=</span> (<span style="color:#ae81ff">255</span>, <span style="color:#ae81ff">128</span>, <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Розпакування (unpacking)</span>
+</span></span><span style="display:flex;"><span>lat, lon <span style="color:#f92672">=</span> coordinates
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Lat: </span><span style="color:#e6db74">{</span>lat<span style="color:#e6db74">}</span><span style="color:#e6db74">, Lon: </span><span style="color:#e6db74">{</span>lon<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Функція може повернути кілька значень через tuple</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_min_max</span>(numbers):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> min(numbers), max(numbers)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>low, high <span style="color:#f92672">=</span> get_min_max([<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">9</span>])
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Min: </span><span style="color:#e6db74">{</span>low<span style="color:#e6db74">}</span><span style="color:#e6db74">, Max: </span><span style="color:#e6db74">{</span>high<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)   <span style="color:#75715e"># Min: 1, Max: 9</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Tuple як ключ dict (list не можна — він не hashable)</span>
+</span></span><span style="display:flex;"><span>location_data <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    (<span style="color:#ae81ff">50.45</span>, <span style="color:#ae81ff">30.52</span>): <span style="color:#e6db74">&#34;Kyiv&#34;</span>,
+</span></span><span style="display:flex;"><span>    (<span style="color:#ae81ff">48.46</span>, <span style="color:#ae81ff">35.05</span>): <span style="color:#e6db74">&#34;Dnipro&#34;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><blockquote>
+<p><strong>Чому tuple, а не list?</strong><br>
+Tuple незмінний → Python може оптимізувати пам&rsquo;ять і швидкість. Семантично tuple означає &ldquo;ця структура не буде змінюватись&rdquo; — координати, RGB, повернені значення функції.</p>
+</blockquote>
+<hr>
+<h3 id="dict-словник">Dict (словник)</h3>
+<p><strong>Dict</strong> — колекція пар ключ-значення. Ключі унікальні. З Python 3.7+ порядок вставки зберігається.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>server <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;hostname&#34;</span>: <span style="color:#e6db74">&#34;web-01&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;ip&#34;</span>: <span style="color:#e6db74">&#34;192.168.1.10&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;port&#34;</span>: <span style="color:#ae81ff">80</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;active&#34;</span>: <span style="color:#66d9ef">True</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Доступ до значень</span>
+</span></span><span style="display:flex;"><span>print(server[<span style="color:#e6db74">&#34;hostname&#34;</span>])              <span style="color:#75715e"># &#34;web-01&#34; — KeyError якщо ключ відсутній</span>
+</span></span><span style="display:flex;"><span>print(server<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;hostname&#34;</span>))          <span style="color:#75715e"># &#34;web-01&#34; — None якщо ключ відсутній</span>
+</span></span><span style="display:flex;"><span>print(server<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;cpu&#34;</span>, <span style="color:#e6db74">&#34;unknown&#34;</span>))    <span style="color:#75715e"># &#34;unknown&#34; — дефолтне значення</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Модифікація</span>
+</span></span><span style="display:flex;"><span>server[<span style="color:#e6db74">&#34;port&#34;</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">443</span>                   <span style="color:#75715e"># оновити значення</span>
+</span></span><span style="display:flex;"><span>server[<span style="color:#e6db74">&#34;ssl&#34;</span>] <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>                   <span style="color:#75715e"># додати новий ключ</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">del</span> server[<span style="color:#e6db74">&#34;active&#34;</span>]                   <span style="color:#75715e"># видалити ключ</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ітерація</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> key <span style="color:#f92672">in</span> server:                     <span style="color:#75715e"># ітерація по ключах</span>
+</span></span><span style="display:flex;"><span>    print(key)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> value <span style="color:#f92672">in</span> server<span style="color:#f92672">.</span>values():          <span style="color:#75715e"># ітерація по значеннях</span>
+</span></span><span style="display:flex;"><span>    print(value)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> key, value <span style="color:#f92672">in</span> server<span style="color:#f92672">.</span>items():      <span style="color:#75715e"># ітерація по парах</span>
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>key<span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">{</span>value<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Злиття словників (Python 3.9+)</span>
+</span></span><span style="display:flex;"><span>defaults <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;timeout&#34;</span>: <span style="color:#ae81ff">30</span>, <span style="color:#e6db74">&#34;retries&#34;</span>: <span style="color:#ae81ff">3</span>}
+</span></span><span style="display:flex;"><span>config <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;db.prod&#34;</span>} <span style="color:#f92672">|</span> defaults   <span style="color:#75715e"># новий об&#39;єднаний словник</span>
+</span></span></code></pre></div><p><strong>Вкладені словники:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>cluster <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;web&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;servers&#34;</span>: [<span style="color:#e6db74">&#34;web-01&#34;</span>, <span style="color:#e6db74">&#34;web-02&#34;</span>],
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;port&#34;</span>: <span style="color:#ae81ff">80</span>,
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;db&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;servers&#34;</span>: [<span style="color:#e6db74">&#34;db-master&#34;</span>, <span style="color:#e6db74">&#34;db-replica&#34;</span>],
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;port&#34;</span>: <span style="color:#ae81ff">5432</span>,
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(cluster[<span style="color:#e6db74">&#34;web&#34;</span>][<span style="color:#e6db74">&#34;servers&#34;</span>][<span style="color:#ae81ff">0</span>])   <span style="color:#75715e"># &#34;web-01&#34;</span>
+</span></span></code></pre></div><p><strong><code>defaultdict</code></strong> — автоматично створює дефолтне значення:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> collections <span style="color:#f92672">import</span> defaultdict
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Групування за першою буквою</span>
+</span></span><span style="display:flex;"><span>words <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;apple&#34;</span>, <span style="color:#e6db74">&#34;ant&#34;</span>, <span style="color:#e6db74">&#34;banana&#34;</span>, <span style="color:#e6db74">&#34;bear&#34;</span>, <span style="color:#e6db74">&#34;cherry&#34;</span>]
+</span></span><span style="display:flex;"><span>grouped <span style="color:#f92672">=</span> defaultdict(list)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> word <span style="color:#f92672">in</span> words:
+</span></span><span style="display:flex;"><span>    grouped[word[<span style="color:#ae81ff">0</span>]]<span style="color:#f92672">.</span>append(word)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(dict(grouped))
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># {&#39;a&#39;: [&#39;apple&#39;, &#39;ant&#39;], &#39;b&#39;: [&#39;banana&#39;, &#39;bear&#39;], &#39;c&#39;: [&#39;cherry&#39;]}</span>
+</span></span></code></pre></div><hr>
+<h3 id="set-множина">Set (множина)</h3>
+<p><strong>Set</strong> — невпорядкована колекція <strong>унікальних</strong> елементів. Перевірка наявності <code>O(1)</code> (на відміну від list <code>O(n)</code>).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>active_ips <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;192.168.1.1&#34;</span>, <span style="color:#e6db74">&#34;192.168.1.2&#34;</span>, <span style="color:#e6db74">&#34;192.168.1.3&#34;</span>}
+</span></span><span style="display:flex;"><span>blocked_ips <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;192.168.1.2&#34;</span>, <span style="color:#e6db74">&#34;10.0.0.5&#34;</span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Операції теорії множин</span>
+</span></span><span style="display:flex;"><span>union <span style="color:#f92672">=</span> active_ips <span style="color:#f92672">|</span> blocked_ips          <span style="color:#75715e"># об&#39;єднання</span>
+</span></span><span style="display:flex;"><span>intersection <span style="color:#f92672">=</span> active_ips <span style="color:#f92672">&amp;</span> blocked_ips   <span style="color:#75715e"># перетин: {&#39;192.168.1.2&#39;}</span>
+</span></span><span style="display:flex;"><span>difference <span style="color:#f92672">=</span> active_ips <span style="color:#f92672">-</span> blocked_ips     <span style="color:#75715e"># в active але не в blocked</span>
+</span></span><span style="display:flex;"><span>sym_diff <span style="color:#f92672">=</span> active_ips <span style="color:#f92672">^</span> blocked_ips       <span style="color:#75715e"># є в одному але не в обох</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірка</span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;192.168.1.1&#34;</span> <span style="color:#f92672">in</span> active_ips)   <span style="color:#75715e"># True — O(1)!</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Видалення дублікатів зі списку</span>
+</span></span><span style="display:flex;"><span>numbers <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>]
+</span></span><span style="display:flex;"><span>unique <span style="color:#f92672">=</span> list(set(numbers))           <span style="color:#75715e"># [1, 2, 3, 4] — порядок не гарантований</span>
+</span></span></code></pre></div><blockquote>
+<p><strong>Коли set замість list?</strong><br>
+Коли треба перевіряти наявність (<code>in</code>) — set у 100x швидший на великих даних. Коли треба унікальність. Коли треба операції з множинами.</p>
+</blockquote>
+<hr>
+<h3 id="comprehensions-генераторні-вирази">Comprehensions (генераторні вирази)</h3>
+<p>Компактний спосіб створити нову колекцію з існуючої. Читабельніший і часто швидший за <code>for</code>-цикл.</p>
+<p><strong>List comprehension:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Традиційний спосіб</span>
+</span></span><span style="display:flex;"><span>squares <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">10</span>):
+</span></span><span style="display:flex;"><span>    squares<span style="color:#f92672">.</span>append(x <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># List comprehension — еквівалентно, але коротше</span>
+</span></span><span style="display:flex;"><span>squares <span style="color:#f92672">=</span> [x <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span> <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">10</span>)]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># З умовою (фільтрація)</span>
+</span></span><span style="display:flex;"><span>even_squares <span style="color:#f92672">=</span> [x <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span> <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">10</span>) <span style="color:#66d9ef">if</span> x <span style="color:#f92672">%</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [0, 4, 16, 36, 64]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># З перетворенням рядків</span>
+</span></span><span style="display:flex;"><span>servers <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;WEB-01&#34;</span>, <span style="color:#e6db74">&#34;WEB-02&#34;</span>, <span style="color:#e6db74">&#34;DB-01&#34;</span>]
+</span></span><span style="display:flex;"><span>lower_servers <span style="color:#f92672">=</span> [s<span style="color:#f92672">.</span>lower() <span style="color:#66d9ef">for</span> s <span style="color:#f92672">in</span> servers]
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [&#34;web-01&#34;, &#34;web-02&#34;, &#34;db-01&#34;]</span>
+</span></span></code></pre></div><p><strong>Dict comprehension:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Перевернути ключі та значення</span>
+</span></span><span style="display:flex;"><span>original <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;a&#34;</span>: <span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#34;b&#34;</span>: <span style="color:#ae81ff">2</span>, <span style="color:#e6db74">&#34;c&#34;</span>: <span style="color:#ae81ff">3</span>}
+</span></span><span style="display:flex;"><span>inverted <span style="color:#f92672">=</span> {v: k <span style="color:#66d9ef">for</span> k, v <span style="color:#f92672">in</span> original<span style="color:#f92672">.</span>items()}
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># {1: &#34;a&#34;, 2: &#34;b&#34;, 3: &#34;c&#34;}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Фільтрація по значенню</span>
+</span></span><span style="display:flex;"><span>servers <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;web-01&#34;</span>: <span style="color:#66d9ef">True</span>, <span style="color:#e6db74">&#34;web-02&#34;</span>: <span style="color:#66d9ef">False</span>, <span style="color:#e6db74">&#34;db-01&#34;</span>: <span style="color:#66d9ef">True</span>}
+</span></span><span style="display:flex;"><span>active <span style="color:#f92672">=</span> {name: status <span style="color:#66d9ef">for</span> name, status <span style="color:#f92672">in</span> servers<span style="color:#f92672">.</span>items() <span style="color:#66d9ef">if</span> status}
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># {&#34;web-01&#34;: True, &#34;db-01&#34;: True}</span>
+</span></span></code></pre></div><p><strong>Set comprehension:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Унікальні домени з email-адрес</span>
+</span></span><span style="display:flex;"><span>emails <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;user@gmail.com&#34;</span>, <span style="color:#e6db74">&#34;admin@ukr.net&#34;</span>, <span style="color:#e6db74">&#34;dev@gmail.com&#34;</span>]
+</span></span><span style="display:flex;"><span>domains <span style="color:#f92672">=</span> {email<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;@&#34;</span>)[<span style="color:#ae81ff">1</span>] <span style="color:#66d9ef">for</span> email <span style="color:#f92672">in</span> emails}
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># {&#34;gmail.com&#34;, &#34;ukr.net&#34;}</span>
+</span></span></code></pre></div><p><strong>Generator expression</strong> — не створює список одразу, генерує по одному:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Якщо треба просто обчислити суму — не треба створювати список</span>
+</span></span><span style="display:flex;"><span>total <span style="color:#f92672">=</span> sum(x <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span> <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">1_000_000</span>))   <span style="color:#75715e"># ефективно по пам&#39;яті</span>
+</span></span></code></pre></div><hr>
+<h3 id="коли-що-використовувати--шпаргалка">Коли що використовувати — шпаргалка</h3>
+<table>
+<thead>
+<tr>
+<th>Структура</th>
+<th>Порядок</th>
+<th>Змінна</th>
+<th>Унікальність</th>
+<th>Ключ-значення</th>
+<th>Пошук</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td><code>tuple</code></td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td><code>dict</code></td>
+<td>✅ 3.7+</td>
+<td>✅</td>
+<td>ключі ✅</td>
+<td>✅</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><code>set</code></td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td>O(1)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-3-ооп--обєктно-орієнтоване-програмування">🧩 3. ООП — Об&rsquo;єктно-орієнтоване програмування</h2>
+<h3 id="класи-та-обєкти">Класи та об&rsquo;єкти</h3>
+<p><strong>Клас</strong> — шаблон (blueprint). <strong>Об&rsquo;єкт</strong> — конкретний екземпляр цього шаблону.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Server</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Атрибут класу — спільний для ВСІХ екземплярів</span>
+</span></span><span style="display:flex;"><span>    default_port <span style="color:#f92672">=</span> <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, hostname, ip, port<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># self — посилання на конкретний екземпляр</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Атрибути екземпляра — унікальні для кожного об&#39;єкта</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>hostname <span style="color:#f92672">=</span> hostname
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>ip <span style="color:#f92672">=</span> ip
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>port <span style="color:#f92672">=</span> port <span style="color:#f92672">or</span> self<span style="color:#f92672">.</span>default_port
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>is_active <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>   <span style="color:#75715e"># дефолтний стан</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">start</span>(self):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>is_active <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>self<span style="color:#f92672">.</span>hostname<span style="color:#e6db74">}</span><span style="color:#e6db74"> запущено на </span><span style="color:#e6db74">{</span>self<span style="color:#f92672">.</span>ip<span style="color:#e6db74">}</span><span style="color:#e6db74">:</span><span style="color:#e6db74">{</span>self<span style="color:#f92672">.</span>port<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">stop</span>(self):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>is_active <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>self<span style="color:#f92672">.</span>hostname<span style="color:#e6db74">}</span><span style="color:#e6db74"> зупинено&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">status</span>(self):
+</span></span><span style="display:flex;"><span>        state <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;активний&#34;</span> <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>is_active <span style="color:#66d9ef">else</span> <span style="color:#e6db74">&#34;зупинений&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>self<span style="color:#f92672">.</span>hostname<span style="color:#e6db74">}</span><span style="color:#e6db74"> [</span><span style="color:#e6db74">{</span>self<span style="color:#f92672">.</span>ip<span style="color:#e6db74">}</span><span style="color:#e6db74">:</span><span style="color:#e6db74">{</span>self<span style="color:#f92672">.</span>port<span style="color:#e6db74">}</span><span style="color:#e6db74">] — </span><span style="color:#e6db74">{</span>state<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># __repr__ — repr для розробника (в дебаггері, в shell)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __repr__(self):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Server(hostname=</span><span style="color:#e6db74">{</span>self<span style="color:#f92672">.</span>hostname<span style="color:#e6db74">!r}</span><span style="color:#e6db74">, ip=</span><span style="color:#e6db74">{</span>self<span style="color:#f92672">.</span>ip<span style="color:#e6db74">!r}</span><span style="color:#e6db74">)&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># __str__ — для print() та str()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __str__(self):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>status()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Створення об&#39;єктів</span>
+</span></span><span style="display:flex;"><span>web1 <span style="color:#f92672">=</span> Server(<span style="color:#e6db74">&#34;web-01&#34;</span>, <span style="color:#e6db74">&#34;192.168.1.10&#34;</span>)
+</span></span><span style="display:flex;"><span>web2 <span style="color:#f92672">=</span> Server(<span style="color:#e6db74">&#34;web-02&#34;</span>, <span style="color:#e6db74">&#34;192.168.1.11&#34;</span>, port<span style="color:#f92672">=</span><span style="color:#ae81ff">8080</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>web1<span style="color:#f92672">.</span>start()
+</span></span><span style="display:flex;"><span>print(web1)          <span style="color:#75715e"># web-01 [192.168.1.10:80] — активний</span>
+</span></span><span style="display:flex;"><span>print(repr(web1))    <span style="color:#75715e"># Server(hostname=&#39;web-01&#39;, ip=&#39;192.168.1.10&#39;)</span>
+</span></span></code></pre></div><hr>
+<h3 id="наслідування">Наслідування</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DatabaseServer</span>(Server):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Спеціалізований сервер БД — розширює базовий Server.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, hostname, ip, db_name, port<span style="color:#f92672">=</span><span style="color:#ae81ff">5432</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Викликаємо __init__ батьківського класу</span>
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span>__init__(hostname, ip, port)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>db_name <span style="color:#f92672">=</span> db_name
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>connections <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">connect</span>(self, user):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>connections<span style="color:#f92672">.</span>append(user)
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Користувач </span><span style="color:#e6db74">{</span>user<span style="color:#e6db74">}</span><span style="color:#e6db74"> підключився до </span><span style="color:#e6db74">{</span>self<span style="color:#f92672">.</span>db_name<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">status</span>(self):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Перевизначаємо метод батька (override)</span>
+</span></span><span style="display:flex;"><span>        base_status <span style="color:#f92672">=</span> super()<span style="color:#f92672">.</span>status()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>base_status<span style="color:#e6db74">}</span><span style="color:#e6db74"> | DB: </span><span style="color:#e6db74">{</span>self<span style="color:#f92672">.</span>db_name<span style="color:#e6db74">}</span><span style="color:#e6db74"> | Connections: </span><span style="color:#e6db74">{</span>len(self<span style="color:#f92672">.</span>connections)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>db <span style="color:#f92672">=</span> DatabaseServer(<span style="color:#e6db74">&#34;db-master&#34;</span>, <span style="color:#e6db74">&#34;192.168.1.50&#34;</span>, <span style="color:#e6db74">&#34;production&#34;</span>)
+</span></span><span style="display:flex;"><span>db<span style="color:#f92672">.</span>start()     <span style="color:#75715e"># метод від Server</span>
+</span></span><span style="display:flex;"><span>db<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&#34;admin&#34;</span>)
+</span></span><span style="display:flex;"><span>print(db)      <span style="color:#75715e"># db-master [192.168.1.50:5432] — активний | DB: production | Connections: 1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірка ієрархії</span>
+</span></span><span style="display:flex;"><span>print(isinstance(db, DatabaseServer))   <span style="color:#75715e"># True</span>
+</span></span><span style="display:flex;"><span>print(isinstance(db, Server))           <span style="color:#75715e"># True — db є і Server теж</span>
+</span></span></code></pre></div><hr>
+<h3 id="інкапсуляція">Інкапсуляція</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BankAccount</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, owner, balance<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>owner <span style="color:#f92672">=</span> owner
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_balance <span style="color:#f92672">=</span> balance        <span style="color:#75715e"># одне підкреслення: &#34;не змінюй напряму&#34; (конвенція)</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>__pin <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0000&#34;</span>            <span style="color:#75715e"># два підкреслення: name mangling (_BankAccount__pin)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@property</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">balance</span>(self):
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;&#34;&#34;Геттер — читаємо _balance як атрибут.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_balance
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@balance.setter</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">balance</span>(self, amount):
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;&#34;&#34;Сеттер — з валідацією перед записом.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> amount <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">ValueError</span>(<span style="color:#e6db74">&#34;Баланс не може бути від&#39;ємним&#34;</span>)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_balance <span style="color:#f92672">=</span> amount
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">deposit</span>(self, amount):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> amount <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">ValueError</span>(<span style="color:#e6db74">&#34;Сума поповнення має бути більше 0&#34;</span>)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_balance <span style="color:#f92672">+=</span> amount
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_balance
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">withdraw</span>(self, amount):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> amount <span style="color:#f92672">&gt;</span> self<span style="color:#f92672">.</span>_balance:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">ValueError</span>(<span style="color:#e6db74">&#34;Недостатньо коштів&#34;</span>)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_balance <span style="color:#f92672">-=</span> amount
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_balance
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>account <span style="color:#f92672">=</span> BankAccount(<span style="color:#e6db74">&#34;Andrii&#34;</span>, <span style="color:#ae81ff">1000</span>)
+</span></span><span style="display:flex;"><span>print(account<span style="color:#f92672">.</span>balance)       <span style="color:#75715e"># 1000 — через property</span>
+</span></span><span style="display:flex;"><span>account<span style="color:#f92672">.</span>balance <span style="color:#f92672">=</span> <span style="color:#ae81ff">2000</span>       <span style="color:#75715e"># через setter з валідацією</span>
+</span></span><span style="display:flex;"><span>account<span style="color:#f92672">.</span>deposit(<span style="color:#ae81ff">500</span>)
+</span></span><span style="display:flex;"><span>print(account<span style="color:#f92672">.</span>balance)       <span style="color:#75715e"># 2500</span>
+</span></span></code></pre></div><blockquote>
+<p><strong>Чому <code>@property</code>?</strong><br>
+Дозволяє звертатись до методу як до атрибута (<code>account.balance</code>), але при цьому контролювати читання/запис. Класика ООП: приховати деталі реалізації, надати стабільний інтерфейс.</p>
+</blockquote>
+<hr>
+<h3 id="статичні-методи-та-методи-класу">Статичні методи та методи класу</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MathUtils</span>:
+</span></span><span style="display:flex;"><span>    PI <span style="color:#f92672">=</span> <span style="color:#ae81ff">3.14159</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@staticmethod</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">add</span>(a, b):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Не має доступу до self або cls</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Просто функція в просторі імен класу</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> a <span style="color:#f92672">+</span> b
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@classmethod</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">circle_area</span>(cls, radius):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># cls — посилання на клас (не екземпляр)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Може отримати доступ до атрибутів класу</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> cls<span style="color:#f92672">.</span>PI <span style="color:#f92672">*</span> radius <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(MathUtils<span style="color:#f92672">.</span>add(<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>))           <span style="color:#75715e"># 7 — без створення екземпляра</span>
+</span></span><span style="display:flex;"><span>print(MathUtils<span style="color:#f92672">.</span>circle_area(<span style="color:#ae81ff">5</span>))      <span style="color:#75715e"># 78.53975</span>
+</span></span></code></pre></div><hr>
+<h2 id="-4-бібліотеки-та-екосистема">⚙️ 4. Бібліотеки та екосистема</h2>
+<h3 id="pip-та-venv">pip та venv</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Створення ізольованого середовища</span>
+</span></span><span style="display:flex;"><span>python3 -m venv .venv
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Активація</span>
+</span></span><span style="display:flex;"><span>source .venv/bin/activate      <span style="color:#75715e"># Linux/macOS</span>
+</span></span><span style="display:flex;"><span>.venv<span style="color:#ae81ff">\S</span>cripts<span style="color:#ae81ff">\a</span>ctivate         <span style="color:#75715e"># Windows</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Встановлення залежностей</span>
+</span></span><span style="display:flex;"><span>pip install requests flask
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Зберегти поточні залежності</span>
+</span></span><span style="display:flex;"><span>pip freeze &gt; requirements.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Відтворити середовище (на іншій машині)</span>
+</span></span><span style="display:flex;"><span>pip install -r requirements.txt
+</span></span></code></pre></div><blockquote>
+<p><strong>Чому <code>venv</code>?</strong><br>
+Кожен проект має свої залежності. Без venv — конфлікт версій між проектами. З venv — кожен проект в ізоляції.</p>
+</blockquote>
+<hr>
+<h3 id="requests--http-запити"><code>requests</code> — HTTP запити</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> requests
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># GET запит</span>
+</span></span><span style="display:flex;"><span>response <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>get(
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;https://api.github.com/users/andriipylypenko&#34;</span>,
+</span></span><span style="display:flex;"><span>    headers<span style="color:#f92672">=</span>{<span style="color:#e6db74">&#34;Accept&#34;</span>: <span style="color:#e6db74">&#34;application/vnd.github.v3+json&#34;</span>},
+</span></span><span style="display:flex;"><span>    timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>   <span style="color:#75715e"># завжди встановлюй timeout!</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірка статусу</span>
+</span></span><span style="display:flex;"><span>response<span style="color:#f92672">.</span>raise_for_status()   <span style="color:#75715e"># кине HTTPError якщо 4xx/5xx</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>data <span style="color:#f92672">=</span> response<span style="color:#f92672">.</span>json()        <span style="color:#75715e"># автоматично парсить JSON</span>
+</span></span><span style="display:flex;"><span>print(data[<span style="color:#e6db74">&#34;name&#34;</span>])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># POST запит з JSON тілом</span>
+</span></span><span style="display:flex;"><span>payload <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;username&#34;</span>: <span style="color:#e6db74">&#34;andrii&#34;</span>, <span style="color:#e6db74">&#34;action&#34;</span>: <span style="color:#e6db74">&#34;login&#34;</span>}
+</span></span><span style="display:flex;"><span>response <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>post(
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;https://api.example.com/auth&#34;</span>,
+</span></span><span style="display:flex;"><span>    json<span style="color:#f92672">=</span>payload,               <span style="color:#75715e"># автоматично серіалізує та встановить Content-Type</span>
+</span></span><span style="display:flex;"><span>    headers<span style="color:#f92672">=</span>{<span style="color:#e6db74">&#34;Authorization&#34;</span>: <span style="color:#e6db74">&#34;Bearer TOKEN&#34;</span>},
+</span></span><span style="display:flex;"><span>    timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><hr>
+<h3 id="json--серіалізація"><code>json</code> — серіалізація</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Python dict → JSON рядок</span>
+</span></span><span style="display:flex;"><span>data <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;db-01&#34;</span>, <span style="color:#e6db74">&#34;port&#34;</span>: <span style="color:#ae81ff">5432</span>, <span style="color:#e6db74">&#34;active&#34;</span>: <span style="color:#66d9ef">True</span>}
+</span></span><span style="display:flex;"><span>json_string <span style="color:#f92672">=</span> json<span style="color:#f92672">.</span>dumps(data, indent<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>, ensure_ascii<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>print(json_string)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># JSON рядок → Python dict</span>
+</span></span><span style="display:flex;"><span>parsed <span style="color:#f92672">=</span> json<span style="color:#f92672">.</span>loads(json_string)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Читання JSON файлу</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#34;config.json&#34;</span>, <span style="color:#e6db74">&#34;r&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>    config <span style="color:#f92672">=</span> json<span style="color:#f92672">.</span>load(f)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Запис JSON файлу</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#34;config.json&#34;</span>, <span style="color:#e6db74">&#34;w&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>    json<span style="color:#f92672">.</span>dump(config, f, indent<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>, ensure_ascii<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span></code></pre></div><hr>
+<h3 id="datetime--дата-і-час"><code>datetime</code> — дата і час</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> datetime <span style="color:#f92672">import</span> datetime, timedelta, date
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>now <span style="color:#f92672">=</span> datetime<span style="color:#f92672">.</span>now()
+</span></span><span style="display:flex;"><span>print(now)                              <span style="color:#75715e"># 2025-06-16 14:30:00.123456</span>
+</span></span><span style="display:flex;"><span>print(now<span style="color:#f92672">.</span>strftime(<span style="color:#e6db74">&#34;%Y-%m-</span><span style="color:#e6db74">%d</span><span style="color:#e6db74"> %H:%M&#34;</span>))  <span style="color:#75715e"># &#34;2025-06-16 14:30&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Парсинг рядка в datetime</span>
+</span></span><span style="display:flex;"><span>dt <span style="color:#f92672">=</span> datetime<span style="color:#f92672">.</span>strptime(<span style="color:#e6db74">&#34;2025-06-16&#34;</span>, <span style="color:#e6db74">&#34;%Y-%m-</span><span style="color:#e6db74">%d</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Арифметика</span>
+</span></span><span style="display:flex;"><span>tomorrow <span style="color:#f92672">=</span> now <span style="color:#f92672">+</span> timedelta(days<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>week_ago <span style="color:#f92672">=</span> now <span style="color:#f92672">-</span> timedelta(weeks<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Різниця</span>
+</span></span><span style="display:flex;"><span>delta <span style="color:#f92672">=</span> now <span style="color:#f92672">-</span> datetime(<span style="color:#ae81ff">2025</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Днів з початку 2025: </span><span style="color:#e6db74">{</span>delta<span style="color:#f92672">.</span>days<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># UTC</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> datetime <span style="color:#f92672">import</span> timezone
+</span></span><span style="display:flex;"><span>utc_now <span style="color:#f92672">=</span> datetime<span style="color:#f92672">.</span>now(timezone<span style="color:#f92672">.</span>utc)
+</span></span></code></pre></div><hr>
+<h3 id="os-та-pathlib--файлова-система"><code>os</code> та <code>pathlib</code> — файлова система</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> os
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> pathlib <span style="color:#f92672">import</span> Path
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pathlib — сучасний API (рекомендується)</span>
+</span></span><span style="display:flex;"><span>base <span style="color:#f92672">=</span> Path(<span style="color:#e6db74">&#34;/etc/nginx&#34;</span>)
+</span></span><span style="display:flex;"><span>config <span style="color:#f92672">=</span> base <span style="color:#f92672">/</span> <span style="color:#e6db74">&#34;nginx.conf&#34;</span>      <span style="color:#75715e"># оператор / для побудови шляху</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(config<span style="color:#f92672">.</span>exists())            <span style="color:#75715e"># True/False</span>
+</span></span><span style="display:flex;"><span>print(config<span style="color:#f92672">.</span>name)                <span style="color:#75715e"># &#34;nginx.conf&#34;</span>
+</span></span><span style="display:flex;"><span>print(config<span style="color:#f92672">.</span>stem)                <span style="color:#75715e"># &#34;nginx&#34;</span>
+</span></span><span style="display:flex;"><span>print(config<span style="color:#f92672">.</span>suffix)              <span style="color:#75715e"># &#34;.conf&#34;</span>
+</span></span><span style="display:flex;"><span>print(config<span style="color:#f92672">.</span>parent)              <span style="color:#75715e"># /etc/nginx</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Створення директорій</span>
+</span></span><span style="display:flex;"><span>Path(<span style="color:#e6db74">&#34;logs/app&#34;</span>)<span style="color:#f92672">.</span>mkdir(parents<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, exist_ok<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Пошук файлів</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> conf <span style="color:#f92672">in</span> Path(<span style="color:#e6db74">&#34;/etc&#34;</span>)<span style="color:#f92672">.</span>glob(<span style="color:#e6db74">&#34;*.conf&#34;</span>):
+</span></span><span style="display:flex;"><span>    print(conf)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># os — для процесів та системних операцій</span>
+</span></span><span style="display:flex;"><span>print(os<span style="color:#f92672">.</span>getenv(<span style="color:#e6db74">&#34;HOME&#34;</span>))          <span style="color:#75715e"># змінна середовища</span>
+</span></span><span style="display:flex;"><span>print(os<span style="color:#f92672">.</span>getpid())                <span style="color:#75715e"># PID поточного процесу</span>
+</span></span><span style="display:flex;"><span>os<span style="color:#f92672">.</span>environ[<span style="color:#e6db74">&#34;DEBUG&#34;</span>] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;true&#34;</span>      <span style="color:#75715e"># встановити змінну середовища</span>
+</span></span></code></pre></div><hr>
+<h2 id="-5-backend-база-api-http-бд">🌐 5. Backend база: API, HTTP, БД</h2>
+<h3 id="http-та-rest-api">HTTP та REST API</h3>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Дія</th>
+<th>Ідемпотентний</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>Отримати дані</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>Створити ресурс</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>Замінити ресурс</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td>Частково змінити</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>Видалити</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Коди відповідей:</strong></p>
+<ul>
+<li><code>2xx</code> — успіх (200 OK, 201 Created, 204 No Content)</li>
+<li><code>3xx</code> — редирект (301 Moved, 302 Found)</li>
+<li><code>4xx</code> — помилка клієнта (400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found)</li>
+<li><code>5xx</code> — помилка сервера (500 Internal Error, 502 Bad Gateway, 503 Service Unavailable)</li>
+</ul>
+<hr>
+<h3 id="flask--мінімальний-rest-api">Flask — мінімальний REST API</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> flask <span style="color:#f92672">import</span> Flask, request, jsonify
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app <span style="color:#f92672">=</span> Flask(__name__)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &#34;База даних&#34; в пам&#39;яті (для прикладу)</span>
+</span></span><span style="display:flex;"><span>servers <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;id&#34;</span>: <span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#34;hostname&#34;</span>: <span style="color:#e6db74">&#34;web-01&#34;</span>, <span style="color:#e6db74">&#34;active&#34;</span>: <span style="color:#66d9ef">True</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;id&#34;</span>: <span style="color:#ae81ff">2</span>, <span style="color:#e6db74">&#34;hostname&#34;</span>: <span style="color:#e6db74">&#34;web-02&#34;</span>, <span style="color:#e6db74">&#34;active&#34;</span>: <span style="color:#66d9ef">False</span>},
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@app.route</span>(<span style="color:#e6db74">&#34;/servers&#34;</span>, methods<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#34;GET&#34;</span>])
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_servers</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Отримати список усіх серверів.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    active_only <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span>args<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;active&#34;</span>, <span style="color:#e6db74">&#34;false&#34;</span>)<span style="color:#f92672">.</span>lower() <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> active_only:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> jsonify([s <span style="color:#66d9ef">for</span> s <span style="color:#f92672">in</span> servers <span style="color:#66d9ef">if</span> s[<span style="color:#e6db74">&#34;active&#34;</span>]])
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> jsonify(servers)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@app.route</span>(<span style="color:#e6db74">&#34;/servers/&lt;int:server_id&gt;&#34;</span>, methods<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#34;GET&#34;</span>])
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_server</span>(server_id):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Отримати конкретний сервер за ID.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    server <span style="color:#f92672">=</span> next((s <span style="color:#66d9ef">for</span> s <span style="color:#f92672">in</span> servers <span style="color:#66d9ef">if</span> s[<span style="color:#e6db74">&#34;id&#34;</span>] <span style="color:#f92672">==</span> server_id), <span style="color:#66d9ef">None</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> server:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> jsonify({<span style="color:#e6db74">&#34;error&#34;</span>: <span style="color:#e6db74">&#34;Server not found&#34;</span>}), <span style="color:#ae81ff">404</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> jsonify(server)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@app.route</span>(<span style="color:#e6db74">&#34;/servers&#34;</span>, methods<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#34;POST&#34;</span>])
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">create_server</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Створити новий сервер.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    data <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span>get_json()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> data <span style="color:#f92672">or</span> <span style="color:#e6db74">&#34;hostname&#34;</span> <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> data:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> jsonify({<span style="color:#e6db74">&#34;error&#34;</span>: <span style="color:#e6db74">&#34;hostname is required&#34;</span>}), <span style="color:#ae81ff">400</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    new_server <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;id&#34;</span>: max(s[<span style="color:#e6db74">&#34;id&#34;</span>] <span style="color:#66d9ef">for</span> s <span style="color:#f92672">in</span> servers) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;hostname&#34;</span>: data[<span style="color:#e6db74">&#34;hostname&#34;</span>],
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;active&#34;</span>: data<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;active&#34;</span>, <span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    servers<span style="color:#f92672">.</span>append(new_server)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> jsonify(new_server), <span style="color:#ae81ff">201</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+</span></span><span style="display:flex;"><span>    app<span style="color:#f92672">.</span>run(debug<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, host<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0.0.0.0&#34;</span>, port<span style="color:#f92672">=</span><span style="color:#ae81ff">5000</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Тестування</span>
+</span></span><span style="display:flex;"><span>curl http://localhost:5000/servers
+</span></span><span style="display:flex;"><span>curl http://localhost:5000/servers?active<span style="color:#f92672">=</span>true
+</span></span><span style="display:flex;"><span>curl -X POST http://localhost:5000/servers <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     -H <span style="color:#e6db74">&#34;Content-Type: application/json&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     -d <span style="color:#e6db74">&#39;{&#34;hostname&#34;: &#34;web-03&#34;}&#39;</span>
+</span></span></code></pre></div><hr>
+<h3 id="sql-базово">SQL базово</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> sqlite3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Підключення (sqlite для прикладу, PostgreSQL — аналогічно через psycopg2)</span>
+</span></span><span style="display:flex;"><span>conn <span style="color:#f92672">=</span> sqlite3<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&#34;app.db&#34;</span>)
+</span></span><span style="display:flex;"><span>cursor <span style="color:#f92672">=</span> conn<span style="color:#f92672">.</span>cursor()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># DDL — створення структури</span>
+</span></span><span style="display:flex;"><span>cursor<span style="color:#f92672">.</span>execute(<span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    CREATE TABLE IF NOT EXISTS servers (
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        id INTEGER PRIMARY KEY AUTOINCREMENT,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        hostname TEXT NOT NULL UNIQUE,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        ip TEXT,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        active BOOLEAN DEFAULT TRUE
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    )
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># DML — маніпуляція даними</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># INSERT — завжди використовуй параметризований запит (захист від SQL injection)</span>
+</span></span><span style="display:flex;"><span>cursor<span style="color:#f92672">.</span>execute(
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;INSERT INTO servers (hostname, ip) VALUES (?, ?)&#34;</span>,
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;web-01&#34;</span>, <span style="color:#e6db74">&#34;192.168.1.10&#34;</span>)
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>conn<span style="color:#f92672">.</span>commit()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SELECT</span>
+</span></span><span style="display:flex;"><span>cursor<span style="color:#f92672">.</span>execute(<span style="color:#e6db74">&#34;SELECT * FROM servers WHERE active = ?&#34;</span>, (<span style="color:#66d9ef">True</span>,))
+</span></span><span style="display:flex;"><span>rows <span style="color:#f92672">=</span> cursor<span style="color:#f92672">.</span>fetchall()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> row <span style="color:#f92672">in</span> rows:
+</span></span><span style="display:flex;"><span>    print(row)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># UPDATE</span>
+</span></span><span style="display:flex;"><span>cursor<span style="color:#f92672">.</span>execute(
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;UPDATE servers SET active = ? WHERE hostname = ?&#34;</span>,
+</span></span><span style="display:flex;"><span>    (<span style="color:#66d9ef">False</span>, <span style="color:#e6db74">&#34;web-01&#34;</span>)
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>conn<span style="color:#f92672">.</span>commit()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># DELETE</span>
+</span></span><span style="display:flex;"><span>cursor<span style="color:#f92672">.</span>execute(<span style="color:#e6db74">&#34;DELETE FROM servers WHERE hostname = ?&#34;</span>, (<span style="color:#e6db74">&#34;web-01&#34;</span>,))
+</span></span><span style="display:flex;"><span>conn<span style="color:#f92672">.</span>commit()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>conn<span style="color:#f92672">.</span>close()
+</span></span></code></pre></div><blockquote>
+<p><strong>Чому параметризовані запити?</strong><br>
+<code>&quot;WHERE id = &quot; + user_input</code> — SQL injection. Зловмисник передає <code>&quot;1 OR 1=1&quot;</code> і отримує всю базу.<br>
+<code>&quot;WHERE id = ?&quot;</code> з параметром — драйвер БД екранує значення, injection неможливий.</p>
+</blockquote>
+<hr>
+<h2 id="-типові-питання-на-співбесіді">🔑 Типові питання на співбесіді</h2>
+<p><strong>Q: Яка різниця між <code>list</code> і <code>tuple</code>?</strong><br>
+A: list змінюваний, tuple незмінний. Tuple швидший і займає менше пам&rsquo;яті. Tuple використовують для фіксованих наборів даних і як ключі словників.</p>
+<p><strong>Q: Що таке <code>*args</code> і <code>**kwargs</code>?</strong><br>
+A: <code>*args</code> — tuple з довільною кількістю позиційних аргументів. <code>**kwargs</code> — dict з довільною кількістю іменованих аргументів.</p>
+<p><strong>Q: Що таке <code>__init__</code> vs <code>__new__</code>?</strong><br>
+A: <code>__new__</code> — створює об&rsquo;єкт (виділяє пам&rsquo;ять). <code>__init__</code> — ініціалізує вже створений об&rsquo;єкт. Зазвичай перевизначають тільки <code>__init__</code>.</p>
+<p><strong>Q: Яка різниця між <code>is</code> і <code>==</code>?</strong><br>
+A: <code>==</code> порівнює значення. <code>is</code> порівнює ідентичність (чи це один і той самий об&rsquo;єкт у пам&rsquo;яті). <code>None</code> завжди перевіряють через <code>is None</code>, бо <code>None</code> — singleton.</p>
+<p><strong>Q: Що таке GIL?</strong><br>
+A: Global Interpreter Lock — м&rsquo;ютекс у CPython, який дозволяє виконувати лише один потік Python-коду одночасно. Через GIL threading не дає реального паралелізму для CPU-задач, але нормально працює для I/O-задач. Для CPU-паралелізму — <code>multiprocessing</code>.</p>
+<p><strong>Q: Що таке декоратор?</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">log_call</span>(func):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Декоратор що логує виклики функції.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">wrapper</span>(<span style="color:#f92672">*</span>args, <span style="color:#f92672">**</span>kwargs):
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Виклик: </span><span style="color:#e6db74">{</span>func<span style="color:#f92672">.</span>__name__<span style="color:#e6db74">}</span><span style="color:#e6db74">(</span><span style="color:#e6db74">{</span>args<span style="color:#e6db74">}</span><span style="color:#e6db74">, </span><span style="color:#e6db74">{</span>kwargs<span style="color:#e6db74">}</span><span style="color:#e6db74">)&#34;</span>)
+</span></span><span style="display:flex;"><span>        result <span style="color:#f92672">=</span> func(<span style="color:#f92672">*</span>args, <span style="color:#f92672">**</span>kwargs)
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Результат: </span><span style="color:#e6db74">{</span>result<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> result
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> wrapper
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@log_call</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">add</span>(a, b):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> a <span style="color:#f92672">+</span> b
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>add(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Виклик: add((2, 3), {})</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Результат: 5</span>
+</span></span></code></pre></div><blockquote>
+<p>Декоратор — це функція що приймає функцію і повертає нову функцію-обгортку. <code>@log_call</code> — синтаксичний цукор для <code>add = log_call(add)</code>.</p>
+</blockquote>
+<hr>
+<h2 id="підсумок">Підсумок</h2>
+<table>
+<thead>
+<tr>
+<th>Тема</th>
+<th>Ключові концепції</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Типи даних</td>
+<td>int, str, list, dict, set, tuple, bool, None</td>
+</tr>
+<tr>
+<td>Керування потоком</td>
+<td>if/elif/else, for, while, break, continue</td>
+</tr>
+<tr>
+<td>Функції</td>
+<td>def, return, *args, **kwargs, lambda, декоратори</td>
+</tr>
+<tr>
+<td>Структури даних</td>
+<td>list vs tuple vs dict vs set + comprehensions</td>
+</tr>
+<tr>
+<td>ООП</td>
+<td>class, self, <strong>init</strong>, наслідування, @property</td>
+</tr>
+<tr>
+<td>Помилки</td>
+<td>try/except/else/finally, raise, власні винятки</td>
+</tr>
+<tr>
+<td>Файли і ресурси</td>
+<td>with open(), pathlib, json, os</td>
+</tr>
+<tr>
+<td>HTTP і API</td>
+<td>requests, статус-коди, REST принципи</td>
+</tr>
+<tr>
+<td>SQL</td>
+<td>SELECT/INSERT/UPDATE/DELETE, параметризовані запити</td>
+</tr>
+<tr>
+<td>Екосистема</td>
+<td>pip, venv, requirements.txt</td>
+</tr>
+</tbody>
+</table>
+<p>Вивчи кожну з цих тем до рівня &ldquo;можу пояснити і написати код без підказок&rdquo; — і ти готовий до більшості технічних співбесід на Python.</p>
+
+</content>
+
+
+
+<p>
+  
+  <a href="//localhost:1313/tags/python/">#Python</a>
+  
+  <a href="//localhost:1313/tags/programming/">#Programming</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

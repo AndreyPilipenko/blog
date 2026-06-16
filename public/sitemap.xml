@@ -128,11 +128,35 @@
     <loc>//localhost:1313/blog/top-linux-commands/</loc>
     <lastmod>2025-02-01T00:27:57+03:00</lastmod>
   </url><url>
+    <loc>//localhost:1313/tags/programming/</loc>
+    <lastmod>2023-06-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/python/</loc>
+    <lastmod>2023-06-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/blog/python/</loc>
+    <lastmod>2023-06-16T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>//localhost:1313/tags/git/</loc>
     <lastmod>2022-06-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>//localhost:1313/blog/git-workflow/</loc>
     <lastmod>2022-06-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/alertmanager/</loc>
+    <lastmod>1993-02-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/grafana/</loc>
+    <lastmod>1993-02-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/categories/monitoring/</loc>
+    <lastmod>1993-02-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/prometheus/</loc>
+    <lastmod>1993-02-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/blog/premetheus-grafana/</loc>
+    <lastmod>1993-02-17T00:00:00+00:00</lastmod>
   </url><url>
     <loc>//localhost:1313/blog/linux-load/</loc>
   </url>
