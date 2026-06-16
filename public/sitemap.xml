@@ -116,6 +116,15 @@
     <loc>//localhost:1313/blog/raid-deep-dive/</loc>
     <lastmod>2025-07-01T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>//localhost:1313/tags/aws/</loc>
+    <lastmod>2025-06-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/blog/aws-guide/</loc>
+    <lastmod>2025-06-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/categories/cloud/</loc>
+    <lastmod>2025-06-16T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>//localhost:1313/blog/docker-deep-dive/</loc>
     <lastmod>2025-06-16T00:00:00+00:00</lastmod>
   </url><url>
@@ -157,8 +166,6 @@
   </url><url>
     <loc>//localhost:1313/blog/premetheus-grafana/</loc>
     <lastmod>1993-02-17T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>//localhost:1313/blog/aws-guide/</loc>
   </url><url>
     <loc>//localhost:1313/blog/linux-load/</loc>
   </url>

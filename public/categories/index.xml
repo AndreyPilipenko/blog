@@ -37,6 +37,13 @@
       <description></description>
     </item>
     <item>
+      <title>Cloud</title>
+      <link>//localhost:1313/categories/cloud/</link>
+      <pubDate>Mon, 16 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/categories/cloud/</guid>
+      <description></description>
+    </item>
+    <item>
       <title>Interview-Prep</title>
       <link>//localhost:1313/categories/interview-prep/</link>
       <pubDate>Sat, 14 Jun 2025 00:00:00 +0000</pubDate>

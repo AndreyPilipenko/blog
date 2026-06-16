@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cloud on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+    <link>//localhost:1313/categories/cloud/</link>
+    <description>Recent content in Cloud on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 16 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/categories/cloud/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>AWS для DevOps</title>
+      <link>//localhost:1313/blog/aws-guide/</link>
+      <pubDate>Mon, 16 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/aws-guide/</guid>
+      <description>Що таке AWS Nitro System Перш ніж переходити до сервісів — важливо розуміти фундамент, на якому вони побудовані.&#xA;AWS Nitro System — це апаратно-програмна платформа, яку Amazon розробила для своїх EC2-інстансів починаючи з 2017 року. Це не просто «гіпервізор» — це ціла екосистема, що складається з кількох компонентів.&#xA;З чого складається Nitro Nitro Hypervisor — мінімалістичний гіпервізор (на базі KVM), що керує розподілом CPU і пам&amp;rsquo;яті між гостьовими ОС. На відміну від класичного Xen (який використовувався раніше), Nitro Hypervisor майже не має власного коду в privileged-режимі — більшість функцій перенесена в апаратуру.</description>
+    </item>
+  </channel>
+</rss>

@@ -5,40 +5,32 @@
   <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
-<meta name="title" content="Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle" />
-<meta name="description" content="title = &ldquo;AWS для DevOps&rdquo; date = 2025-06-16 draft = false tags = [&ldquo;aws&rdquo;] categories = [&ldquo;Cloud&rdquo;] description = &ldquo;Детальний розбір AWS-тем: IAM, EC2, VPC, Route 53, S3, RDS, CloudWatch, Terraform — з прикладами, коментарями та типовими питаннями співбесіди.&rdquo; &#43;&#43;&#43;
-Що таке AWS Nitro System Перш ніж переходити до сервісів — важливо розуміти фундамент, на якому вони побудовані.
-AWS Nitro System — це апаратно-програмна платформа, яку Amazon розробила для своїх EC2-інстансів починаючи з 2017 року." />
-<meta name="keywords" content="" />
+<title>AWS для DevOps | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="AWS для DevOps" />
+<meta name="description" content="Детальний розбір AWS-тем: IAM, EC2, VPC, Route 53, S3, RDS, CloudWatch, Terraform — з прикладами, коментарями та типовими питаннями співбесіди." />
+<meta name="keywords" content="aws," />
 
 
-<meta property="og:title" content="" />
-<meta property="og:description" content="title = &ldquo;AWS для DevOps&rdquo; date = 2025-06-16 draft = false tags = [&ldquo;aws&rdquo;] categories = [&ldquo;Cloud&rdquo;] description = &ldquo;Детальний розбір AWS-тем: IAM, EC2, VPC, Route 53, S3, RDS, CloudWatch, Terraform — з прикладами, коментарями та типовими питаннями співбесіди.&rdquo; &#43;&#43;&#43;
-Що таке AWS Nitro System Перш ніж переходити до сервісів — важливо розуміти фундамент, на якому вони побудовані.
-AWS Nitro System — це апаратно-програмна платформа, яку Amazon розробила для своїх EC2-інстансів починаючи з 2017 року." />
+<meta property="og:title" content="AWS для DevOps" />
+<meta property="og:description" content="Детальний розбір AWS-тем: IAM, EC2, VPC, Route 53, S3, RDS, CloudWatch, Terraform — з прикладами, коментарями та типовими питаннями співбесіди." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="//localhost:1313/blog/aws-guide/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2025-06-16T00:00:00+00:00" />
+<meta property="article:modified_time" content="2025-06-16T00:00:00+00:00" />
 
 
 
 
-
-
-<meta name="twitter:card" content="summary"/><meta name="twitter:title" content=""/>
-<meta name="twitter:description" content="title = &ldquo;AWS для DevOps&rdquo; date = 2025-06-16 draft = false tags = [&ldquo;aws&rdquo;] categories = [&ldquo;Cloud&rdquo;] description = &ldquo;Детальний розбір AWS-тем: IAM, EC2, VPC, Route 53, S3, RDS, CloudWatch, Terraform — з прикладами, коментарями та типовими питаннями співбесіди.&rdquo; &#43;&#43;&#43;
-Що таке AWS Nitro System Перш ніж переходити до сервісів — важливо розуміти фундамент, на якому вони побудовані.
-AWS Nitro System — це апаратно-програмна платформа, яку Amazon розробила для своїх EC2-інстансів починаючи з 2017 року."/>
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="AWS для DevOps"/>
+<meta name="twitter:description" content="Детальний розбір AWS-тем: IAM, EC2, VPC, Route 53, S3, RDS, CloudWatch, Terraform — з прикладами, коментарями та типовими питаннями співбесіди."/>
 
 
 
-<meta itemprop="name" content="">
-<meta itemprop="description" content="title = &ldquo;AWS для DevOps&rdquo; date = 2025-06-16 draft = false tags = [&ldquo;aws&rdquo;] categories = [&ldquo;Cloud&rdquo;] description = &ldquo;Детальний розбір AWS-тем: IAM, EC2, VPC, Route 53, S3, RDS, CloudWatch, Terraform — з прикладами, коментарями та типовими питаннями співбесіди.&rdquo; &#43;&#43;&#43;
-Що таке AWS Nitro System Перш ніж переходити до сервісів — важливо розуміти фундамент, на якому вони побудовані.
-AWS Nitro System — це апаратно-програмна платформа, яку Amazon розробила для своїх EC2-інстансів починаючи з 2017 року.">
-
-<meta itemprop="wordCount" content="5557">
-<meta itemprop="keywords" content="" />
+<meta itemprop="name" content="AWS для DevOps">
+<meta itemprop="description" content="Детальний розбір AWS-тем: IAM, EC2, VPC, Route 53, S3, RDS, CloudWatch, Terraform — з прикладами, коментарями та типовими питаннями співбесіди."><meta itemprop="datePublished" content="2025-06-16T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2025-06-16T00:00:00+00:00" />
+<meta itemprop="wordCount" content="5517">
+<meta itemprop="keywords" content="aws," />
 <meta name="referrer" content="no-referrer-when-downgrade" />
 
   <style>
@@ -210,24 +202,17 @@ AWS Nitro System — це апаратно-програмна платформа
 </header>
   <main>
 
-<h1></h1>
+<h1>AWS для DevOps</h1>
 <p>
   <i>
-    <time datetime='0001-01-01'>
-      01 Jan, 0001
+    <time datetime='2025-06-16'>
+      16 Jun, 2025
     </time>
   </i>
 </p>
 
 <content>
-  <p>title = &ldquo;AWS для DevOps&rdquo;
-date = 2025-06-16
-draft = false
-tags = [&ldquo;aws&rdquo;]
-categories = [&ldquo;Cloud&rdquo;]
-description = &ldquo;Детальний розбір AWS-тем: IAM, EC2, VPC, Route 53, S3, RDS, CloudWatch, Terraform — з прикладами, коментарями та типовими питаннями співбесіди.&rdquo;
-+++</p>
-<hr>
+  <hr>
 <h2 id="що-таке-aws-nitro-system">Що таке AWS Nitro System</h2>
 <p>Перш ніж переходити до сервісів — важливо розуміти фундамент, на якому вони побудовані.</p>
 <p><strong>AWS Nitro System</strong> — це апаратно-програмна платформа, яку Amazon розробила для своїх EC2-інстансів починаючи з 2017 року. Це не просто «гіпервізор» — це ціла екосистема, що складається з кількох компонентів.</p>
@@ -1223,6 +1208,8 @@ Terraform:
 
 
 <p>
+  
+  <a href="//localhost:1313/tags/aws/">#Aws</a>
   
 </p>
 

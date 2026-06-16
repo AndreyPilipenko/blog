@@ -96,6 +96,7 @@ ls -la /proc/1234/fd/    # всі відкриті файлові дескрип
 cat /proc/1234/status    # CPU, RAM, стан процесу
 cat /proc/1234/maps      # карта пам'яті процесу
 ls /proc/1234/ns/        # namespace-и до яких належить процес
+cat /proc/1234/environ   # environ показує environment variables на момент запуску процесу
 ```
 
 ### Системні файли — не тільки про процеси
