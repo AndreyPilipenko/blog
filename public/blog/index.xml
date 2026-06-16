@@ -114,6 +114,13 @@
       <description>1. Архітектура стеку: хто що робить [ Targets ] ←── scrape ── [ Prometheus ] ──→ [ Grafana ] │ [ Alertmanager ] ──→ Slack / PagerDuty / Email Компонент Роль Протокол Prometheus Збір, зберігання, обчислення HTTP pull (scrape) Grafana Візуалізація, дашборди HTTP API до Prometheus Alertmanager Роутинг, дедублікація, мовчання алертів HTTP від Prometheus Exporter Конвертує метрики у Prometheus-формат HTTP /metrics endpoint Ключовий принцип — pull model: Prometheus сам ходить до таргетів кожні N секунд (за замовчуванням 15 секунд).</description>
     </item>
     <item>
+      <title></title>
+      <link>//localhost:1313/blog/aws-guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/aws-guide/</guid>
+      <description>title = &amp;ldquo;AWS для DevOps&amp;rdquo; date = 2025-06-16 draft = false tags = [&amp;ldquo;aws&amp;rdquo;] categories = [&amp;ldquo;Cloud&amp;rdquo;] description = &amp;ldquo;Детальний розбір AWS-тем: IAM, EC2, VPC, Route 53, S3, RDS, CloudWatch, Terraform — з прикладами, коментарями та типовими питаннями співбесіди.&amp;rdquo; +++&#xA;Що таке AWS Nitro System Перш ніж переходити до сервісів — важливо розуміти фундамент, на якому вони побудовані.&#xA;AWS Nitro System — це апаратно-програмна платформа, яку Amazon розробила для своїх EC2-інстансів починаючи з 2017 року.</description>
+    </item>
+    <item>
       <title>Top commands to diagnose Linux system load</title>
       <link>//localhost:1313/blog/linux-load/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
