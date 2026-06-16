@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+    <link>//localhost:1313/categories/linux/</link>
+    <description>Recent content in Linux on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 16 Jun 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux inside: what&#39;s /dev, /proc, /sys</title>
+      <link>//localhost:1313/blog/linux-virtual-filesystems/</link>
+      <pubDate>Tue, 16 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/linux-virtual-filesystems/</guid>
+      <description>Головна ідея: файл як інтерфейс до ядра В Unix є принцип — «всe є файл». І Linux доводить цей принцип до логічного максимуму: навіть сам стан ядра, апаратура і запущені процеси — представлені у вигляді файлів.&#xA;Але є нюанс: ці файли не існують на диску. Вони генеруються ядром on-the-fly, прямо в момент коли ти їх читаєш. Відкрив файл — ядро виконало функцію і повернуло результат у вигляді тексту. Записав у файл — ядро застосувало зміну.</description>
+    </item>
+  </channel>
+</rss>

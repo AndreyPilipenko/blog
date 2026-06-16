@@ -6,8 +6,43 @@
     <description>Recent content in Tags on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 14 Jun 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 16 Jun 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Interview</title>
+      <link>//localhost:1313/tags/interview/</link>
+      <pubDate>Tue, 16 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/interview/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Kernel</title>
+      <link>//localhost:1313/tags/kernel/</link>
+      <pubDate>Tue, 16 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/kernel/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Linux</title>
+      <link>//localhost:1313/tags/linux/</link>
+      <pubDate>Tue, 16 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/linux/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Sysadmin</title>
+      <link>//localhost:1313/tags/sysadmin/</link>
+      <pubDate>Tue, 16 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/sysadmin/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Udev</title>
+      <link>//localhost:1313/tags/udev/</link>
+      <pubDate>Tue, 16 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/udev/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Bash</title>
       <link>//localhost:1313/tags/bash/</link>
@@ -16,17 +51,38 @@
       <description></description>
     </item>
     <item>
+      <title>Ci/Cd</title>
+      <link>//localhost:1313/tags/ci/cd/</link>
+      <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/ci/cd/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>DevOps</title>
+      <link>//localhost:1313/tags/devops/</link>
+      <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/devops/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Github-Actions</title>
+      <link>//localhost:1313/tags/github-actions/</link>
+      <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/github-actions/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Jenkins</title>
+      <link>//localhost:1313/tags/jenkins/</link>
+      <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/jenkins/</guid>
+      <description></description>
+    </item>
+    <item>
       <title>Leetcode</title>
       <link>//localhost:1313/tags/leetcode/</link>
       <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/tags/leetcode/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Linux</title>
-      <link>//localhost:1313/tags/linux/</link>
-      <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tags/linux/</guid>
       <description></description>
     </item>
     <item>
@@ -41,13 +97,6 @@
       <link>//localhost:1313/tags/corosync/</link>
       <pubDate>Thu, 04 Jun 2026 00:00:00 +0300</pubDate>
       <guid>//localhost:1313/tags/corosync/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>DevOps</title>
-      <link>//localhost:1313/tags/devops/</link>
-      <pubDate>Thu, 04 Jun 2026 00:00:00 +0300</pubDate>
-      <guid>//localhost:1313/tags/devops/</guid>
       <description></description>
     </item>
     <item>

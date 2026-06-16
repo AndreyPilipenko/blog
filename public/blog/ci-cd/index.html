@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CI/CD: повний гайд &#43; усі каверзні питання для співбесіди | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="CI/CD: повний гайд &#43; усі каверзні питання для співбесіди" />
+<meta name="description" content="Від базових концепцій до підступних питань на Senior-рівні: pipeline, artifacts, secrets, rollback, GitOps — усе в одній статті." />
+<meta name="keywords" content="ci/cd,devops,github-actions,jenkins,interview," />
+
+
+<meta property="og:title" content="CI/CD: повний гайд &#43; усі каверзні питання для співбесіди" />
+<meta property="og:description" content="Від базових концепцій до підступних питань на Senior-рівні: pipeline, artifacts, secrets, rollback, GitOps — усе в одній статті." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/blog/ci-cd/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2026-06-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-06-14T00:00:00+00:00" />
+
+
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="CI/CD: повний гайд &#43; усі каверзні питання для співбесіди"/>
+<meta name="twitter:description" content="Від базових концепцій до підступних питань на Senior-рівні: pipeline, artifacts, secrets, rollback, GitOps — усе в одній статті."/>
+
+
+
+<meta itemprop="name" content="CI/CD: повний гайд &#43; усі каверзні питання для співбесіди">
+<meta itemprop="description" content="Від базових концепцій до підступних питань на Senior-рівні: pipeline, artifacts, secrets, rollback, GitOps — усе в одній статті."><meta itemprop="datePublished" content="2026-06-14T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2026-06-14T00:00:00+00:00" />
+<meta itemprop="wordCount" content="4195">
+<meta itemprop="keywords" content="ci/cd,devops,github-actions,jenkins,interview," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</h2>
+</a>
+<nav>
+<a href="/">Home</a>
+
+<a href="/blog/">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>CI/CD: повний гайд &#43; усі каверзні питання для співбесіди</h1>
+<p>
+  <i>
+    <time datetime='2026-06-14'>
+      14 Jun, 2026
+    </time>
+  </i>
+</p>
+
+<content>
+  <blockquote>
+<p>Стаття розрахована на тих, хто готується до DevOps-співбесіди або хоче систематизувати знання по CI/CD. Охоплює теорію, практику, GitHub Actions і Jenkins — із реальними прикладами конфігів і поясненням «чому саме так».</p>
+</blockquote>
+<hr>
+<h2 id="зміст">Зміст</h2>
+<ol>
+<li><a href="#%D1%89%D0%BE-%D1%82%D0%B0%D0%BA%D0%B5-cicd">Що таке CI/CD і навіщо це взагалі</a></li>
+<li><a href="#%D0%BA%D0%BB%D1%8E%D1%87%D0%BE%D0%B2%D1%96-%D0%BA%D0%BE%D0%BD%D1%86%D0%B5%D0%BF%D1%86%D1%96%D1%97">Ключові концепції і термінологія</a></li>
+<li><a href="#github-actions">GitHub Actions — детально</a></li>
+<li><a href="#jenkins">Jenkins — детально</a></li>
+<li><a href="#artifacts-%D1%96-%D0%BA%D0%B5%D1%88%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F">Artifacts, кешування, оптимізація</a></li>
+<li><a href="#secrets-%D1%96-%D0%B1%D0%B5%D0%B7%D0%BF%D0%B5%D0%BA%D0%B0">Secrets і безпека в пайплайні</a></li>
+<li><a href="#%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%B5%D0%B3%D1%96%D1%97-%D0%B4%D0%B5%D0%BF%D0%BB%D0%BE%D1%8E">Стратегії деплою</a></li>
+<li><a href="#rollback">Rollback і disaster recovery</a></li>
+<li><a href="#%D0%BC%D0%BE%D0%BD%D1%96%D1%82%D0%BE%D1%80%D0%B8%D0%BD%D0%B3-%D0%BF%D0%B0%D0%B9%D0%BF%D0%BB%D0%B0%D0%B9%D0%BD%D1%83">Моніторинг і observability пайплайну</a></li>
+<li><a href="#gitops">GitOps і CD у Kubernetes</a></li>
+<li><a href="#%D0%BA%D0%B0%D0%B2%D0%B5%D1%80%D0%B7%D0%BD%D1%96-%D0%BF%D0%B8%D1%82%D0%B0%D0%BD%D0%BD%D1%8F">Каверзні питання на співбесіді</a></li>
+</ol>
+<hr>
+<h2 id="що-таке-cicd">Що таке CI/CD</h2>
+<p><strong>Continuous Integration (CI)</strong> — практика, при якій кожен розробник мінімум раз на день інтегрує свій код у спільну гілку. Кожна інтеграція автоматично верифікується: запускаються build, тести, линтери. Мета — виявляти конфлікти і баги якомога раніше, поки вони ще дешеві у виправленні.</p>
+<p><strong>Continuous Delivery (CD)</strong> — розширення CI: після успішного пайплайну артефакт готовий до деплою в будь-який момент. Фактичний push на прод — ручна дія (клік кнопки або апрув).</p>
+<p><strong>Continuous Deployment</strong> — ще один крок: якщо всі перевірки пройдені, код автоматично летить на прод без жодного ручного кроку. Вимагає дуже зрілої культури тестування.</p>
+<pre tabindex="0"><code>Developer push
+      │
+      ▼
+  ┌─────────┐    fail     ┌──────────────┐
+  │  CI Run │ ──────────► │ Notify team  │
+  └────┬────┘             └──────────────┘
+       │ pass
+       ▼
+  ┌─────────────┐
+  │  Artifact   │  ◄── docker image / binary / helm chart
+  └──────┬──────┘
+         │
+         ▼
+  ┌─────────────┐   manual gate    ┌──────────┐
+  │  Staging    │ ──────────────► │   Prod   │   ← Continuous Delivery
+  └─────────────┘                 └──────────┘
+
+  або автоматично ──────────────────────────►        ← Continuous Deployment
+</code></pre><h3 id="чому-cicd--це-не-просто-автозапуск-тестів">Чому CI/CD — це не просто «автозапуск тестів»</h3>
+<ul>
+<li>Скорочує <strong>lead time</strong> (час від коміту до прод) з тижнів до годин</li>
+<li>Знижує <strong>batch size</strong>: маленькі зміни легше ревʼюити і відкочувати</li>
+<li>Дає <strong>fast feedback loop</strong>: розробник дізнається про зламаний тест за хвилини, а не на code review через день</li>
+<li>Зменшує <strong>deployment fear</strong>: якщо деплоїти часто, кожен деплой — дрібна і зрозуміла зміна</li>
+</ul>
+<hr>
+<h2 id="ключові-концепції">Ключові концепції</h2>
+<h3 id="pipeline">Pipeline</h3>
+<p>Послідовність автоматизованих етапів (stages/jobs), через які проходить код від коміту до деплою. Типова структура:</p>
+<pre tabindex="0"><code>lint → test → build → security-scan → publish → deploy-staging → smoke-test → deploy-prod
+</code></pre><h3 id="job-vs-step-vs-stage">Job vs Step vs Stage</h3>
+<table>
+<thead>
+<tr>
+<th>Термін</th>
+<th>GitHub Actions</th>
+<th>Jenkins</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Найбільша одиниця</td>
+<td>Workflow</td>
+<td>Pipeline</td>
+</tr>
+<tr>
+<td>Середня</td>
+<td>Job</td>
+<td>Stage</td>
+</tr>
+<tr>
+<td>Найменша</td>
+<td>Step</td>
+<td>Step</td>
+</tr>
+</tbody>
+</table>
+<p>У <strong>GitHub Actions</strong> jobs за замовчуванням виконуються паралельно. Залежності між ними задаються через <code>needs</code>.<br>
+У <strong>Jenkins Declarative Pipeline</strong> stages виконуються послідовно, але можна використовувати <code>parallel {}</code> блок.</p>
+<h3 id="runner--agent">Runner / Agent</h3>
+<p>Машина або контейнер, де фізично виконується код пайплайну.</p>
+<ul>
+<li><strong>GitHub Actions</strong>: GitHub-hosted runners (ubuntu-latest, windows-latest, macos-latest) або self-hosted.</li>
+<li><strong>Jenkins</strong>: Master node (контролер) + Agents (worker-и). Агентами можуть бути фізичні машини, Docker-контейнери або Kubernetes Pods.</li>
+</ul>
+<h3 id="artifact">Artifact</h3>
+<p>Результат білду — файл або набір файлів, який «переживає» завершення job і може бути використаний наступним етапом або збережений. Наприклад: <code>app.jar</code>, <code>dist/</code>, Docker image, helm chart.</p>
+<h3 id="trigger-тригер">Trigger (тригер)</h3>
+<p>Подія, яка запускає пайплайн: push у гілку, PR, tag, розклад (cron), ручний запуск, webhook від зовнішньої системи.</p>
+<hr>
+<h2 id="github-actions">GitHub Actions</h2>
+<h3 id="анатомія-workflow-файлу">Анатомія workflow-файлу</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># .github/workflows/ci.yml          # шлях до файлу — GitHub шукає workflows саме тут</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">CI Pipeline                  </span> <span style="color:#75715e"># назва, відображається в UI вкладки Actions</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ─── ТРИГЕРИ ──────────────────────────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">on</span>:                                 <span style="color:#75715e"># блок &#34;коли запускати цей workflow&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">push:                             # тригер</span>: <span style="color:#ae81ff">хтось зробив git push</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">branches</span>: [<span style="color:#ae81ff">main, develop]      </span> <span style="color:#75715e"># але тільки якщо push йде в ці гілки</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># push у feature/xyz — НЕ запустить workflow</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">pull_request:                     # тригер</span>: <span style="color:#ae81ff">відкрили / оновили PR</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">branches</span>: [<span style="color:#ae81ff">main]               </span> <span style="color:#75715e"># тільки якщо PR цілиться в main</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># це запускає CI на кожен новий коміт у PR</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">workflow_dispatch:                # тригер</span>: <span style="color:#ae81ff">ручний запуск через UI або API</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># без параметрів — просто кнопка &#34;Run workflow&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ─── ГЛОБАЛЬНІ ЗМІННІ ─────────────────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">env</span>:                                <span style="color:#75715e"># змінні доступні у ВСІХ jobs цього workflow</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">REGISTRY</span>: <span style="color:#ae81ff">ghcr.io                </span> <span style="color:#75715e"># адреса GitHub Container Registry</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># ghcr.io — вбудований в GitHub, не треба</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># платити за DockerHub або піднімати свій</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">IMAGE_NAME</span>: <span style="color:#ae81ff">${{ github.repository }} </span> <span style="color:#75715e"># контекст github.repository повертає</span>
+</span></span><span style="display:flex;"><span>                                        <span style="color:#75715e"># &#34;owner/repo-name&#34;, наприклад &#34;andrii/myapp&#34;</span>
+</span></span><span style="display:flex;"><span>                                        <span style="color:#75715e"># буде використано як частина тегу image</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ─── JOBS ─────────────────────────────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">jobs</span>:                               <span style="color:#75715e"># список jobs; за замовчуванням виконуються</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># ПАРАЛЕЛЬНО, якщо не вказано needs</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ══════════════════════════════════════════════════════════════════════════════</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># JOB 1: LINT</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ══════════════════════════════════════════════════════════════════════════════</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">lint</span>:                             <span style="color:#75715e"># ім&#39;я job (довільне, але унікальне в межах workflow)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-latest         </span> <span style="color:#75715e"># тип runner&#39;а; ubuntu-latest = свіжа Ubuntu VM</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># GitHub підіймає чисту VM під кожен run</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># альтернативи: windows-latest, macos-latest,</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># або self-hosted для власних машин</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:                          <span style="color:#75715e"># кроки виконуються ПОСЛІДОВНО зверху вниз</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">uses: actions/checkout@v4   # крок 1</span>: <span style="color:#ae81ff">клонує репо в робочу директорію VM</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># без цього кроку — файлів коду немає взагалі</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># @v4 — закріплена мажорна версія action</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># НІКОЛИ не пишіть @latest — сьогодні може</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># зламати пайплайн без жодних змін з вашого боку</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">uses: actions/setup-python@v5   # крок 2</span>: <span style="color:#ae81ff">встановлює Python на runner</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:                           <span style="color:#75715e"># блок параметрів для цього action</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">python-version</span>: <span style="color:#e6db74">&#39;3.12&#39;</span>        <span style="color:#75715e"># яку версію Python встановити</span>
+</span></span><span style="display:flex;"><span>                                        <span style="color:#75715e"># без цього кроку — береться системний Python</span>
+</span></span><span style="display:flex;"><span>                                        <span style="color:#75715e"># VM (може бути 3.10 або будь-який інший)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">run</span>: <span style="color:#ae81ff">pip install ruff &amp;&amp; ruff check .</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># крок 3: shell команда (bash за замовчуванням)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># pip install ruff      — встановлює ruff (швидкий Python лінтер на Rust)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># &amp;&amp; ruff check .       — запускає лінтер по всіх .py файлах</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># якщо ruff знайде помилки — повертає exit code != 0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># ненульовий exit code = крок вважається failed = весь job failed</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ══════════════════════════════════════════════════════════════════════════════</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># JOB 2: TEST</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ══════════════════════════════════════════════════════════════════════════════</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">test</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-latest</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">needs: lint                     # ЗАЛЕЖНІСТЬ</span>: <span style="color:#ae81ff">цей job стартує тільки після того,</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># як job &#34;lint&#34; завершився УСПІШНО</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># якщо lint впав — test навіть не стартує</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># це заощаджує хвилини runner-часу</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">strategy</span>:                       <span style="color:#75715e"># блок стратегії запуску job</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">matrix</span>:                       <span style="color:#75715e"># matrix = запустити job кілька разів</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># з різними комбінаціями змінних</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">python-version</span>: [<span style="color:#e6db74">&#39;3.11&#39;</span>, <span style="color:#e6db74">&#39;3.12&#39;</span>]
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># результат: GitHub створить 2 паралельних job:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#   test (3.11)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#   test (3.12)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># якщо додати ще одну вісь — буде декартовий добуток:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#   os: [ubuntu, windows] + python: [3.11, 3.12] = 4 jobs</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/checkout@v4  </span> <span style="color:#75715e"># знову клонуємо — кожен matrix job це окрема VM</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># стан між jobs НЕ зберігається автоматично</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/setup-python@v5</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">python-version</span>: <span style="color:#ae81ff">${{ matrix.python-version }}</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># ${{ matrix.python-version }} — підставляє поточне значення з matrix</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># для першого job = &#39;3.11&#39;, для другого = &#39;3.12&#39;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># так один набір steps працює для всіх версій</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Cache pip             </span> <span style="color:#75715e"># name — людська назва кроку в UI (опціонально,</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># але рятує коли треба знайти де впало)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/cache@v4     </span> <span style="color:#75715e"># action для кешування директорій між runs</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">path: ~/.cache/pip        # що кешувати</span>: <span style="color:#ae81ff">директорія pip cache</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># pip завантажені пакети зберігає саме тут</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">key</span>: <span style="color:#ae81ff">${{ runner.os }}-pip-${{ hashFiles(&#39;requirements.txt&#39;) }}</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># ключ кешу — рядок який ідентифікує цей конкретний кеш</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># runner.os       → &#34;Linux&#34; (щоб не мікшувати кеші різних ОС)</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># hashFiles(...)  → SHA256 хеш файлу requirements.txt</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># якщо requirements.txt не змінився — хеш той самий → кеш HIT</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># якщо додали нову залежність → хеш інший → кеш MISS → pip качає заново</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># без кешу: pip install може займати 2-3 хв на кожен run</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">run</span>: <span style="color:#ae81ff">pip install -r requirements.txt &amp;&amp; pytest --cov</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># pip install -r requirements.txt  — встановлює залежності з файлу</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#   якщо кеш HIT — pip не качає з інтернету, бере локально (секунди)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#   якщо кеш MISS — качає з PyPI (хвилини)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># pytest --cov                     — запускає тести з coverage</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#   --cov генерує звіт покриття коду</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#   падіння будь-якого тесту = exit code 1 = job failed</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ══════════════════════════════════════════════════════════════════════════════</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># JOB 3: BUILD AND PUSH</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ══════════════════════════════════════════════════════════════════════════════</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">build-and-push</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-latest</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">needs</span>: <span style="color:#ae81ff">test                    </span> <span style="color:#75715e"># стартує тільки після ВСІХ matrix jobs &#34;test&#34;</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># тобто і 3.11, і 3.12 мають пройти успішно</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">permissions</span>:                    <span style="color:#75715e"># явне обмеження прав GITHUB_TOKEN для цього job</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># за замовчуванням токен може все — це небезпечно</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">contents</span>: <span style="color:#ae81ff">read               </span> <span style="color:#75715e"># дозвіл читати код репозиторію (для checkout)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">packages</span>: <span style="color:#ae81ff">write              </span> <span style="color:#75715e"># дозвіл писати в GitHub Packages (ghcr.io)</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#75715e"># без цього рядка docker push поверне 403</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/checkout@v4  </span> <span style="color:#75715e"># клонуємо код — потрібен Dockerfile</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Log in to GHCR       </span> <span style="color:#75715e"># логінимось у container registry</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">docker/login-action@v3</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">registry</span>: <span style="color:#ae81ff">${{ env.REGISTRY }}   </span> <span style="color:#75715e"># ghcr.io (з глобального env вгорі)</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">username</span>: <span style="color:#ae81ff">${{ github.actor }}   </span> <span style="color:#75715e"># github.actor = логін того, хто зробив push</span>
+</span></span><span style="display:flex;"><span>                                           <span style="color:#75715e"># наприклад &#34;andrii&#34;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">password</span>: <span style="color:#ae81ff">${{ secrets.GITHUB_TOKEN }}</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># GITHUB_TOKEN — спеціальний секрет, який GitHub АВТОМАТИЧНО генерує</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># для кожного workflow run і видаляє після його завершення</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># не треба створювати вручну — він завжди є</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># scope обмежений правами з блоку permissions вище</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># тому packages: write і дає нам право пушити в ghcr.io</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Build and push</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">docker/build-push-action@v5 </span> <span style="color:#75715e"># action для build + push в одному кроці</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">push</span>: <span style="color:#ae81ff">${{ github.ref == &#39;refs/heads/main&#39; }}</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># умовний push: будуємо image завжди, але пушимо ТІЛЬКИ якщо</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># це push у гілку main (refs/heads/main)</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># якщо це PR або push у develop — push: false</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># навіщо: в PR хочемо перевірити що image будується без помилок,</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># але не забруднювати registry тимчасовими образами</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">tags</span>: <span style="color:#ae81ff">${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># фінальний тег image, наприклад:</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># ghcr.io/andrii/myapp:a3f8c91d...</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># env.REGISTRY    → ghcr.io</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># env.IMAGE_NAME  → andrii/myapp</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># github.sha      → повний SHA коміту (40 символів)</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># чому SHA, а не latest?</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># SHA незмінний — завжди можна знайти який коміт в якому image</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># latest постійно перезаписується — важко відкотити і дебажити</span>
+</span></span></code></pre></div><h3 id="важливі-особливості-github-actions">Важливі особливості GitHub Actions</h3>
+<p><strong>Контексти</strong> — обʼєкти з метаданими: <code>github</code>, <code>env</code>, <code>secrets</code>, <code>runner</code>, <code>job</code>, <code>steps</code>. Доступні через <code>${{ &lt;context&gt;.&lt;property&gt; }}</code>.</p>
+<p><strong>GITHUB_TOKEN</strong> — автоматично генерується для кожного workflow run. Має права в межах репозиторію. Для cross-repo операцій потрібен PAT або GitHub App token.</p>
+<p><strong>Environments</strong> — іменовані середовища (staging, production) з окремими секретами і <strong>protection rules</strong> (required reviewers, deployment branches). Найважливіше для CD:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">deploy</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">environment</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">production</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">url</span>: <span style="color:#ae81ff">https://myapp.com   </span> <span style="color:#75715e"># відображається в UI</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">run</span>: <span style="color:#ae81ff">./deploy.sh</span>
+</span></span></code></pre></div><p><strong>Reusable workflows</strong> — виклик одного workflow з іншого:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">jobs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">call-deploy</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">org/shared-workflows/.github/workflows/deploy.yml@main</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">environment</span>: <span style="color:#ae81ff">production</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">secrets</span>: <span style="color:#ae81ff">inherit</span>
+</span></span></code></pre></div><p><strong>Composite actions</strong> — упаковка кількох steps в одну дію для перевикористання:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># .github/actions/setup-app/action.yml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">Setup App</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">runs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">using</span>: <span style="color:#ae81ff">composite</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/setup-node@v4</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">node-version</span>: <span style="color:#e6db74">&#39;20&#39;</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">run</span>: <span style="color:#ae81ff">npm ci</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">shell</span>: <span style="color:#ae81ff">bash</span>
+</span></span></code></pre></div><h3 id="паралельність-і-concurrency">Паралельність і concurrency</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">concurrency</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">group</span>: <span style="color:#ae81ff">${{ github.workflow }}-${{ github.ref }}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cancel-in-progress</span>: <span style="color:#66d9ef">true</span>   <span style="color:#75715e"># скасовує попередній run при новому push</span>
+</span></span></code></pre></div><p>Без цього при швидких послідовних pushах у PR можуть одночасно бігти 5 workflows і всі деплоїтися в staging.</p>
+<hr>
+<h2 id="jenkins">Jenkins</h2>
+<h3 id="declarative-vs-scripted-pipeline">Declarative vs Scripted Pipeline</h3>
+<p><strong>Declarative</strong> (рекомендований):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span><span style="color:#75715e">// Jenkinsfile
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>pipeline <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    agent <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        docker <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            image <span style="color:#e6db74">&#39;node:20-alpine&#39;</span>
+</span></span><span style="display:flex;"><span>            args <span style="color:#e6db74">&#39;-v /var/run/docker.sock:/var/run/docker.sock&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    environment <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        DOCKER_REGISTRY <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;registry.example.com&#39;</span>
+</span></span><span style="display:flex;"><span>        APP_NAME        <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;my-app&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    options <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        timeout<span style="color:#f92672">(</span>time: <span style="color:#ae81ff">30</span><span style="color:#f92672">,</span> unit: <span style="color:#e6db74">&#39;MINUTES&#39;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        buildDiscarder<span style="color:#f92672">(</span>logRotator<span style="color:#f92672">(</span>numToKeepStr: <span style="color:#e6db74">&#39;10&#39;</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>        disableConcurrentBuilds<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    stages <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Checkout&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                checkout scm
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Lint &amp; Test&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            parallel <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Lint&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                    steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                        sh <span style="color:#e6db74">&#39;npm run lint&#39;</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>                stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Unit Tests&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                    steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                        sh <span style="color:#e6db74">&#39;npm test -- --coverage&#39;</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>                    post <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                        always <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                            junit <span style="color:#e6db74">&#39;test-results/**/*.xml&#39;</span>
+</span></span><span style="display:flex;"><span>                            publishCoverage adapters: <span style="color:#f92672">[</span>coberturaAdapter<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;coverage/cobertura-coverage.xml&#39;</span><span style="color:#f92672">)]</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Build Docker Image&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                script <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">def</span> image <span style="color:#f92672">=</span> docker<span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;${DOCKER_REGISTRY}/${APP_NAME}:${BUILD_NUMBER}&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                    docker<span style="color:#f92672">.</span><span style="color:#a6e22e">withRegistry</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;https://${DOCKER_REGISTRY}&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;registry-credentials&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                        image<span style="color:#f92672">.</span><span style="color:#a6e22e">push</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>                        image<span style="color:#f92672">.</span><span style="color:#a6e22e">push</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;latest&#39;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Deploy to Staging&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                sh <span style="color:#e6db74">&#39;./scripts/deploy.sh staging ${BUILD_NUMBER}&#39;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Integration Tests&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                sh <span style="color:#e6db74">&#39;npm run test:e2e -- --base-url https://staging.example.com&#39;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Deploy to Production&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            when <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                branch <span style="color:#e6db74">&#39;main&#39;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            input <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                message <span style="color:#e6db74">&#39;Deploy to production?&#39;</span>
+</span></span><span style="display:flex;"><span>                ok <span style="color:#e6db74">&#39;Deploy&#39;</span>
+</span></span><span style="display:flex;"><span>                submitter <span style="color:#e6db74">&#39;admin,devops-team&#39;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                sh <span style="color:#e6db74">&#39;./scripts/deploy.sh production ${BUILD_NUMBER}&#39;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    post <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        success <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            slackSend channel: <span style="color:#e6db74">&#39;#deployments&#39;</span><span style="color:#f92672">,</span> color: <span style="color:#e6db74">&#39;good&#39;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                      message: <span style="color:#e6db74">&#34;✅ ${JOB_NAME} #${BUILD_NUMBER} succeeded&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        failure <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            slackSend channel: <span style="color:#e6db74">&#39;#deployments&#39;</span><span style="color:#f92672">,</span> color: <span style="color:#e6db74">&#39;danger&#39;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                      message: <span style="color:#e6db74">&#34;❌ ${JOB_NAME} #${BUILD_NUMBER} failed: ${BUILD_URL}&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        always <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            cleanWs<span style="color:#f92672">()</span>   <span style="color:#75715e">// очищаємо workspace після кожного запуску
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><strong>Scripted Pipeline</strong> — повний Groovy, більша гнучкість, але менш читабельний і важчий в підтримці. Використовується коли Declarative не дає потрібного контролю.</p>
+<h3 id="jenkins-master-agent-архітектура">Jenkins Master-Agent архітектура</h3>
+<pre tabindex="0"><code>          ┌────────────────────┐
+          │   Jenkins Master   │
+          │  (Controller)      │
+          │  - UI / API        │
+          │  - Job scheduling  │
+          │  - Plugin mgmt     │
+          └────────┬───────────┘
+                   │  JNLP або SSH
+        ┌──────────┼──────────┐
+        ▼          ▼          ▼
+   ┌─────────┐ ┌─────────┐ ┌──────────────┐
+   │ Agent 1 │ │ Agent 2 │ │  K8s Agent   │
+   │ (Linux) │ │ (macOS) │ │  (Pod-based) │
+   └─────────┘ └─────────┘ └──────────────┘
+</code></pre><p><strong>Kubernetes plugin</strong> для Jenkins — агенти запускаються як Pods у K8s і автоматично видаляються після завершення job. Золотий стандарт для масштабованих інсталяцій.</p>
+<h3 id="shared-libraries">Shared Libraries</h3>
+<p>Виносимо повторюваний Groovy-код у бібліотеку, яку шерять всі Jenkinsfiles:</p>
+<pre tabindex="0"><code>shared-library/
+├── vars/
+│   └── deployToKubernetes.groovy   # global variable — викликається як функція
+└── src/
+    └── com/company/
+        └── Docker.groovy            # клас для перевикористання
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span><span style="color:#75715e">// vars/deployToKubernetes.groovy
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">call</span><span style="color:#f92672">(</span>Map config<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    sh <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        helm upgrade --install ${config.releaseName} ${config.chart} \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          --namespace ${config.namespace} \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          --set image.tag=${config.imageTag}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Jenkinsfile
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">@Library</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;company-shared-library&#39;</span><span style="color:#f92672">)</span> _
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>pipeline <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    stages <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Deploy&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                deployToKubernetes<span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>                    releaseName: <span style="color:#e6db74">&#39;my-app&#39;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                    chart: <span style="color:#e6db74">&#39;./helm/my-app&#39;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                    namespace: <span style="color:#e6db74">&#39;production&#39;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                    imageTag: env<span style="color:#f92672">.</span><span style="color:#a6e22e">BUILD_NUMBER</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><hr>
+<h2 id="artifacts-і-кешування">Artifacts і кешування</h2>
+<h3 id="різниця-між-cache-і-artifact">Різниця між cache і artifact</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Cache</th>
+<th>Artifact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Мета</strong></td>
+<td>Прискорити білд (npm, pip, gradle)</td>
+<td>Передати результат між jobs/stages</td>
+</tr>
+<tr>
+<td><strong>Час життя</strong></td>
+<td>Тижні, глобально між runs</td>
+<td>Кілька днів, прив&rsquo;язаний до run</td>
+</tr>
+<tr>
+<td><strong>Приклад</strong></td>
+<td><code>node_modules/</code>, <code>.m2/</code></td>
+<td><code>dist/</code>, <code>app.jar</code>, docker image</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># GitHub Actions: правильний ключ кешу</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/cache@v4</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">path</span>: <span style="color:#ae81ff">~/.npm</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">key</span>: <span style="color:#ae81ff">${{ runner.os }}-npm-${{ hashFiles(&#39;**/package-lock.json&#39;) }}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">restore-keys</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      ${{ runner.os }}-npm-   # fallback: використовуємо застарілий кеш</span>      
+</span></span></code></pre></div><p><strong>Підводний камінь</strong>: якщо ключ містить хеш файлу залежностей — при оновленні <code>package-lock.json</code> новий кеш будується з нуля. <code>restore-keys</code> дозволяє взяти найближчий старий кеш і зекономити час.</p>
+<h3 id="передача-artifacts-між-jobs">Передача artifacts між jobs</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">jobs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">build</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">run</span>: <span style="color:#ae81ff">npm run build</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/upload-artifact@v4</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">dist-files</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">path</span>: <span style="color:#ae81ff">dist/</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">retention-days</span>: <span style="color:#ae81ff">7</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">deploy</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">needs</span>: <span style="color:#ae81ff">build</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/download-artifact@v4</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">dist-files</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">path</span>: <span style="color:#ae81ff">dist/</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">run</span>: <span style="color:#ae81ff">./deploy.sh</span>
+</span></span></code></pre></div><hr>
+<h2 id="secrets-і-безпека">Secrets і безпека</h2>
+<h3 id="де-зберігати-секрети">Де зберігати секрети</h3>
+<ul>
+<li><strong>GitHub Secrets</strong> — прості key-value, шифруються через libsodium. Доступні через <code>${{ secrets.MY_SECRET }}</code>. Ніколи не логуються в stdout.</li>
+<li><strong>GitHub Environment Secrets</strong> — секрети прив&rsquo;язані до environment (production, staging), доступні тільки при деплої в цей environment.</li>
+<li><strong>HashiCorp Vault + OIDC</strong> — enterprise рішення, секрети не зберігаються в GitHub взагалі.</li>
+<li><strong>AWS Secrets Manager / GCP Secret Manager</strong> — хмарні сховища, інтегруються через IAM.</li>
+</ul>
+<h3 id="oidc-замість-довгоживучих-ключів">OIDC замість довгоживучих ключів</h3>
+<p>Замість того, щоб класти AWS credentials в GitHub Secrets, краще використовувати OIDC:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">permissions</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">id-token</span>: <span style="color:#ae81ff">write  </span> <span style="color:#75715e"># дозвіл на отримання OIDC token</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">aws-actions/configure-aws-credentials@v4</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">role-to-assume</span>: <span style="color:#ae81ff">arn:aws:iam::123456789:role/GitHubActionsRole</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">aws-region</span>: <span style="color:#ae81ff">us-east-1</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Немає жодних ключів! GitHub отримує тимчасові credentials через OIDC</span>
+</span></span></code></pre></div><p>AWS перевіряє JWT-токен від GitHub і видає тимчасові credentials. Ніяких довгоживучих Access Key / Secret Key, які можуть витекти.</p>
+<h3 id="захист-від-secret-leakage">Захист від secret leakage</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># Погано — значення потрапить у лог</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">run</span>: <span style="color:#ae81ff">echo &#34;Token is ${{ secrets.API_TOKEN }}&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Добре — маскується як ***</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    echo &#34;::add-mask::$MY_TOKEN&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ./deploy.sh</span>    
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">MY_TOKEN</span>: <span style="color:#ae81ff">${{ secrets.API_TOKEN }}</span>
+</span></span></code></pre></div><p>GitHub автоматично маскує значення секретів у логах, але якщо ви base64-encode секрет і виводите його — маскування не спрацює.</p>
+<h3 id="least-privilege-у-pipeline">Least privilege у pipeline</h3>
+<ul>
+<li>Кожен job повинен мати тільки ті permissions, які йому потрібні</li>
+<li>GITHUB_TOKEN за замовчуванням тепер <code>read-only</code> (можна змінити в налаштуваннях репо)</li>
+<li>Self-hosted runners не запускають код з fork PR без explicit approval</li>
+</ul>
+<hr>
+<h2 id="стратегії-деплою">Стратегії деплою</h2>
+<h3 id="blue-green-deployment">Blue-Green Deployment</h3>
+<p>Два ідентичних середовища. Нова версія деплоїться в «зелене», трафік переключається миттєво. Rollback — переключити трафік назад.</p>
+<pre tabindex="0"><code>              ┌─────────────┐
+ Users ──────►│ Load Balancer│
+              └──────┬──────┘
+                     │
+          ┌──────────┴──────────┐
+          │                     │
+    ┌─────▼──────┐       ┌──────▼─────┐
+    │  Blue (v1) │       │ Green (v2) │  ← активний
+    │  (standby) │       │  NEW CODE  │
+    └────────────┘       └────────────┘
+</code></pre><p><strong>Плюси</strong>: нульовий downtime, миттєвий rollback.<br>
+<strong>Мінуси</strong>: вдвічі більше ресурсів, складніше з database migrations.</p>
+<h3 id="canary-deployment">Canary Deployment</h3>
+<p>Нова версія отримує малий відсоток трафіку (1-5%), поступово збільшується при відсутності помилок.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># Приклад з Argo Rollouts</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">strategy</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">canary</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">setWeight</span>: <span style="color:#ae81ff">5</span>      <span style="color:#75715e"># 5% трафіку на нову версію</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">pause</span>: {<span style="color:#f92672">duration</span>: <span style="color:#ae81ff">10m}</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">setWeight</span>: <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">pause</span>: {<span style="color:#f92672">duration</span>: <span style="color:#ae81ff">10m}</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">setWeight</span>: <span style="color:#ae81ff">100</span>
+</span></span></code></pre></div><h3 id="rolling-update">Rolling Update</h3>
+<p>Поступова заміна старих інстансів новими. Kubernetes rolling update за замовчуванням:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">strategy</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">type</span>: <span style="color:#ae81ff">RollingUpdate</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">rollingUpdate</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">maxSurge</span>: <span style="color:#ae81ff">1</span>         <span style="color:#75715e"># max нових pods понад desired</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">maxUnavailable</span>: <span style="color:#ae81ff">0</span>   <span style="color:#75715e"># жоден pod не може бути недоступний</span>
+</span></span></code></pre></div><h3 id="feature-flags">Feature Flags</h3>
+<p>Код деплоїться в прод, але нова функціональність вимкнена за флагом. Дозволяє деплоїти і релізити незалежно. Інструменти: LaunchDarkly, Unleash, Flipt.</p>
+<hr>
+<h2 id="rollback">Rollback</h2>
+<h3 id="чому-rollback-важливіший-за-деплой">Чому rollback важливіший за деплой</h3>
+<p>«Деплоїти швидко — добре. Відкочувати ще швидше — обовʼязково.»</p>
+<h3 id="стратегії-rollback">Стратегії rollback</h3>
+<p><strong>1. Попередній image tag</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Helm</span>
+</span></span><span style="display:flex;"><span>helm rollback my-app <span style="color:#ae81ff">2</span>   <span style="color:#75715e"># відкат до revision 2</span>
+</span></span><span style="display:flex;"><span>helm history my-app      <span style="color:#75715e"># переглянути всі ревізії</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Kubernetes</span>
+</span></span><span style="display:flex;"><span>kubectl rollout undo deployment/my-app
+</span></span><span style="display:flex;"><span>kubectl rollout undo deployment/my-app --to-revision<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>
+</span></span></code></pre></div><p><strong>2. Revert commit + re-deploy</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git revert HEAD~1 --no-edit
+</span></span><span style="display:flex;"><span>git push origin main   <span style="color:#75715e"># тригерить CI/CD</span>
+</span></span></code></pre></div><p><strong>3. Feature flag вимкнення</strong> — найшвидший метод, якщо використовуються feature flags.</p>
+<h3 id="database-migrations-і-rollback">Database migrations і rollback</h3>
+<p>Найскладніша частина. Правило: кожна migration повинна бути <strong>backward compatible</strong> зі старою версією коду мінімум на один деплой-цикл.</p>
+<p><strong>Підхід Expand-Contract (3 фази):</strong></p>
+<ol>
+<li><strong>Expand</strong>: додати нову колонку (стара версія продовжує писати в стару)</li>
+<li><strong>Migrate</strong>: обидві версії пишуть в обидві колонки</li>
+<li><strong>Contract</strong>: видалити стару колонку (тільки після повного деплою нової версії)</li>
+</ol>
+<hr>
+<h2 id="моніторинг-пайплайну">Моніторинг пайплайну</h2>
+<h3 id="метрики-які-треба-відстежувати">Метрики, які треба відстежувати</h3>
+<p><strong>DORA Metrics</strong> — стандарт для оцінки ефективності DevOps:</p>
+<table>
+<thead>
+<tr>
+<th>Метрика</th>
+<th>Що вимірює</th>
+<th>Elite performers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deployment Frequency</strong></td>
+<td>Як часто деплоїте в прод</td>
+<td>Кілька разів на день</td>
+</tr>
+<tr>
+<td><strong>Lead Time for Changes</strong></td>
+<td>Від коміту до прод</td>
+<td>&lt; 1 години</td>
+</tr>
+<tr>
+<td><strong>Change Failure Rate</strong></td>
+<td>% деплоїв, що спричинили інцидент</td>
+<td>&lt; 5%</td>
+</tr>
+<tr>
+<td><strong>Time to Restore</strong></td>
+<td>Час відновлення після інциденту</td>
+<td>&lt; 1 години</td>
+</tr>
+</tbody>
+</table>
+<h3 id="сповіщення">Сповіщення</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># GitHub Actions: сповіщення в Slack при падінні на main</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Notify Slack on failure</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">if</span>: <span style="color:#ae81ff">failure() &amp;&amp; github.ref == &#39;refs/heads/main&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">slackapi/slack-github-action@v1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">channel-id</span>: <span style="color:#e6db74">&#39;C012AB3CD&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">payload</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#34;text&#34;: &#34;❌ Pipeline failed on main&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#34;blocks&#34;: [{
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          &#34;type&#34;: &#34;section&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          &#34;text&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            &#34;type&#34;: &#34;mrkdwn&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            &#34;text&#34;: &#34;*Job:* ${{ github.job }}\n*Run:* ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        }]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      }</span>      
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">SLACK_BOT_TOKEN</span>: <span style="color:#ae81ff">${{ secrets.SLACK_BOT_TOKEN }}</span>
+</span></span></code></pre></div><hr>
+<h2 id="gitops">GitOps і CD у Kubernetes</h2>
+<h3 id="gitops-принцип">GitOps-принцип</h3>
+<p>Git — єдине джерело правди про стан інфраструктури. Замість <code>kubectl apply</code> у пайплайні, оператор (ArgoCD, Flux) постійно звіряє стан кластеру з Git і усуває drift.</p>
+<pre tabindex="0"><code>Developer ──► git push ──► Git Repo (desired state)
+                                │
+                                │  watches
+                           ┌────▼─────┐
+                           │  ArgoCD  │  ◄── reconciles constantly
+                           └────┬─────┘
+                                │ applies
+                           ┌────▼─────┐
+                           │    K8s   │  (actual state)
+                           └──────────┘
+</code></pre><h3 id="argocd-application">ArgoCD Application</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">argoproj.io/v1alpha1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Application</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-app</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">argocd</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">project</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">source</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">repoURL</span>: <span style="color:#ae81ff">https://github.com/company/k8s-manifests</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">targetRevision</span>: <span style="color:#ae81ff">HEAD</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">path</span>: <span style="color:#ae81ff">apps/my-app/overlays/production</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">destination</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">server</span>: <span style="color:#ae81ff">https://kubernetes.default.svc</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">production</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">syncPolicy</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">automated</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">prune</span>: <span style="color:#66d9ef">true</span>      <span style="color:#75715e"># видаляти ресурси, яких немає в Git</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">selfHeal</span>: <span style="color:#66d9ef">true</span>   <span style="color:#75715e"># відновлювати при ручних змінах у кластері</span>
+</span></span></code></pre></div><p><strong>Image Updater</strong> — ArgoCD Image Updater стежить за новими тегами в registry і автоматично оновлює маніфести в Git при появі нового image.</p>
+<hr>
+<h2 id="каверзні-питання">Каверзні питання на співбесіді</h2>
+<h3 id="базовий-рівень">Базовий рівень</h3>
+<p><strong>Q: Чим відрізняється Continuous Delivery від Continuous Deployment?</strong></p>
+<p>A: Обидва забезпечують готовність артефакту до деплою після CI. Різниця — в останньому кроці: Delivery вимагає ручного тригера (апрув, клік кнопки), Deployment відбувається повністю автоматично. Continuous Deployment підходить командам з дуже зрілим покриттям тестами і observability.</p>
+<hr>
+<p><strong>Q: Що таке Jenkinsfile і де він має зберігатися?</strong></p>
+<p>A: Jenkinsfile — текстовий файл у корені репозиторію, що описує пайплайн у вигляді коду (Pipeline as Code). Він має зберігатися в самому репо разом з кодом, щоб версіонуватися разом з ним. Це дозволяє: переглядати зміни пайплайну через PR, тестувати зміни пайплайну в feature-гілці без впливу на main, відкочувати пайплайн разом з кодом.</p>
+<hr>
+<p><strong>Q: Як запустити job тільки при пуші в <code>main</code>, але не в PR?</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># GitHub Actions</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">on</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">push</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">branches</span>: [<span style="color:#ae81ff">main]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">pull_request</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">branches</span>: [<span style="color:#ae81ff">main]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">jobs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">deploy</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">if</span>: <span style="color:#ae81ff">github.event_name == &#39;push&#39;  </span> <span style="color:#75715e"># не запускати в PR</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">run</span>: <span style="color:#ae81ff">./deploy.sh</span>
+</span></span></code></pre></div><hr>
+<h3 id="середній-рівень">Середній рівень</h3>
+<p><strong>Q: Пайплайн завис через зависший тест. Як захиститися?</strong></p>
+<p>A: Встановити timeout на рівні job/step і на рівні всього pipeline:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># GitHub Actions</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">jobs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">test</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">timeout-minutes</span>: <span style="color:#ae81ff">15</span>   <span style="color:#75715e"># весь job не більше 15 хвилин</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">run</span>: <span style="color:#ae81ff">pytest</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">timeout-minutes</span>: <span style="color:#ae81ff">10</span>   <span style="color:#75715e"># конкретний step</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Jenkins Declarative</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">options {</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">timeout(time: 30, unit</span>: <span style="color:#e6db74">&#39;MINUTES&#39;</span><span style="color:#ae81ff">)</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<p><strong>Q: Як уникнути race condition при паралельних деплоях?</strong></p>
+<p>A: Кілька підходів:</p>
+<ol>
+<li><code>concurrency</code> у GitHub Actions (cancel-in-progress або queue)</li>
+<li><code>disableConcurrentBuilds()</code> у Jenkins</li>
+<li>Distributed lock (наприклад через Redis або DynamoDB) — якщо деплоять кілька систем</li>
+<li>Захист через environment protection rules у GitHub</li>
+</ol>
+<hr>
+<p><strong>Q: Як безпечно передати database URL у пайплайн?</strong></p>
+<p>A: Ніколи не хардкодити в Jenkinsfile/workflow. Варіанти від гіршого до кращого:</p>
+<ol>
+<li><strong>Environment variables у CI системі</strong> (GitHub Secrets, Jenkins credentials) — прийнятно</li>
+<li><strong>Vault + OIDC</strong> — додаток отримує секрет у runtime, без зберігання в CI</li>
+<li><strong>IRSA / Workload Identity</strong> — pod отримує credentials через IAM, жодних секретів взагалі</li>
+</ol>
+<hr>
+<p><strong>Q: Що таке matrix strategy і коли її використовувати?</strong></p>
+<p>A: Matrix дозволяє запускати один і той самий job з різними комбінаціями параметрів паралельно. Типові випадки: тестування на кількох версіях мови, кількох ОС, кількох версіях залежностей.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">strategy</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">matrix</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">os</span>: [<span style="color:#ae81ff">ubuntu-latest, windows-latest]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">python-version</span>: [<span style="color:#e6db74">&#39;3.11&#39;</span>, <span style="color:#e6db74">&#39;3.12&#39;</span>]
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">fail-fast</span>: <span style="color:#66d9ef">false</span>   <span style="color:#75715e"># не зупиняти інші runs при падінні одного</span>
+</span></span></code></pre></div><p>Це дає 4 паралельних jobs (2×2). <code>fail-fast: false</code> корисний коли хочемо побачити всі падіння, а не зупинятися на першому.</p>
+<hr>
+<h3 id="senior-рівень">Senior-рівень</h3>
+<p><strong>Q: Як організувати CI/CD для монорепо з 50 сервісами?</strong></p>
+<p>A: Проблема — запускати весь пайплайн для кожного сервісу при будь-якому коміті занадто дорого. Рішення:</p>
+<ol>
+<li><strong>Path filtering</strong> — запускати job тільки якщо змінились відповідні файли:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">on</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">push</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">paths</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#39;services/user-service/**&#39;</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#39;shared-libs/**&#39;</span>
+</span></span></code></pre></div><ol start="2">
+<li>
+<p><strong>Affected detection</strong> — інструменти як Nx, Turborepo, Bazel розуміють граф залежностей і визначають, які сервіси «зачеплені» конкретним комітом.</p>
+</li>
+<li>
+<p><strong>Dynamic matrix</strong> — генерувати список змінених сервісів у першому job і передавати його як matrix до наступного:</p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">jobs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">detect-changes</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">outputs</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">services</span>: <span style="color:#ae81ff">${{ steps.changed.outputs.services }}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">id</span>: <span style="color:#ae81ff">changed</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          SERVICES=$(./scripts/detect-changed-services.sh)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          echo &#34;services=$SERVICES&#34; &gt;&gt; $GITHUB_OUTPUT</span>          
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">build</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">needs</span>: <span style="color:#ae81ff">detect-changes</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">strategy</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">matrix</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">service</span>: <span style="color:#ae81ff">${{ fromJson(needs.detect-changes.outputs.services) }}</span>
+</span></span></code></pre></div><hr>
+<p><strong>Q: Пайплайн регулярно падає через flaky tests. Що робити?</strong></p>
+<p>A: Флакі тести — окремий клас проблем. Підходи:</p>
+<ol>
+<li><strong>Quarantine</strong> — позначити флакі тести окремим тегом, запускати в окремому job з <code>continue-on-error: true</code>, не блокувати merge</li>
+<li><strong>Retry</strong> — перезапускати тільки флакі тести (pytest-rerunfailures, jest &ndash;testRetrys)</li>
+<li><strong>Tracking</strong> — вести метрики по флакі (тест A падає в 15% runs) і фіксити найгірших</li>
+<li><strong>Root cause</strong> — флакість зазвичай від: race conditions, залежності від часу, спільного стану між тестами, зовнішніх HTTP-запитів (мокати їх)</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># GitHub Actions: retry всього job при флакі</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">nick-fields/retry@v3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">timeout_minutes</span>: <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">max_attempts</span>: <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">command</span>: <span style="color:#ae81ff">npm test</span>
+</span></span></code></pre></div><hr>
+<p><strong>Q: Як перевіряти, що Docker image не містить критичних вразливостей?</strong></p>
+<p>A: Інтегрувати сканування у пайплайн:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Scan image with Trivy</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">aquasecurity/trivy-action@master</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image-ref</span>: <span style="color:#ae81ff">myapp:${{ github.sha }}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">format</span>: <span style="color:#ae81ff">sarif</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">output</span>: <span style="color:#ae81ff">trivy-results.sarif</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">severity</span>: <span style="color:#e6db74">&#39;CRITICAL,HIGH&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">exit-code</span>: <span style="color:#e6db74">&#39;1&#39;</span>   <span style="color:#75715e"># зламати пайплайн при знахідці</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Upload to GitHub Security tab</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">github/codeql-action/upload-sarif@v3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">sarif_file</span>: <span style="color:#ae81ff">trivy-results.sarif</span>
+</span></span></code></pre></div><p>Також: Snyk, Grype, Docker Scout. Найкраще сканувати base image окремо + final image, щоб розуміти звідки прийшла вразливість.</p>
+<hr>
+<p><strong>Q: Чим небезпечні self-hosted runners і як їх захистити?</strong></p>
+<p>A: Основні ризики:</p>
+<ul>
+<li><strong>Poisoned pipeline attack</strong> — зловмисник через PR запускає код на вашому раннері з доступом до внутрішньої мережі</li>
+<li><strong>Secret exfiltration</strong> — якщо secrets доступні в environment, шкідливий код може їх витягти</li>
+<li><strong>Persistence</strong> — атакуючий залишає backdoor між runs</li>
+</ul>
+<p>Захист:</p>
+<ol>
+<li>Ніколи не запускати PR з форків на self-hosted раннерах без explicit approval</li>
+<li>Ephemeral runners — кожен job запускається у свіжому контейнері (GitHub Actions Runner Controller в K8s)</li>
+<li>Мінімальні права runner-а в мережі</li>
+<li>Окремий runner pool для sensitive jobs (production deploy)</li>
+</ol>
+<hr>
+<p><strong>Q: Як будувати пайплайн якщо один з кроків потребує 20 хвилин?</strong></p>
+<p>A: Паралелізм і кешування:</p>
+<ol>
+<li><strong>Паралельні jobs</strong> — lint, unit tests, security scan паралельно, не послідовно</li>
+<li><strong>Test splitting</strong> — розбити тест-сьют на N частин і запускати паралельно (pytest-split, jest &ndash;shard)</li>
+<li><strong>BuildKit cache</strong> — Docker layer caching між runs:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">docker/build-push-action@v5</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">cache-from</span>: <span style="color:#ae81ff">type=gha          </span> <span style="color:#75715e"># GitHub Actions cache</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">cache-to</span>: <span style="color:#ae81ff">type=gha,mode=max</span>
+</span></span></code></pre></div><ol start="4">
+<li><strong>Incremental builds</strong> — Bazel, Gradle build cache, Nx computation cache</li>
+<li><strong>Оцінити необхідність</strong> — 20 хвилин E2E тестів на кожний PR? Можливо, запускати тільки на main</li>
+</ol>
+<hr>
+<p><strong>Q: Як зробити zero-downtime deployment для stateful сервісу з PostgreSQL?</strong></p>
+<p>A: Це складна задача без срібної кулі:</p>
+<ol>
+<li><strong>Migration першою, код потім</strong> — запускати migration окремим job до деплою нового коду. Migration повинна бути backward compatible.</li>
+<li><strong>Expand-Contract pattern</strong> — ніколи не дропати/перейменовувати колонки в одній migration разом з кодом. Три фази.</li>
+<li><strong>Connection draining</strong> — preStop hook у Kubernetes дає час завершити поточні запити:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">lifecycle</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">preStop</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">exec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">command</span>: [<span style="color:#e6db74">&#34;/bin/sh&#34;</span>, <span style="color:#e6db74">&#34;-c&#34;</span>, <span style="color:#e6db74">&#34;sleep 15&#34;</span>]
+</span></span></code></pre></div><ol start="4">
+<li><strong>PodDisruptionBudget</strong> — гарантує, що мінімум N pods доступні під час rolling update:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">minAvailable</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">my-app</span>
+</span></span></code></pre></div><hr>
+<p><strong>Q: Чим відрізняється <code>git merge</code> від <code>git rebase</code> в контексті CI/CD?</strong></p>
+<p>A: В CI/CD більш важлива стратегія гілкування і яка стратегія merge використовується:</p>
+<ul>
+<li><strong>Merge commit</strong> — зберігає всю історію, чіткий <code>Merge branch 'feature'</code> коміт. Легше розслідувати коли щось зламалось.</li>
+<li><strong>Squash merge</strong> — всі коміти з PR → один коміт. Чистіша лінійна історія на main, але втрачається деталізація.</li>
+<li><strong>Rebase</strong> — лінійна історія без merge commits. Проблема: rebase переписує SHA, тому ніколи не rebase публічних гілок.</li>
+</ul>
+<p>Для CI важливо: якщо ви squash — тег артефакту має бути SHA кінцевого коміту на main, не SHA feature branch.</p>
+<hr>
+<p><strong>Q: Jenkins pipeline або GitHub Actions — що вибрати і чому?</strong></p>
+<p>A: Не «або», а «залежно від контексту»:</p>
+<table>
+<thead>
+<tr>
+<th>Критерій</th>
+<th>GitHub Actions</th>
+<th>Jenkins</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Хостинг</td>
+<td>SaaS (або self-hosted)</td>
+<td>Self-hosted</td>
+</tr>
+<tr>
+<td>Інтеграція з GitHub</td>
+<td>Нативна</td>
+<td>Через плагін</td>
+</tr>
+<tr>
+<td>Кастомізація</td>
+<td>Обмежена workflow DSL</td>
+<td>Повний Groovy/Java API</td>
+</tr>
+<tr>
+<td>Enterprise features</td>
+<td>GitHub Enterprise</td>
+<td>Дуже гнучко</td>
+</tr>
+<tr>
+<td>On-prem вимоги</td>
+<td>Self-hosted runners</td>
+<td>Так</td>
+</tr>
+<tr>
+<td>Вартість</td>
+<td>Per-minute billing</td>
+<td>Інфраструктура</td>
+</tr>
+<tr>
+<td>Екосистема</td>
+<td>Marketplace з тисячами actions</td>
+<td>1800+ плагінів</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Відповідь на співбесіді</strong>: «Для нових проектів на GitHub — Actions через нативну інтеграцію і zero ops. Для legacy enterprise з on-prem, складними approval workflows і потребою в Shared Libraries — Jenkins. На великому масштабі обидва можуть поєднуватися.»</p>
+<hr>
+<h3 id="про-підводні-камені">Про підводні камені</h3>
+<p><strong>Q: Назвіть 3 найчастіші помилки в CI/CD пайплайнах</strong></p>
+<p>A:</p>
+<ol>
+<li>
+<p><strong>Секрети в коді або логах</strong> — <code>echo $API_KEY</code> у step, хардкод credentials у Dockerfile ARG, які потрапляють у image history.</p>
+</li>
+<li>
+<p><strong>Відсутність ідемпотентності деплою</strong> — якщо деплой запустили двічі (через retry або паралельний run), другий запуск не повинен ламати перший. Helm upgrade ідемпотентний, <code>kubectl apply</code> ідемпотентний, <code>kubectl create</code> — ні.</p>
+</li>
+<li>
+<p><strong>Ігнорування flaky tests замість фікса</strong> — додавання <code>--retries 3</code> ховає проблему. Флакі тест — це симптом реальної проблеми: race condition, нечищений стан між тестами, неправильний mock.</p>
+</li>
+</ol>
+<hr>
+<h2 id="підсумок">Підсумок</h2>
+<p>CI/CD — це не інструмент, а <strong>культура і набір практик</strong>. Найкращий пайплайн марний без:</p>
+<ul>
+<li>Тестів, які мають сенс і не флакають</li>
+<li>Команди, яка дійсно читає сповіщення про падіння</li>
+<li>Процесу rollback, який відпрацьовується заздалегідь, а не в момент інциденту</li>
+<li>Моніторингу після деплою (deployment markers у Grafana, error rate в Sentry)</li>
+</ul>
+<p>На співбесіді важливо показати не тільки знання YAML-синтаксису, а й <strong>розуміння трейдофів</strong>: коли Jenkins краще за Actions, чому canary краще за big bang, як database migrations вписуються в zero-downtime деплой.</p>
+<hr>
+
+</content>
+
+
+
+<p>
+  
+  <a href="//localhost:1313/tags/ci/cd/">#Ci/Cd</a>
+  
+  <a href="//localhost:1313/tags/devops/">#DevOps</a>
+  
+  <a href="//localhost:1313/tags/github-actions/">#Github-Actions</a>
+  
+  <a href="//localhost:1313/tags/jenkins/">#Jenkins</a>
+  
+  <a href="//localhost:1313/tags/interview/">#Interview</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

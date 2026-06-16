@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Linux inside: what&#39;s /dev, /proc, /sys | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="Linux inside: what&#39;s /dev, /proc, /sys" />
+<meta name="description" content="Розбираємо три магічні директорії Linux — /dev, /proc і /sys. Що в них живе, хто ними керує і чому це важливо знати кожному системному адміністратору." />
+<meta name="keywords" content="linux,kernel,interview,sysadmin,udev," />
+
+
+<meta property="og:title" content="Linux inside: what&#39;s /dev, /proc, /sys" />
+<meta property="og:description" content="Розбираємо три магічні директорії Linux — /dev, /proc і /sys. Що в них живе, хто ними керує і чому це важливо знати кожному системному адміністратору." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/blog/linux-virtual-filesystems/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2026-06-16T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-06-16T00:00:00+00:00" />
+
+
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Linux inside: what&#39;s /dev, /proc, /sys"/>
+<meta name="twitter:description" content="Розбираємо три магічні директорії Linux — /dev, /proc і /sys. Що в них живе, хто ними керує і чому це важливо знати кожному системному адміністратору."/>
+
+
+
+<meta itemprop="name" content="Linux inside: what&#39;s /dev, /proc, /sys">
+<meta itemprop="description" content="Розбираємо три магічні директорії Linux — /dev, /proc і /sys. Що в них живе, хто ними керує і чому це важливо знати кожному системному адміністратору."><meta itemprop="datePublished" content="2026-06-16T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2026-06-16T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1201">
+<meta itemprop="keywords" content="linux,kernel,interview,sysadmin,udev," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</h2>
+</a>
+<nav>
+<a href="/">Home</a>
+
+<a href="/blog/">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Linux inside: what&#39;s /dev, /proc, /sys</h1>
+<p>
+  <i>
+    <time datetime='2026-06-16'>
+      16 Jun, 2026
+    </time>
+  </i>
+</p>
+
+<content>
+  <hr>
+<h2 id="головна-ідея-файл-як-інтерфейс-до-ядра">Головна ідея: файл як інтерфейс до ядра</h2>
+<p>В Unix є принцип — <strong>«всe є файл»</strong>. І Linux доводить цей принцип до логічного максимуму: навіть сам стан ядра, апаратура і запущені процеси — представлені у вигляді файлів.</p>
+<p>Але є нюанс: ці файли <strong>не існують на диску</strong>. Вони генеруються ядром on-the-fly, прямо в момент коли ти їх читаєш. Відкрив файл — ядро виконало функцію і повернуло результат у вигляді тексту. Записав у файл — ядро застосувало зміну.</p>
+<p>Це і є <strong>віртуальні файлові системи</strong>. Три головні з них: <code>/dev</code>, <code>/proc</code> і <code>/sys</code>.</p>
+<hr>
+<h2 id="dev--файли-пристрої">/dev — файли-пристрої</h2>
+<h3 id="що-це">Що це</h3>
+<p><code>/dev</code> — це директорія де ядро Linux представляє <strong>фізичні і логічні пристрої</strong> у вигляді файлів. Хочеш читати з диска — відкрий <code>/dev/sda</code>. Хочеш генерувати нулі — читай з <code>/dev/zero</code>.</p>
+<h3 id="типи-файлів-у-dev">Типи файлів у /dev</h3>
+<p>В Linux є два типи device files:</p>
+<p><strong>Block devices</strong> (позначаються <code>b</code> в <code>ls -la</code>) — пристрої що передають дані блоками. Диски, розділи, USB-накопичувачі:</p>
+<pre tabindex="0"><code>/dev/sda        # перший SATA/SCSI диск
+/dev/nvme0n1    # перший NVMe диск
+/dev/sda1       # перший розділ на sda
+</code></pre><p><strong>Character devices</strong> (позначаються <code>c</code>) — пристрої що передають дані побайтово, потоком:</p>
+<pre tabindex="0"><code>/dev/tty        # поточний термінал
+/dev/ttyS0      # перший serial port
+/dev/input/mice # миша
+</code></pre><h3 id="спеціальні-файли-які-треба-знати">Спеціальні файли які треба знати</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>/dev/null    <span style="color:#75715e"># «чорна діра» — все що пишеш туди зникає</span>
+</span></span><span style="display:flex;"><span>/dev/zero    <span style="color:#75715e"># нескінченний потік нульових байт</span>
+</span></span><span style="display:flex;"><span>/dev/random  <span style="color:#75715e"># криптографічно безпечні випадкові байти</span>
+</span></span><span style="display:flex;"><span>/dev/urandom <span style="color:#75715e"># те саме але non-blocking (не чекає entropy)</span>
+</span></span><span style="display:flex;"><span>/dev/full    <span style="color:#75715e"># завжди повертає «диск повний» при записі (для тестів)</span>
+</span></span></code></pre></div><p>Практичний приклад — затерти диск нулями:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>dd <span style="color:#66d9ef">if</span><span style="color:#f92672">=</span>/dev/zero of<span style="color:#f92672">=</span>/dev/sdb bs<span style="color:#f92672">=</span>1M status<span style="color:#f92672">=</span>progress
+</span></span></code></pre></div><p>Або перенаправити stderr в нікуди:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>command 2&gt;/dev/null
+</span></span></code></pre></div><h3 id="хто-керує-dev--демон-udev">Хто керує /dev — демон udev</h3>
+<p>Файли в <code>/dev</code> не статичні. Коли ти підключаєш USB-флешку — файл <code>/dev/sdb</code> з&rsquo;являється. Коли відключаєш — зникає. Хто це робить?</p>
+<p><strong>udev</strong> — userspace-демон (частина <code>systemd</code>), який слухає події від ядра і реагує на них. Детальніше про нього нижче.</p>
+<hr>
+<h2 id="proc--вікно-в-середину-ядра">/proc — вікно в середину ядра</h2>
+<h3 id="що-це-1">Що це</h3>
+<p><code>/proc</code> (procfs) — найстаріша з трьох. Виникла ще в Unix як інструмент для інтроспекції <strong>запущених процесів</strong>. Потім виросла в щось більше.</p>
+<p>Вся ця директорія живе <strong>виключно в оперативній пам&rsquo;яті</strong>. При перезавантаженні вміст зникає і генерується заново. Розмір на диску — нуль байт.</p>
+<h3 id="директорії-процесів">Директорії процесів</h3>
+<p>Для кожного запущеного процесу є своя директорія <code>/proc/PID/</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ls /proc/1/          <span style="color:#75715e"># процес з PID 1 (systemd)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cmdline  environ  fd  maps  mem  net  ns  status  ...</span>
+</span></span></code></pre></div><p>Що там всередині:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat /proc/1234/cmdline   <span style="color:#75715e"># команда з якою запущено процес</span>
+</span></span><span style="display:flex;"><span>ls -la /proc/1234/fd/    <span style="color:#75715e"># всі відкриті файлові дескриптори</span>
+</span></span><span style="display:flex;"><span>cat /proc/1234/status    <span style="color:#75715e"># CPU, RAM, стан процесу</span>
+</span></span><span style="display:flex;"><span>cat /proc/1234/maps      <span style="color:#75715e"># карта пам&#39;яті процесу</span>
+</span></span><span style="display:flex;"><span>ls /proc/1234/ns/        <span style="color:#75715e"># namespace-и до яких належить процес</span>
+</span></span></code></pre></div><h3 id="системні-файли--не-тільки-про-процеси">Системні файли — не тільки про процеси</h3>
+<p>З часом <code>/proc</code> перетворився на загальне місце для всього що ядро хоче показати назовні:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat /proc/cpuinfo      <span style="color:#75715e"># детальна інфо про кожне ядро CPU</span>
+</span></span><span style="display:flex;"><span>cat /proc/meminfo      <span style="color:#75715e"># стан оперативної пам&#39;яті</span>
+</span></span><span style="display:flex;"><span>cat /proc/loadavg      <span style="color:#75715e"># load average (те що показує top)</span>
+</span></span><span style="display:flex;"><span>cat /proc/mounts       <span style="color:#75715e"># всі змонтовані файлові системи</span>
+</span></span><span style="display:flex;"><span>cat /proc/net/dev      <span style="color:#75715e"># статистика мережевих інтерфейсів</span>
+</span></span><span style="display:flex;"><span>cat /proc/interrupts   <span style="color:#75715e"># IRQ — які переривання і скільки разів</span>
+</span></span><span style="display:flex;"><span>cat /proc/diskstats    <span style="color:#75715e"># I/O статистика дисків</span>
+</span></span></code></pre></div><h3 id="procsys--параметри-ядра-в-реальному-часі">/proc/sys — параметри ядра в реальному часі</h3>
+<p>Особлива піддиректорія. Файли тут <strong>читаються і записуються</strong> — це і є механізм <code>sysctl</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># читаємо значення</span>
+</span></span><span style="display:flex;"><span>cat /proc/sys/net/ipv4/ip_forward    <span style="color:#75715e"># → 0 або 1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># це ТОЧНО ТЕ САМЕ що:</span>
+</span></span><span style="display:flex;"><span>sysctl net.ipv4.ip_forward
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># записуємо (змінюємо поведінку ядра в реальному часі)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#ae81ff">1</span> &gt; /proc/sys/net/ipv4/ip_forward
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># або через sysctl</span>
+</span></span><span style="display:flex;"><span>sysctl -w net.ipv4.ip_forward<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p><code>sysctl</code> — це просто зручна обгортка над читанням/записом файлів у <code>/proc/sys/</code>.</p>
+<hr>
+<h2 id="sys--структурований-інтерфейс-до-hardware">/sys — структурований інтерфейс до hardware</h2>
+<h3 id="чому-зявився-sysfs">Чому з&rsquo;явився sysfs</h3>
+<p>До появи <code>/sys</code> все лізло в <code>/proc</code> — і інфо про процеси, і про мережу, і про CPU, і про диски. Це ставало некерованим. Формати файлів були довільними, один файл міг містити 20 різних полів, треба було писати складний парсинг.</p>
+<p>У Linux 2.6 (2003 рік) з&rsquo;явився <strong>sysfs</strong> з чіткою концепцією:</p>
+<blockquote>
+<p><strong>Один файл = один атрибут. Крапка.</strong></p>
+</blockquote>
+<h3 id="структура-sysfs">Структура sysfs</h3>
+<p>sysfs відображає реальну ієрархію об&rsquo;єктів всередині ядра (так звані <code>kobject</code>):</p>
+<pre tabindex="0"><code>/sys/
+├── class/          # пристрої згруповані по класу
+│   ├── net/        # мережеві інтерфейси
+│   │   ├── eth0/
+│   │   │   ├── speed        → 1000
+│   │   │   ├── mtu          → 1500
+│   │   │   ├── operstate    → up
+│   │   │   └── address      → aa:bb:cc:dd:ee:ff
+│   │   └── lo/
+│   └── block/
+├── block/          # блокові пристрої
+│   └── sda/
+│       └── queue/
+│           └── scheduler    → [mq-deadline] kyber bfq
+├── devices/        # повне дерево всіх пристроїв
+├── module/         # завантажені модулі ядра
+└── kernel/         # параметри ядра
+</code></pre><h3 id="практичні-приклади">Практичні приклади</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># стан мережевого інтерфейсу</span>
+</span></span><span style="display:flex;"><span>cat /sys/class/net/eth0/operstate      <span style="color:#75715e"># up / down</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># MTU</span>
+</span></span><span style="display:flex;"><span>cat /sys/class/net/eth0/mtu            <span style="color:#75715e"># 1500</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># швидкість лінка в Mbit/s</span>
+</span></span><span style="display:flex;"><span>cat /sys/class/net/eth0/speed          <span style="color:#75715e"># 1000</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># I/O scheduler диску (і змінити його)</span>
+</span></span><span style="display:flex;"><span>cat /sys/block/sda/queue/scheduler
+</span></span><span style="display:flex;"><span>echo mq-deadline &gt; /sys/block/sda/queue/scheduler
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NUMA топологія — скільки нод і які CPU до якої належать</span>
+</span></span><span style="display:flex;"><span>cat /sys/devices/system/node/node0/cpulist
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># вимкнути конкретне ядро CPU (обережно!)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#ae81ff">0</span> &gt; /sys/devices/system/cpu/cpu3/online
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># температура з thermal zone</span>
+</span></span><span style="display:flex;"><span>cat /sys/class/thermal/thermal_zone0/temp  <span style="color:#75715e"># значення в мілліградусах</span>
+</span></span></code></pre></div><p>Все читається і пишеться без жодного парсингу — беруть значення і використовують.</p>
+<hr>
+<h2 id="udev--хто-керує-dev">udev — хто керує /dev</h2>
+<h3 id="загальна-схема">Загальна схема</h3>
+<p>Коли ти підключаєш новий пристрій, відбувається ось що:</p>
+<pre tabindex="0"><code>Підключили USB-диск
+        ↓
+Ядро виявило новий пристрій → додало kobject у /sys/
+        ↓
+Ядро надіслало uevent через netlink socket
+        ↓
+udevd (демон) отримав подію
+        ↓
+udevd переглянув правила в /etc/udev/rules.d/ та /lib/udev/rules.d/
+        ↓
+Створив /dev/sdb, виставив права доступу, запустив скрипти
+</code></pre><p>Ядро відповідає тільки за виявлення пристрою. <strong>Що з ним робити</strong> — вирішує udev у userspace. Це правильний поділ: механізм в ядрі, політика — зовні.</p>
+<h3 id="правила-udev">Правила udev</h3>
+<p>Правила зберігаються у файлах <code>*.rules</code>. Синтаксис — умова + дія:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># /etc/udev/rules.d/99-custom.rules</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Дати стабільне ім&#39;я диску по серійному номеру</span>
+</span></span><span style="display:flex;"><span>SUBSYSTEM<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;block&#34;</span>, ATTRS<span style="color:#f92672">{</span>serial<span style="color:#f92672">}==</span><span style="color:#e6db74">&#34;XYZ123&#34;</span>, SYMLINK<span style="color:#f92672">+=</span><span style="color:#e6db74">&#34;disk/my-backup&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># При підключенні USB Logitech — запустити скрипт</span>
+</span></span><span style="display:flex;"><span>ACTION<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;add&#34;</span>, SUBSYSTEM<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;usb&#34;</span>, ATTRS<span style="color:#f92672">{</span>idVendor<span style="color:#f92672">}==</span><span style="color:#e6db74">&#34;046d&#34;</span>, RUN<span style="color:#f92672">+=</span><span style="color:#e6db74">&#34;/usr/local/bin/logitech-setup.sh&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Виставити групу і права на відеопристрій</span>
+</span></span><span style="display:flex;"><span>SUBSYSTEM<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;video4linux&#34;</span>, GROUP<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;video&#34;</span>, MODE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0660&#34;</span>
+</span></span></code></pre></div><h3 id="корисні-команди-udev">Корисні команди udev</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Дивитися live-потік подій при підключенні пристроїв</span>
+</span></span><span style="display:flex;"><span>udevadm monitor
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Всі атрибути конкретного пристрою (для написання rules)</span>
+</span></span><span style="display:flex;"><span>udevadm info /dev/sda
+</span></span><span style="display:flex;"><span>udevadm info --attribute-walk /dev/sda   <span style="color:#75715e"># повне дерево атрибутів</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірити які правила спрацюють для пристрою (dry-run)</span>
+</span></span><span style="display:flex;"><span>udevadm test /sys/class/net/eth0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перечитати правила і перезапустити обробку</span>
+</span></span><span style="display:flex;"><span>udevadm control --reload-rules
+</span></span><span style="display:flex;"><span>udevadm trigger
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Почекати поки всі події оброблені</span>
+</span></span><span style="display:flex;"><span>udevadm settle
+</span></span></code></pre></div><hr>
+<h2 id="порівняння-procfs-vs-sysfs">Порівняння: procfs vs sysfs</h2>
+<p>Це питання часто задають на співбесідах. Принципова різниця — не тільки в змісті, а в <strong>ідеології</strong>:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>/proc (procfs)</th>
+<th>/sys (sysfs)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Виник</td>
+<td>1980-ті, Unix</td>
+<td>2003, Linux 2.6</td>
+</tr>
+<tr>
+<td>Ідея</td>
+<td>Дамп стану процесів</td>
+<td>Структурована топологія ядра</td>
+</tr>
+<tr>
+<td>Формат файлів</td>
+<td>Довільний текст, багато полів</td>
+<td>Один файл = одне значення</td>
+</tr>
+<tr>
+<td>Структура</td>
+<td>Органічно виросла, хаотична</td>
+<td>Відображає kobject-ієрархію ядра</td>
+</tr>
+<tr>
+<td>Записуваний?</td>
+<td>Тільки /proc/sys</td>
+<td>Більшість атрибутів — так</td>
+</tr>
+<tr>
+<td>Парсинг</td>
+<td>Потрібен (grep/awk)</td>
+<td>Не потрібен</td>
+</tr>
+<tr>
+<td>Нові підсистеми</td>
+<td>Не додають</td>
+<td>Так, це канонічне місце</td>
+</tr>
+</tbody>
+</table>
+<h3 id="чому-proc-досі-живий">Чому /proc досі живий?</h3>
+<p>Тому що <strong>зворотна сумісність</strong>. Тисячі інструментів — <code>ps</code>, <code>top</code>, <code>htop</code>, <code>netstat</code>, <code>lsof</code> — читають <code>/proc</code>. Перенести все у <code>/sys</code> означало б зламати екосистему. Тому:</p>
+<ul>
+<li><code>/proc/PID/</code> — залишається канонічним місцем для інфо про процеси</li>
+<li><code>/proc/sys/</code> — залишається для <code>sysctl</code></li>
+<li>нові підсистеми ядра — ідуть у <code>/sys</code></li>
+</ul>
+<hr>
+<h2 id="підсумок">Підсумок</h2>
+<pre tabindex="0"><code>/dev  → файли-пристрої, якими керує udev
+/proc → інтроспекція процесів і параметри ядра (sysctl)
+/sys  → структурована hardware-топологія, один файл = один атрибут
+</code></pre><p>Всі три — <strong>не існують на диску</strong>. Це інтерфейси ядра у вигляді файлової системи. Читаєш файл — ядро виконує функцію. Пишеш у файл — ядро застосовує зміну.</p>
+<p>Розуміння цих трьох директорій — це розуміння того як Linux влаштований зсередини. І це те що відрізняє системного адміністратора який «натискає кнопки» від того хто розуміє що відбувається насправді.</p>
+
+</content>
+
+
+
+<p>
+  
+  <a href="//localhost:1313/tags/linux/">#Linux</a>
+  
+  <a href="//localhost:1313/tags/kernel/">#Kernel</a>
+  
+  <a href="//localhost:1313/tags/interview/">#Interview</a>
+  
+  <a href="//localhost:1313/tags/sysadmin/">#Sysadmin</a>
+  
+  <a href="//localhost:1313/tags/udev/">#Udev</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

@@ -3,30 +3,66 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>//localhost:1313/</loc>
-    <lastmod>2026-06-14T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>//localhost:1313/tags/bash/</loc>
-    <lastmod>2026-06-14T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>//localhost:1313/blog/</loc>
+    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/categories/</loc>
+    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/interview/</loc>
+    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/kernel/</loc>
+    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/linux/</loc>
+    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/categories/linux/</loc>
+    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/blog/linux-virtual-filesystems/</loc>
+    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/sysadmin/</loc>
+    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/</loc>
+    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/udev/</loc>
+    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/bash/</loc>
     <lastmod>2026-06-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>//localhost:1313/categories/career/</loc>
     <lastmod>2026-06-14T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:1313/categories/</loc>
+    <loc>//localhost:1313/tags/ci/cd/</loc>
+    <lastmod>2026-06-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/blog/ci-cd/</loc>
+    <lastmod>2026-06-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/devops/</loc>
+    <lastmod>2026-06-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/categories/devops/</loc>
     <lastmod>2026-06-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>//localhost:1313/blog/bash/</loc>
     <lastmod>2026-06-14T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>//localhost:1313/tags/github-actions/</loc>
+    <lastmod>2026-06-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/jenkins/</loc>
+    <lastmod>2026-06-14T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>//localhost:1313/tags/leetcode/</loc>
-    <lastmod>2026-06-14T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>//localhost:1313/tags/linux/</loc>
-    <lastmod>2026-06-14T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>//localhost:1313/tags/</loc>
     <lastmod>2026-06-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>//localhost:1313/tags/%D0%B0%D0%BB%D0%B3%D0%BE%D1%80%D0%B8%D1%82%D0%BC%D0%B8/</loc>
@@ -36,9 +72,6 @@
     <lastmod>2026-06-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>//localhost:1313/tags/corosync/</loc>
-    <lastmod>2026-06-04T00:00:00+03:00</lastmod>
-  </url><url>
-    <loc>//localhost:1313/tags/devops/</loc>
     <lastmod>2026-06-04T00:00:00+03:00</lastmod>
   </url><url>
     <loc>//localhost:1313/tags/ha/</loc>

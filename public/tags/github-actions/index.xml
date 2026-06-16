@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>DevOps on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
-    <link>//localhost:1313/tags/devops/</link>
-    <description>Recent content in DevOps on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
+    <title>Github-Actions on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+    <link>//localhost:1313/tags/github-actions/</link>
+    <description>Recent content in Github-Actions on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 14 Jun 2026 00:00:00 +0000</lastBuildDate>
-    <atom:link href="//localhost:1313/tags/devops/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//localhost:1313/tags/github-actions/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CI/CD: повний гайд &#43; усі каверзні питання для співбесіди</title>
       <link>//localhost:1313/blog/ci-cd/</link>
       <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/blog/ci-cd/</guid>
       <description>Стаття розрахована на тих, хто готується до DevOps-співбесіди або хоче систематизувати знання по CI/CD. Охоплює теорію, практику, GitHub Actions і Jenkins — із реальними прикладами конфігів і поясненням «чому саме так».&#xA;Зміст Що таке CI/CD і навіщо це взагалі Ключові концепції і термінологія GitHub Actions — детально Jenkins — детально Artifacts, кешування, оптимізація Secrets і безпека в пайплайні Стратегії деплою Rollback і disaster recovery Моніторинг і observability пайплайну GitOps і CD у Kubernetes Каверзні питання на співбесіді Що таке CI/CD Continuous Integration (CI) — практика, при якій кожен розробник мінімум раз на день інтегрує свій код у спільну гілку.</description>
-    </item>
-    <item>
-      <title>Proxmox VE Cluster: від теорії до продакшену</title>
-      <link>//localhost:1313/blog/proxmox-cluster-guide/</link>
-      <pubDate>Thu, 04 Jun 2026 00:00:00 +0300</pubDate>
-      <guid>//localhost:1313/blog/proxmox-cluster-guide/</guid>
-      <description>Proxmox Virtual Environment — це платформа на базі Debian Linux, що поєднує KVM-віртуалізацію та LXC-контейнеризацію в єдиному веб-інтерфейсі. Поодинокий гіпервізор — це завжди single point of failure. Кластер вирішує цю проблему, але за умови що ти розумієш як він реально працює всередині.&#xA;Як Proxmox влаштований на низькому рівні Перед тим як говорити про кластер — треба зрозуміти що відбувається на одній ноді.&#xA;Шар 1 — Залізо і ядро Proxmox встановлюється прямо на bare metal.</description>
     </item>
   </channel>
 </rss>
