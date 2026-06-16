@@ -93,7 +93,7 @@
       <description>Linux Commands Cheatsheet&#xA;Особистий довідник по адмініструванню Linux-серверів&#xA;📦 Диски та файлова система # Огляд дисків та розділів lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID fdisk -l smartctl --scan # Визначити фізичні диски (якщо /dev/sda — залізний сервер) # Місце на диску df -h # Файлові системи df -hi # По inode du -h --max-depth=1 /var/virtualizor/ | sort -h du -sh /home # Вага директорії du -sch .[!.]* * | sort -h # З прихованими директоріями sudo du -h -d1 /root/ | sort -nr ncdu -e # Інтерактивно + приховані директорії inode vs файловий дескриптор</description>
     </item>
     <item>
-      <title>Python для співбесіди: повна база з поясненнями та прикладами</title>
+      <title>Python з поясненнями та прикладами</title>
       <link>//localhost:1313/blog/python/</link>
       <pubDate>Fri, 16 Jun 2023 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/blog/python/</guid>
