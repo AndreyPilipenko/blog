@@ -7,10 +7,6 @@ categories = ["monitoring"]
 description = "Повний розбір стеку Prometheus/Grafana/Alertmanager: як влаштована база даних часових рядів, типи метрик (Counter, Gauge, Histogram, Summary), PromQL функції rate/increase/irate, побудова дашбордів і алертів — з реальними прикладами кожного рядка."
 +++
 
-# Prometheus + Grafana + Alertmanager
-
-> **Аудиторія**: DevOps-інженер, який вже бачив Grafana але хоче зрозуміти, що відбувається під капотом — від того, як Prometheus зберігає дані, до того, чому `rate()` не те саме, що `irate()`.
-
 ---
 
 ## 1. Архітектура стеку: хто що робить
