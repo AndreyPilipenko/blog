@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RAID від A до Z: рівні, парність, mdadm, silent corruption і ZFS | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="RAID від A до Z: рівні, парність, mdadm, silent corruption і ZFS" />
+<meta name="description" content="Глибокий розбір усіх рівнів RAID, різниці між апаратним і програмним RAID, небезпеки silent corruption та як ZFS вирішує проблеми, про які ти ще не знав." />
+<meta name="keywords" content="linux," />
+
+
+<meta property="og:title" content="RAID від A до Z: рівні, парність, mdadm, silent corruption і ZFS" />
+<meta property="og:description" content="Глибокий розбір усіх рівнів RAID, різниці між апаратним і програмним RAID, небезпеки silent corruption та як ZFS вирішує проблеми, про які ти ще не знав." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/blog/raid-deep-dive/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2025-07-01T00:00:00+00:00" />
+<meta property="article:modified_time" content="2025-07-01T00:00:00+00:00" />
+
+
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="RAID від A до Z: рівні, парність, mdadm, silent corruption і ZFS"/>
+<meta name="twitter:description" content="Глибокий розбір усіх рівнів RAID, різниці між апаратним і програмним RAID, небезпеки silent corruption та як ZFS вирішує проблеми, про які ти ще не знав."/>
+
+
+
+<meta itemprop="name" content="RAID від A до Z: рівні, парність, mdadm, silent corruption і ZFS">
+<meta itemprop="description" content="Глибокий розбір усіх рівнів RAID, різниці між апаратним і програмним RAID, небезпеки silent corruption та як ZFS вирішує проблеми, про які ти ще не знав."><meta itemprop="datePublished" content="2025-07-01T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2025-07-01T00:00:00+00:00" />
+<meta itemprop="wordCount" content="3389">
+<meta itemprop="keywords" content="linux," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</h2>
+</a>
+<nav>
+<a href="/">Home</a>
+
+<a href="/blog/">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>RAID від A до Z: рівні, парність, mdadm, silent corruption і ZFS</h1>
+<p>
+  <i>
+    <time datetime='2025-07-01'>
+      01 Jul, 2025
+    </time>
+  </i>
+</p>
+
+<content>
+  <h2 id="вступ-навіщо-взагалі-raid-у-2025">Вступ: навіщо взагалі RAID у 2025?</h2>
+<p>Перш ніж розбирати рівні — важливо зрозуміти, що <strong>RAID не є заміною бекапу</strong>. Це мантра, яку треба вбити в голову перед будь-якою розмовою про RAID. RAID захищає від відмови одного або кількох дисків; він не захищає від:</p>
+<ul>
+<li>випадкового <code>rm -rf /</code></li>
+<li>пошкодження файлової системи</li>
+<li>ransomware</li>
+<li>людської помилки</li>
+<li>silent corruption (про це детально нижче)</li>
+</ul>
+<p>RAID — це <strong>availability</strong>, а не <strong>durability</strong> у термінах CAP-теореми. Маючи RAID, ти отримуєш безперервність роботи при відмові диска. Бекап — це окрема історія.</p>
+<hr>
+<h2 id="фундамент-що-таке-парність-parity">Фундамент: що таке парність (parity)?</h2>
+<p>Перш ніж до рівнів, треба зрозуміти parity — ключову концепцію RAID 3/4/5/6.</p>
+<p><strong>XOR-магія.</strong> Для будь-яких двох бітів A і B діє:</p>
+<pre tabindex="0"><code>A XOR B = P (parity)
+A XOR P = B  (відновлення B)
+B XOR P = A  (відновлення A)
+</code></pre><p>Приклад на блоках:</p>
+<pre tabindex="0"><code>Диск 1: 10110010
+Диск 2: 11001101
+Parity: 01111111  (XOR від D1 і D2)
+</code></pre><p>Якщо Диск 2 згорів, відновлення: <code>Диск 1 XOR Parity = 10110010 XOR 01111111 = 11001101</code> — ми отримали Диск 2 назад.</p>
+<p><strong>Контрольна сума (checksum)</strong> — це інший механізм: агрегатна функція від даних (MD5, SHA, CRC32, XXHash), що дозволяє <em>виявити</em> пошкодження. Сама по собі вона не відновлює дані — лише каже &ldquo;щось зламалось&rdquo;. У RAID parity = checksum + відновлення в одному.</p>
+<p><strong>Різниця між checksum і parity:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Властивість</th>
+<th>Checksum</th>
+<th>Parity (XOR)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Виявлення помилки</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Виправлення помилки</td>
+<td>❌</td>
+<td>✅ (для 1 диска)</td>
+</tr>
+<tr>
+<td>Overhead</td>
+<td>мінімальний</td>
+<td>1/N дискового простору</td>
+</tr>
+<tr>
+<td>Де використовується</td>
+<td>ZFS, btrfs, scrub</td>
+<td>RAID 3/4/5/6</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="raid-0--striping-без-захисту">RAID 0 — Striping без захисту</h2>
+<h3 id="як-працює">Як працює</h3>
+<p>Дані розбиваються на stripe chunks і записуються по черзі на всі диски:</p>
+<pre tabindex="0"><code>Файл: [A1][A2][A3][A4][A5][A6]
+
+Диск 1: [A1][A3][A5]
+Диск 2: [A2][A4][A6]
+</code></pre><h3 id="характеристики">Характеристики</h3>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Значення</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Мінімум дисків</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Корисний обсяг</td>
+<td>100% (N × розмір диска)</td>
+</tr>
+<tr>
+<td>Захист від відмов</td>
+<td><strong>0 дисків</strong></td>
+</tr>
+<tr>
+<td>Read IOPS</td>
+<td>~N × IOPS одного диска</td>
+</tr>
+<tr>
+<td>Write IOPS</td>
+<td>~N × IOPS одного диска</td>
+</tr>
+</tbody>
+</table>
+<h3 id="коли-використовувати">Коли використовувати</h3>
+<ul>
+<li>Scratch-диски для відеомонтажу, ML-тренування</li>
+<li>Тимчасові датасети</li>
+<li><code>/tmp</code> на серверах зі швидкими NVMe</li>
+</ul>
+<h3 id="каверзне-питання-raid-0-з-10-дисків--яка-ймовірність-відмови">Каверзне питання: &ldquo;RAID 0 з 10 дисків — яка ймовірність відмови?&rdquo;</h3>
+<p>Якщо надійність одного диска = 99%, то RAID 0 з 10 дисків: <code>0.99^10 ≈ 90.4%</code>. З 100 дисків: <code>0.99^100 ≈ 36.6%</code>. RAID 0 масштабує ненадійність — кожен доданий диск підвищує шанс загальної відмови.</p>
+<hr>
+<h2 id="raid-1--mirroring">RAID 1 — Mirroring</h2>
+<h3 id="як-працює-1">Як працює</h3>
+<p>Кожен блок записується одночасно на всі диски (дзеркало):</p>
+<pre tabindex="0"><code>Запис &#34;Hello&#34;:
+Диск 1: [Hello]
+Диск 2: [Hello]
+</code></pre><h3 id="характеристики-1">Характеристики</h3>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Значення</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Мінімум дисків</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Корисний обсяг</td>
+<td>50% (1/N дискового простору)</td>
+</tr>
+<tr>
+<td>Захист від відмов</td>
+<td>N-1 дисків</td>
+</tr>
+<tr>
+<td>Read IOPS</td>
+<td>може читати з обох (деякі контролери)</td>
+</tr>
+<tr>
+<td>Write IOPS</td>
+<td>обмежений найповільнішим диском</td>
+</tr>
+</tbody>
+</table>
+<h3 id="нюанс-read-performance">Нюанс: read performance</h3>
+<p>Деякі RAID-контролери та mdadm реалізують <strong>read balancing</strong> — читання чергується між дзеркалами. Але це не завжди допомагає: якщо workload sequential, виграш мінімальний. Для random reads — відчутно краще.</p>
+<h3 id="каверзне-питання-raid-1--це-завжди-2-диски">Каверзне питання: &ldquo;RAID 1 — це завжди 2 диски?&rdquo;</h3>
+<p>Ні. RAID 1 може бути з 3, 4, і більше дисків (multi-mirror). mdadm підтримує це:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mdadm --create /dev/md0 --level<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> --raid-devices<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> /dev/sda /dev/sdb /dev/sdc
+</span></span></code></pre></div><p>Але економічно доцільно лише у специфічних задачах (наприклад, boot-диск + hot spare без rebuild overhead).</p>
+<hr>
+<h2 id="raid-2--bit-level-striping-з-кодом-хеммінга">RAID 2 — Bit-level striping з кодом Хеммінга</h2>
+<h3 id="як-працює-2">Як працює</h3>
+<p>Дані роздроблюються <strong>по одному біту</strong> (або байту) по дата-дисках, плюс кілька dedicated дисків під коди Хеммінга для виправлення помилок (ECC).</p>
+<pre tabindex="0"><code>Для 4 дата-дисків потрібно 3 диски під parity (Hamming code)
+</code></pre><h3 id="чому-він-мертвий">Чому він мертвий</h3>
+<p>Сучасні жорсткі диски вже мають вбудований ECC на рівні диска (sectored ECC). RAID 2 вирішував проблему, яка вже не існує як архітектурна потреба. Він вимагає:</p>
+<ul>
+<li>Синхронізовані шпинделі (всі диски крутяться в унісон)</li>
+<li>Складна реалізація</li>
+<li>Висока кількість parity-дисків</li>
+</ul>
+<p><strong>RAID 2 не використовується в production з 1990-х.</strong> Але він з&rsquo;являється на технічних інтерв&rsquo;ю саме для перевірки, чи знаєш ти його обмеження.</p>
+<hr>
+<h2 id="raid-3--byte-level-striping--dedicated-parity">RAID 3 — Byte-level striping + dedicated parity</h2>
+<h3 id="як-працює-3">Як працює</h3>
+<p>Стриппінг на рівні байтів, один виділений диск для parity (XOR):</p>
+<pre tabindex="0"><code>Диск 1 (data): [D1][D4][D7]
+Диск 2 (data): [D2][D5][D8]
+Диск 3 (data): [D3][D6][D9]
+Диск 4 (parity): [P1][P2][P3]   P = D1 XOR D2 XOR D3
+</code></pre><h3 id="проблема-parity-disk-bottleneck">Проблема: parity disk bottleneck</h3>
+<p>Кожна операція запису вимагає оновлення parity-диска. Він стає <strong>hot spot</strong> і зношується значно швидше за дата-диски. Це архітектурний недолік, який RAID 5 вирішив через distributed parity.</p>
+<h3 id="де-raid-3-має-сенс">Де RAID 3 має сенс</h3>
+<p>Лише при <strong>великих послідовних</strong> операціях (відеоредагування, наукові обчислення зі стримінгом). При random I/O parity disk задихається.</p>
+<hr>
+<h2 id="raid-4--block-level-striping--dedicated-parity">RAID 4 — Block-level striping + dedicated parity</h2>
+<p>Ідентичний RAID 3, але стриппінг <strong>на рівні блоків</strong> (не байтів). Та ж проблема bottleneck на parity-диску. Практично не використовується — його замінив RAID 5.</p>
+<p><strong>Каверзне питання: &ldquo;Чим RAID 4 кращий за RAID 3?&rdquo;</strong></p>
+<p>RAID 4 краще для random read: можна паралельно читати різні блоки з різних дисків без синхронізації. RAID 3 потребує синхронізованого читання (byte-level). Але обидва мають той самий bottleneck при записі.</p>
+<hr>
+<h2 id="raid-5--distributed-parity">RAID 5 — Distributed parity</h2>
+<h3 id="як-працює-4">Як працює</h3>
+<p>Parity розподілена по всіх дисках — немає dedicated parity disk:</p>
+<pre tabindex="0"><code>           Диск 1    Диск 2    Диск 3    Диск 4
+Stripe 1:  [D1]      [D2]      [D3]      [P1=D1^D2^D3]
+Stripe 2:  [D4]      [D5]      [P2]      [D6]
+Stripe 3:  [D7]      [P3]      [D8]      [D9]
+Stripe 4:  [P4]      [D10]     [D11]     [D12]
+</code></pre><p>Parity обертається (rotating parity) — кожен диск по черзі зберігає parity для певного stripe.</p>
+<h3 id="характеристики-2">Характеристики</h3>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Значення</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Мінімум дисків</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Корисний обсяг</td>
+<td>(N-1)/N</td>
+</tr>
+<tr>
+<td>Захист від відмов</td>
+<td><strong>1 диск</strong></td>
+</tr>
+<tr>
+<td>Read IOPS</td>
+<td>відмінний (розпаралелено)</td>
+</tr>
+<tr>
+<td>Write IOPS</td>
+<td>write penalty через parity calculation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="write-penalty-raid-5-write-hole">Write penalty (RAID 5 write hole)</h3>
+<p>Кожен запис у RAID 5 — це насправді <strong>4 I/O операції</strong>:</p>
+<ol>
+<li>Read старих даних (old data read)</li>
+<li>Read старого parity (old parity read)</li>
+<li>Розрахунок нового parity: <code>new_parity = old_parity XOR old_data XOR new_data</code></li>
+<li>Write нових даних + нового parity</li>
+</ol>
+<p>Це &ldquo;RAID 5 write penalty&rdquo; — при random writes RAID 5 повільніший за RAID 1.</p>
+<h3 id="raid-5-write-hole--критична-небезпека">RAID 5 Write Hole — критична небезпека</h3>
+<p>При раптовому відключенні живлення під час запису може виникнути <strong>RAID 5 write hole</strong>: дані записані, але parity — ні (або навпаки). Після відновлення parity стає невалідним, але RAID цього не знає. Якщо тепер помре диск — відновлення дасть <strong>корупцію замість правильних даних</strong>.</p>
+<p>Рішення:</p>
+<ul>
+<li>Battery-backed write cache (BBWC) на апаратному контролері</li>
+<li>Журналювання (ZFS Intent Log, RAID 6 з додатковою надлишковістю)</li>
+<li>Уникати RAID 5 на великих дисках (&gt;2TB) — час rebuild занадто довгий</li>
+</ul>
+<h3 id="каверзне-питання-raid-5-з-одним-відмовленим-диском--наскільки-небезпечно">Каверзне питання: &ldquo;RAID 5 з одним відмовленим диском — наскільки небезпечно?&rdquo;</h3>
+<p>Критично небезпечно. Поки йде rebuild (годинами на терабайтах), RAID читає <strong>всі інші диски</strong> повністю. Це максимальне навантаження — саме в цей момент найбільша ймовірність відмови ще одного диска через stress. Якщо він відмовить — <strong>повна втрата даних</strong>.</p>
+<hr>
+<h2 id="raid-6--double-distributed-parity">RAID 6 — Double distributed parity</h2>
+<h3 id="як-працює-5">Як працює</h3>
+<p>Два незалежних parity-блоки на кожен stripe — P і Q. P = XOR (як у RAID 5), Q = Reed-Solomon код (більш складна математика, базована на полях Галуа GF(2^8)):</p>
+<pre tabindex="0"><code>           Диск 1    Диск 2    Диск 3    Диск 4    Диск 5
+Stripe 1:  [D1]      [D2]      [D3]      [P]       [Q]
+</code></pre><h3 id="характеристики-3">Характеристики</h3>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Значення</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Мінімум дисків</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Корисний обсяг</td>
+<td>(N-2)/N</td>
+</tr>
+<tr>
+<td>Захист від відмов</td>
+<td><strong>2 диски одночасно</strong></td>
+</tr>
+<tr>
+<td>Write penalty</td>
+<td>ще гірший ніж RAID 5 (6 I/O замість 4)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="reed-solomon-vs-xor">Reed-Solomon vs XOR</h3>
+<p>XOR (P) — простий, швидкий, відновлює один диск.<br>
+Reed-Solomon (Q) — складніший, повільніший, але дозволяє відновити другий диск навіть коли P вже &ldquo;витрачений&rdquo; на відновлення першого.</p>
+<p>Комбінація P+Q дозволяє відновити будь-які <strong>два</strong> відмовлених диски, але не три.</p>
+<h3 id="каверзне-питання-чи-може-raid-6-пережити-3-одночасних-відмови">Каверзне питання: &ldquo;Чи може RAID 6 пережити 3 одночасних відмови?&rdquo;</h3>
+<p>Ні. З 3 відмовленими дисками — повна втрата. Але якщо перший диск відмовив, rebuild завершився, а потім відмовив другий — RAID 6 це переживе (бо між відмовами надлишковість відновилась). RAID 6 захищає від двох <strong>одночасних</strong> (або concurrent) відмов.</p>
+<hr>
+<h2 id="raid-10-10--mirror--stripe">RAID 10 (1+0) — Mirror + Stripe</h2>
+<h3 id="як-працює-6">Як працює</h3>
+<p>Спочатку дзеркала (RAID 1), потім стриппінг між ними (RAID 0):</p>
+<pre tabindex="0"><code>        Mirror 1         Mirror 2
+        /       \        /       \
+      Disk1    Disk2   Disk3    Disk4
+
+Дані стріпуються між Mirror1 і Mirror2
+</code></pre><h3 id="характеристики-4">Характеристики</h3>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Значення</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Мінімум дисків</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Корисний обсяг</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>Захист від відмов</td>
+<td>1 диск з кожної пари (worst case: 1, best case: N/2)</td>
+</tr>
+<tr>
+<td>Read IOPS</td>
+<td>відмінний (читання з обох дзеркал)</td>
+</tr>
+<tr>
+<td>Write IOPS</td>
+<td>відмінний (немає parity overhead)</td>
+</tr>
+<tr>
+<td>Rebuild швидкість</td>
+<td><strong>дуже швидко</strong> (лише 1 дзеркало, не весь масив)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="raid-10-vs-raid-5-що-краще">RAID 10 vs RAID 5: що краще?</h3>
+<p>Для production OLTP (бази даних, Postgres, MySQL) — <strong>RAID 10 майже завжди кращий</strong>:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>RAID 5</th>
+<th>RAID 10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Write latency</td>
+<td>висока (parity overhead)</td>
+<td>низька</td>
+</tr>
+<tr>
+<td>Rebuild time (4×2TB)</td>
+<td>6-12 годин</td>
+<td>30-60 хвилин</td>
+</tr>
+<tr>
+<td>Ризик під час rebuild</td>
+<td>критичний</td>
+<td>помірний</td>
+</tr>
+<tr>
+<td>Ціна</td>
+<td>дешевше (менше дисків)</td>
+<td>дорожче</td>
+</tr>
+</tbody>
+</table>
+<h3 id="каверзне-питання-скільки-дисків-може-відмовити-у-raid-10-з-8-дисків">Каверзне питання: &ldquo;Скільки дисків може відмовити у RAID 10 з 8 дисків?&rdquo;</h3>
+<p>Теоретично до 4 (якщо щастить і кожна відмова в різній парі). Практично гарантовано переживе 1. Якщо відмовлять обидва диски однієї пари — дані втрачені, незалежно від стану інших пар.</p>
+<hr>
+<h2 id="raid-50-і-raid-60">RAID 50 і RAID 60</h2>
+<p><strong>RAID 50</strong> = RAID 5 + RAID 0 (stripe across RAID 5 arrays).<br>
+<strong>RAID 60</strong> = RAID 6 + RAID 0.</p>
+<p>Використовуються на великих масивах (8+ дисків) для балансу між продуктивністю та надлишковістю. Складніші в управлінні, але дають кращу продуктивність ніж чистий RAID 5/6 при великій кількості дисків.</p>
+<hr>
+<h2 id="апаратний-raid-vs-програмний-raid">Апаратний RAID vs Програмний RAID</h2>
+<h3 id="апаратний-raid-hardware-raid">Апаратний RAID (Hardware RAID)</h3>
+<p>Окремий контролер (RAID card) з власним процесором і кеш-пам&rsquo;яттю:</p>
+<pre tabindex="0"><code>┌──────────────────────────────────┐
+│          RAID Controller         │
+│  ┌──────────┐  ┌──────────────┐  │
+│  │   CPU    │  │  Cache RAM   │  │
+│  │(XOR/RS)  │  │ (BBU/FBWC)  │  │
+│  └──────────┘  └──────────────┘  │
+└───────┬──────────────────────────┘
+        │ SAS/SATA (HBA interface)
+   ┌────┴────────────────┐
+  Disk1  Disk2  Disk3  Disk4
+</code></pre><p><strong>Переваги:</strong></p>
+<ul>
+<li>Offload CPU від хоста (важливо при великих масивах)</li>
+<li>Battery-backed cache — write-back без ризику write hole</li>
+<li>Consistent performance, незалежно від навантаження ОС</li>
+<li>Підтримка hot spare автоматично</li>
+</ul>
+<p><strong>Недоліки:</strong></p>
+<ul>
+<li>Vendor lock-in — якщо контролер згорів, без ідентичного контролера дані <strong>недоступні</strong> (конфіг зберігається на контролері або дисках у vendor-форматі)</li>
+<li>Приховує стан дисків від ОС (ОС бачить один &ldquo;virtual disk&rdquo;, не знає про S.M.A.R.T. окремих дисків)</li>
+<li>Дорого (LSI MegaRAID, HP SmartArray — $200-$2000+)</li>
+<li>Silent corruption — контролер може не помічати bit rot</li>
+</ul>
+<h3 id="програмний-raid-software-raid--mdadm">Програмний RAID (Software RAID / mdadm)</h3>
+<p>Реалізований у ядрі Linux, ОС повністю контролює масив:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Створення RAID 5</span>
+</span></span><span style="display:flex;"><span>mdadm --create /dev/md0 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --level<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --raid-devices<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  /dev/sda /dev/sdb /dev/sdc /dev/sdd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Статус масиву</span>
+</span></span><span style="display:flex;"><span>mdadm --detail /dev/md0
+</span></span><span style="display:flex;"><span>cat /proc/mdstat
+</span></span></code></pre></div><p><strong>Переваги:</strong></p>
+<ul>
+<li>Портабельний — диски можна перенести на іншу машину з mdadm</li>
+<li>Прозорість — ОС бачить кожен диск окремо, S.M.A.R.T. доступний</li>
+<li>Безкоштовно</li>
+<li>ZFS і btrfs мають власні software RAID з checksumming</li>
+</ul>
+<p><strong>Недоліки:</strong></p>
+<ul>
+<li>Використовує CPU хоста (незначно на сучасному залізі)</li>
+<li>Немає hardware write cache з BBU за замовчуванням</li>
+<li>Write hole без journaling або intent log</li>
+</ul>
+<h3 id="fake-raid-bios-raid--hostraid">Fake RAID (BIOS RAID / HostRAID)</h3>
+<p>Гібрид: конфігурація в BIOS/UEFI, але обробка — в драйвері ОС (dmraid). Найгірший варіант:</p>
+<ul>
+<li>Складніший у налаштуванні</li>
+<li>Менш надійний ніж справжній апаратний або software RAID</li>
+<li>mdadm може навіть розпізнати fake RAID масиви (<code>mdadm --examine</code>)</li>
+</ul>
+<p><strong>Рекомендація:</strong> уникай fake RAID. Вибирай або справжній hardware RAID controller, або mdadm/ZFS.</p>
+<hr>
+<h2 id="mdadm-практика">mdadm: практика</h2>
+<h3 id="основні-команди">Основні команди</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Перегляд стану</span>
+</span></span><span style="display:flex;"><span>cat /proc/mdstat
+</span></span><span style="display:flex;"><span>mdadm --detail /dev/md0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Додати диск (hot spare)</span>
+</span></span><span style="display:flex;"><span>mdadm /dev/md0 --add /dev/sde
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Замінити відмовлений диск</span>
+</span></span><span style="display:flex;"><span>mdadm /dev/md0 --remove /dev/sdb   <span style="color:#75715e"># якщо ще не виключений</span>
+</span></span><span style="display:flex;"><span>mdadm /dev/md0 --add /dev/sdb_new
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Примусовий rebuild</span>
+</span></span><span style="display:flex;"><span>mdadm /dev/md0 --re-add /dev/sdb
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Зберегти конфіг</span>
+</span></span><span style="display:flex;"><span>mdadm --detail --scan &gt;&gt; /etc/mdadm/mdadm.conf
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Scrub (перевірка parity)</span>
+</span></span><span style="display:flex;"><span>echo check &gt; /sys/block/md0/md/sync_action
+</span></span><span style="display:flex;"><span>cat /sys/block/md0/md/mismatch_cnt  <span style="color:#75715e"># кількість розбіжностей</span>
+</span></span></code></pre></div><h3 id="chunk-size--важливий-параметр">Chunk size — важливий параметр</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mdadm --create /dev/md0 --chunk<span style="color:#f92672">=</span><span style="color:#ae81ff">512</span> --level<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span> ...
+</span></span></code></pre></div><p>Chunk size (stripe unit) впливає на:</p>
+<ul>
+<li><strong>Малий chunk (64KB):</strong> краще для random I/O (більше паралелізму)</li>
+<li><strong>Великий chunk (512KB-1MB):</strong> краще для sequential I/O (менше overhead)</li>
+</ul>
+<p>Для баз даних: 64-128KB. Для відео/sequential: 256KB-1MB.</p>
+<h3 id="важливий-нюанс-bitmap">Важливий нюанс: bitmap</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mdadm --create /dev/md0 --level<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> --bitmap<span style="color:#f92672">=</span>internal ...
+</span></span></code></pre></div><p>Internal bitmap зберігає &ldquo;dirty bits&rdquo; — при crash rebuild починається лише для &ldquo;брудних&rdquo; регіонів, а не всього масиву. Суттєво скорочує час після несподіваного вимкнення.</p>
+<hr>
+<h2 id="silent-corruption--найнебезпечніший-ворог">Silent Corruption — найнебезпечніший ворог</h2>
+<h3 id="що-це-таке">Що це таке?</h3>
+<p><strong>Silent corruption</strong> (також &ldquo;bit rot&rdquo;, &ldquo;data rot&rdquo;) — пошкодження даних на рівні зберігання без будь-яких помилок у логах. Ні ОС, ні RAID-контролер не повідомляють про проблему. Ти читаєш дані — і отримуєш пошкоджені дані, думаючи що вони правильні.</p>
+<h3 id="причини">Причини</h3>
+<p><strong>Апаратні:</strong></p>
+<ul>
+<li>Cosmic rays (зміна одного біта в RAM або на диску від радіації — реальна проблема, ~1 помилка/місяць на 8GB RAM без ECC)</li>
+<li>Read disturb — читання однієї клітини NAND flash впливає на сусідні</li>
+<li>Write cliff у SSD (після досягнення write endurance)</li>
+<li>Слабкі сектори (pending sectors) на HDD — диск не звітує про помилку, але читає некоректно</li>
+</ul>
+<p><strong>Програмні/протокольні:</strong></p>
+<ul>
+<li>URE (Unrecoverable Read Error) — специфікація HDD допускає 1 помилку на 10^14-10^15 біт. Для 2TB диска при rebuild це ~1-2 ймовірних URE</li>
+<li>SATA/SAS: обрізання помилок у стеку (деякі RAID-контролери &ldquo;приховують&rdquo; URE, повертаючи нулі)</li>
+<li>Firmware баги</li>
+<li>Memory corruption при передачі (без end-to-end checksum)</li>
+</ul>
+<h3 id="чому-традиційний-raid-не-захищає-від-silent-corruption">Чому традиційний RAID не захищає від silent corruption?</h3>
+<p>RAID 5 з 4 дисків: диск 2 має bit rot у секторі 1000. RAID не знає про це — диск відповідає &ldquo;все ок&rdquo; і повертає некоректні дані. Parity розрахована від правильних даних — навіть якщо зробити перевірку parity, вона покаже &ldquo;inconsistency&rdquo;, але RAID не знає, ЧИЙ блок неправильний (дати чи parity).</p>
+<p>При rebuild після відмови ще одного диска — відновлення буде базуватися на corrupted блоці і результат буде невалідним.</p>
+<h3 id="ure-під-час-rebuild-математика">URE під час rebuild: математика</h3>
+<p>Специфікація SATA HDD: <strong>1 URE на 10^14 прочитаних біт</strong>.</p>
+<p>Масив RAID 5 з 4 × 2TB дисків. При rebuild читається 3 × 2TB = 6TB = 6 × 10^12 байт = 4.8 × 10^13 біт.</p>
+<p>Ймовірність хоча б одного URE:</p>
+<pre tabindex="0"><code>P = 1 - (1 - 1/10^14)^(4.8×10^13) ≈ 1 - e^(-0.48) ≈ 38%
+</code></pre><p><strong>38% шанс неповного rebuild на 3×2TB масиві.</strong> З 4TB дисками — ймовірність ще вища.</p>
+<p>Enterprise SAS диски мають URE spec 10^15 — на порядок кращий, але все одно не нульовий.</p>
+<h3 id="детектування-без-zfs">Детектування без ZFS</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Scrub mdadm (перевіряє parity consistency)</span>
+</span></span><span style="display:flex;"><span>echo check &gt; /sys/block/md0/md/sync_action
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірка S.M.A.R.T. (але не end-to-end checksum)</span>
+</span></span><span style="display:flex;"><span>smartctl -a /dev/sda | grep -i <span style="color:#e6db74">&#34;reallocated\|pending\|uncorrectable&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перегляд результатів scrub</span>
+</span></span><span style="display:flex;"><span>cat /sys/block/md0/md/mismatch_cnt
+</span></span></code></pre></div><p>Але: mdadm scrub виявляє <strong>parity inconsistency</strong>, не знає який блок правильний. Якщо bit rot і parity обидва &ldquo;стабільно неправильні&rdquo; (parity була правильно розрахована від corrupted даних) — scrub нічого не покаже.</p>
+<hr>
+<h2 id="zfs-файлова-система-яка-вирішує-все-вище">ZFS: файлова система, яка вирішує все вище</h2>
+<h3 id="архітектура-zfs">Архітектура ZFS</h3>
+<p>ZFS — це не просто файлова система. Це <strong>storage stack</strong>: volume manager + RAID + filesystem в одному, з end-to-end checksumming на кожному рівні.</p>
+<pre tabindex="0"><code>┌─────────────────────────────────────────┐
+│           ZFS Dataset / zvol            │ ← файлова система
+├─────────────────────────────────────────┤
+│              ZFS Pool (zpool)           │ ← volume manager
+├─────────────────────────────────────────┤
+│    vdev: mirror / raidz / stripe        │ ← RAID рівень
+├─────────────────────────────────────────┤
+│         Checksum layer (SHA-256)        │ ← кожен блок хешується
+├─────────────────────────────────────────┤
+│         Physical disks / SSDs           │
+└─────────────────────────────────────────┘
+</code></pre><h3 id="copy-on-write-cow">Copy-on-Write (CoW)</h3>
+<p>ZFSніколи не перезаписує дані in-place. Кожен write:</p>
+<ol>
+<li>Пише нові дані в новий блок</li>
+<li>Оновлює метадані, що вказують на новий блок</li>
+<li>Старий блок звільняється (або зберігається як snapshot)</li>
+</ol>
+<p>Наслідок: <strong>немає RAID write hole</strong>. Якщо живлення вимкнулось посередині запису — стара версія даних залишається консистентною. Нова версія просто не &ldquo;закріплена&rdquo; в дереві метаданих.</p>
+<h3 id="raidz-vs-класичний-raid-5">RAIDZ vs класичний RAID 5</h3>
+<p><strong>RAIDZ1</strong> ≈ RAID 5, <strong>RAIDZ2</strong> ≈ RAID 6, <strong>RAIDZ3</strong> — захист від 3 відмов.</p>
+<p>Але є ключові відмінності:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>RAID 5</th>
+<th>RAIDZ1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Write hole</td>
+<td>❌ Є</td>
+<td>✅ Немає (CoW)</td>
+</tr>
+<tr>
+<td>Checksum</td>
+<td>❌ Немає</td>
+<td>✅ SHA-256/blake3 на кожному блоці</td>
+</tr>
+<tr>
+<td>Stripe size</td>
+<td>фіксований</td>
+<td><strong>динамічний</strong> (залежить від запиту)</td>
+</tr>
+<tr>
+<td>Silent corruption detect</td>
+<td>❌</td>
+<td>✅ При кожному read</td>
+</tr>
+<tr>
+<td>Self-healing</td>
+<td>❌</td>
+<td>✅ Автоматично при виявленні</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Динамічний stripe</strong> в RAIDZ — важлива деталь. Класичний RAID 5 має фіксований chunk size, що призводить до read-modify-write навіть для малих записів. RAIDZ пише рівно стільки parity, скільки потрібно для конкретного запису.</p>
+<h3 id="zfs-scrub">ZFS Scrub</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Запустити перевірку</span>
+</span></span><span style="display:flex;"><span>zpool scrub tank
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перегляд статусу</span>
+</span></span><span style="display:flex;"><span>zpool status tank
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Результат</span>
+</span></span><span style="display:flex;"><span>  scan: scrub repaired 0B in 00:12:33 with <span style="color:#ae81ff">0</span> errors on ...
+</span></span></code></pre></div><p>При scrub ZFS читає <strong>кожен блок</strong>, перевіряє контрольну суму і:</p>
+<ul>
+<li>Якщо checksum не збігається і є надлишковість (mirror/raidz) → <strong>автоматично відновлює</strong> з іншої копії</li>
+<li>Якщо checksum не збігається і надлишковості немає → помилка в логах</li>
+</ul>
+<p>Рекомендується: weekly scrub для HDD, monthly для SSD.</p>
+<h3 id="zfs-snapshots-і-захист-від-людської-помилки">ZFS Snapshots і захист від людської помилки</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Snapshot</span>
+</span></span><span style="display:flex;"><span>zfs snapshot tank/data@2025-07-01
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Відновлення файлу</span>
+</span></span><span style="display:flex;"><span>zfs rollback tank/data@2025-07-01
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># або</span>
+</span></span><span style="display:flex;"><span>cp /tank/data/.zfs/snapshot/2025-07-01/file.txt /tank/data/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Автоматичні snapshot (zfs-auto-snapshot або sanoid)</span>
+</span></span><span style="display:flex;"><span>sanoid --take-snapshots --verbose
+</span></span></code></pre></div><p>Snapshots — O(1) операція (лише метадані), займають місце лише для змінених даних (CoW).</p>
+<h3 id="arc-adaptive-replacement-cache">ARC (Adaptive Replacement Cache)</h3>
+<p>ZFS використовує RAM як кеш (ARC) — до 50% RAM за замовчуванням. Це дуже ефективно для hot data, але може конфліктувати з іншими додатками на сервері:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Обмежити ARC до 8GB (в /etc/modprobe.d/zfs.conf або sysctl)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;options zfs zfs_arc_max=8589934592&#34;</span> &gt;&gt; /etc/modprobe.d/zfs.conf
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Поточний стан ARC</span>
+</span></span><span style="display:flex;"><span>arc_summary
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># або</span>
+</span></span><span style="display:flex;"><span>cat /proc/spl/kstat/zfs/arcstats | grep -E <span style="color:#e6db74">&#34;^size|^hits|^misses&#34;</span>
+</span></span></code></pre></div><h3 id="l2arc-і-zilslog">L2ARC і ZIL/SLOG</h3>
+<p><strong>L2ARC</strong> — другий рівень кешу на SSD (для read):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>zpool add tank cache /dev/nvme0n1
+</span></span></code></pre></div><p><strong>ZIL (ZFS Intent Log)</strong> — журнал для синхронних записів. За замовчуванням на тих же дисках. <strong>SLOG</strong> (Separate Intent Log) — виносимо на окремий fast SSD/NVMe:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>zpool add tank log /dev/nvme1n1
+</span></span></code></pre></div><p>SLOG критично важливий для NFS/iSCSI workloads з синхронними записами (бази даних, VMware datastores).</p>
+<h3 id="ecc-ram-і-zfs">ECC RAM і ZFS</h3>
+<p><strong>ZFS вимагає ECC RAM</strong> — не технічно, але практично. Ось чому:</p>
+<p>ARC зберігає дані в RAM. Якщо RAM має bit error (без ECC) → ZFS запише corrupted дані на диск з &ldquo;правильним&rdquo; checksum (бо checksum рахується від corrupted даних вже в пам&rsquo;яті). Після цього ZFS не зможе виявити corruption, бо checksum збігатиметься.</p>
+<p>ECC RAM виявляє і виправляє single-bit errors та детектує double-bit errors — захищаючи весь pipeline.</p>
+<hr>
+<h2 id="порівняльна-таблиця-raid-рівнів">Порівняльна таблиця RAID рівнів</h2>
+<table>
+<thead>
+<tr>
+<th>Рівень</th>
+<th>Диски мін</th>
+<th>Обсяг</th>
+<th>Відмов</th>
+<th>Read</th>
+<th>Write</th>
+<th>Use case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RAID 0</td>
+<td>2</td>
+<td>100%</td>
+<td>0</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>Тимчасові дані, ML scratch</td>
+</tr>
+<tr>
+<td>RAID 1</td>
+<td>2</td>
+<td>50%</td>
+<td>N-1</td>
+<td>⭐⭐⭐</td>
+<td>⭐⭐⭐</td>
+<td>OS, boot, невеликі БД</td>
+</tr>
+<tr>
+<td>RAID 5</td>
+<td>3</td>
+<td>(N-1)/N</td>
+<td>1</td>
+<td>⭐⭐⭐⭐</td>
+<td>⭐⭐</td>
+<td>Файлові сервери, архіви</td>
+</tr>
+<tr>
+<td>RAID 6</td>
+<td>4</td>
+<td>(N-2)/N</td>
+<td>2</td>
+<td>⭐⭐⭐⭐</td>
+<td>⭐</td>
+<td>Великі масиви, cold storage</td>
+</tr>
+<tr>
+<td>RAID 10</td>
+<td>4</td>
+<td>50%</td>
+<td>1-N/2</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>OLTP, production БД</td>
+</tr>
+<tr>
+<td>RAIDZ1</td>
+<td>3</td>
+<td>(N-1)/N</td>
+<td>1</td>
+<td>⭐⭐⭐⭐</td>
+<td>⭐⭐⭐</td>
+<td>ZFS storage, NAS</td>
+</tr>
+<tr>
+<td>RAIDZ2</td>
+<td>4</td>
+<td>(N-2)/N</td>
+<td>2</td>
+<td>⭐⭐⭐⭐</td>
+<td>⭐⭐</td>
+<td>ZFS з підвищеним захистом</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="каверзні-питання-для-інтервю-швидкий-довідник">Каверзні питання для інтерв&rsquo;ю: швидкий довідник</h2>
+<p><strong>Q: RAID 5 vs RAID 6 — коли що обирати?</strong><br>
+A: RAID 6 при дисках &gt;2TB і масиві 6+ дисків. Час rebuild RAID 5 на 4TB диску — 8-16 годин при повному навантаженні. За цей час ймовірність другої відмови критично висока. RAID 6 дає буфер безпеки.</p>
+<p><strong>Q: Чому RAID 5 &ldquo;мертвий&rdquo; для великих дисків?</strong><br>
+A: URE probability + rebuild time. На 8TB SATA при rebuild читається ~24TB (3×8TB). Ймовірність URE: &gt;90%. Індустрія де-факто рекомендує RAID 6 або RAIDZ2 для дисків &gt;2TB.</p>
+<p><strong>Q: Що станеться якщо у RAID 10 відмовлять Диск 1 і Диск 2 (одна пара)?</strong><br>
+A: Повна втрата даних цієї пари, хоч інші пари живі.</p>
+<p><strong>Q: Чи можна змінити chunk size після створення масиву?</strong><br>
+A: Ні, без перестворення. Це деструктивна операція для mdadm RAID.</p>
+<p><strong>Q: mdadm rebuild читає весь масив чи лише відмовлений диск?</strong><br>
+A: Читає всі &ldquo;живі&rdquo; диски для відновлення даних на новий диск. Це і є причиною стресу на здорові диски під час rebuild.</p>
+<p><strong>Q: Що таке &ldquo;degraded mode&rdquo;?</strong><br>
+A: RAID продовжує працювати після відмови диска (якщо в межах надлишковості), але без захисту. Статус: <code>[UUU_]</code> в /proc/mdstat де <code>_</code> = відмовлений диск.</p>
+<p><strong>Q: ZFS дзеркало vs mdadm RAID 1 — в чому різниця?</strong><br>
+A: ZFS mirror має end-to-end checksums, CoW (немає write hole), автоматичне self-healing при scrub. mdadm RAID 1 — простіший, без checksums, є write hole без BBU.</p>
+<p><strong>Q: Що таке &ldquo;split-brain&rdquo; у RAID 1?</strong><br>
+A: При network partition (в distributed RAID або Ceph) обидва вузли думають що інший мертвий і починають писати незалежно. Результат — два дивергентних дзеркала. Вирішується через quorum/fencing.</p>
+<hr>
+<h2 id="практичні-рекомендації">Практичні рекомендації</h2>
+<h3 id="що-використовувати-в-2025">Що використовувати в 2025</h3>
+<p><strong>Для домашнього NAS/сервера:</strong> ZFS (TrueNAS, Proxmox ZFS). RAIDZ2 для 4-8 дисків.</p>
+<p><strong>Для production Linux-сервера (без ZFS):</strong> RAID 10 через mdadm для баз даних, RAID 6 для файлових сховищ.</p>
+<p><strong>Для Proxmox homelab:</strong> ZFS mirror або RAIDZ1 — отримуєш snapshots, checksums і простоту управління.</p>
+<p><strong>Ніколи в production:</strong></p>
+<ul>
+<li>RAID 5 з HDD &gt;2TB без додаткових заходів (BBU, RAIDZ2)</li>
+<li>RAID 0 для важливих даних</li>
+<li>Fake RAID (BIOS RAID)</li>
+</ul>
+<h3 id="моніторинг-health">Моніторинг health</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># mdadm: перевіряти регулярно</span>
+</span></span><span style="display:flex;"><span>cat /proc/mdstat
+</span></span><span style="display:flex;"><span>mdadm --detail /dev/md0 | grep -E <span style="color:#e6db74">&#34;State|Rebuild|Failed&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># S.M.A.R.T. (встановити smartmontools)</span>
+</span></span><span style="display:flex;"><span>smartctl -H /dev/sda  <span style="color:#75715e"># quick health check</span>
+</span></span><span style="display:flex;"><span>smartctl -t long /dev/sda  <span style="color:#75715e"># запустити extended test</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ZFS</span>
+</span></span><span style="display:flex;"><span>zpool status -v
+</span></span><span style="display:flex;"><span>zpool list
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Налаштувати автоматичний scrub (cron або systemd timer)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ZFS: zpool scrub tank  — раз на тиждень</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># mdadm: echo check &gt; /sys/block/md0/md/sync_action  — раз на місяць</span>
+</span></span></code></pre></div><h3 id="нагадування-про-3-2-1-backup">Нагадування про 3-2-1 backup</h3>
+<p>RAID — це не backup. Правило 3-2-1:</p>
+<ul>
+<li><strong>3</strong> копії даних</li>
+<li><strong>2</strong> різні носії</li>
+<li><strong>1</strong> offsite (S3, Backblaze B2, фізично інше місце)</li>
+</ul>
+<p>RAID рахується як <strong>одна</strong> копія.</p>
+<hr>
+<h2 id="висновок">Висновок</h2>
+<p>RAID — це зрілий стек технологій з 35-річною історією, але нові виклики (більші диски, NVMe, silent corruption) змінили best practices. Ключові висновки:</p>
+<ol>
+<li><strong>RAID 5 на великих HDD — небезпечний.</strong> Rebuild time + URE probability = реальний ризик втрати даних.</li>
+<li><strong>Silent corruption реальна.</strong> Без end-to-end checksums (ZFS/btrfs) ти можеш роками зберігати corrupted дані, не знаючи про це.</li>
+<li><strong>ZFS вирішує більшість проблем</strong> класичного RAID: write hole, silent corruption, людська помилка (snapshots). Але потребує ECC RAM і правильного налаштування.</li>
+<li><strong>mdadm — відмінний вибір</strong> для Linux, якщо розумієш його обмеження і додаєш моніторинг + regular scrub.</li>
+<li><strong>Hardware RAID controller ≠ кращий.</strong> Без доступу до S.M.A.R.T. і з vendor lock-in він може бути гіршим за software RAID для більшості use cases.</li>
+</ol>
+<blockquote>
+<p>Найкращий RAID — той, стан якого ти моніториш щодня.</p>
+</blockquote>
+
+</content>
+
+
+
+<p>
+  
+  <a href="//localhost:1313/tags/linux/">#Linux</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

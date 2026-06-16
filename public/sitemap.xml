@@ -110,6 +110,15 @@
     <loc>//localhost:1313/blog/kubernetes-cheatsheet/</loc>
     <lastmod>2026-01-04T00:00:00+03:00</lastmod>
   </url><url>
+    <loc>//localhost:1313/categories/infrastructure/</loc>
+    <lastmod>2025-07-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/blog/raid-deep-dive/</loc>
+    <lastmod>2025-07-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/blog/docker-deep-dive/</loc>
+    <lastmod>2025-06-16T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>//localhost:1313/categories/interview-prep/</loc>
     <lastmod>2025-06-14T00:00:00+00:00</lastmod>
   </url><url>
@@ -118,6 +127,12 @@
   </url><url>
     <loc>//localhost:1313/blog/top-linux-commands/</loc>
     <lastmod>2025-02-01T00:27:57+03:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/git/</loc>
+    <lastmod>2022-06-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/blog/git-workflow/</loc>
+    <lastmod>2022-06-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>//localhost:1313/blog/linux-load/</loc>
   </url>

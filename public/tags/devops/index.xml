@@ -22,5 +22,12 @@
       <guid>//localhost:1313/blog/proxmox-cluster-guide/</guid>
       <description>Proxmox Virtual Environment — це платформа на базі Debian Linux, що поєднує KVM-віртуалізацію та LXC-контейнеризацію в єдиному веб-інтерфейсі. Поодинокий гіпервізор — це завжди single point of failure. Кластер вирішує цю проблему, але за умови що ти розумієш як він реально працює всередині.&#xA;Як Proxmox влаштований на низькому рівні Перед тим як говорити про кластер — треба зрозуміти що відбувається на одній ноді.&#xA;Шар 1 — Залізо і ядро Proxmox встановлюється прямо на bare metal.</description>
     </item>
+    <item>
+      <title>Docker зсередини: containerd, runc, образи, мережі</title>
+      <link>//localhost:1313/blog/docker-deep-dive/</link>
+      <pubDate>Mon, 16 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/docker-deep-dive/</guid>
+      <description>Docker зсередини: containerd, runc, образи, мережі та все що треба знати на співбесіді Ця стаття — не «Hello World». Це розбір Docker-стеку від ядра Linux до docker compose up, з поясненням кожного рядка конфігу, каверзними питаннями зі співбесід і реальними прикладами з production.&#xA;1. Архітектура: що відбувається після docker run Більшість думають, що Docker — це монолітний демон. Насправді це стек із кількох незалежних компонентів.&#xA;┌─────────────────────────────────────────────┐ │ docker CLI (клієнт, просто шле HTTP запити)│ └────────────────────┬────────────────────────┘ │ Unix socket /var/run/docker.</description>
+    </item>
   </channel>
 </rss>

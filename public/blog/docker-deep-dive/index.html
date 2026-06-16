@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Docker зсередини: containerd, runc, образи, мережі | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="Docker зсередини: containerd, runc, образи, мережі" />
+<meta name="description" content="Повний розбір Docker-стеку: архітектура containerd &#43; runc, шари образів, multi-stage build, Docker Compose, мережі, логування, troubleshooting — з поясненням кожного рядка конфігу." />
+<meta name="keywords" content="devops,linux," />
+
+
+<meta property="og:title" content="Docker зсередини: containerd, runc, образи, мережі" />
+<meta property="og:description" content="Повний розбір Docker-стеку: архітектура containerd &#43; runc, шари образів, multi-stage build, Docker Compose, мережі, логування, troubleshooting — з поясненням кожного рядка конфігу." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/blog/docker-deep-dive/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2025-06-16T00:00:00+00:00" />
+<meta property="article:modified_time" content="2025-06-16T00:00:00+00:00" />
+
+
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Docker зсередини: containerd, runc, образи, мережі"/>
+<meta name="twitter:description" content="Повний розбір Docker-стеку: архітектура containerd &#43; runc, шари образів, multi-stage build, Docker Compose, мережі, логування, troubleshooting — з поясненням кожного рядка конфігу."/>
+
+
+
+<meta itemprop="name" content="Docker зсередини: containerd, runc, образи, мережі">
+<meta itemprop="description" content="Повний розбір Docker-стеку: архітектура containerd &#43; runc, шари образів, multi-stage build, Docker Compose, мережі, логування, troubleshooting — з поясненням кожного рядка конфігу."><meta itemprop="datePublished" content="2025-06-16T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2025-06-16T00:00:00+00:00" />
+<meta itemprop="wordCount" content="4347">
+<meta itemprop="keywords" content="devops,linux," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</h2>
+</a>
+<nav>
+<a href="/">Home</a>
+
+<a href="/blog/">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Docker зсередини: containerd, runc, образи, мережі</h1>
+<p>
+  <i>
+    <time datetime='2025-06-16'>
+      16 Jun, 2025
+    </time>
+  </i>
+</p>
+
+<content>
+  <h1 id="docker-зсередини-containerd-runc-образи-мережі-та-все-що-треба-знати-на-співбесіді">Docker зсередини: containerd, runc, образи, мережі та все що треба знати на співбесіді</h1>
+<blockquote>
+<p>Ця стаття — не «Hello World». Це розбір Docker-стеку від ядра Linux до <code>docker compose up</code>, з поясненням кожного рядка конфігу, каверзними питаннями зі співбесід і реальними прикладами з production.</p>
+</blockquote>
+<hr>
+<h2 id="1-архітектура-що-відбувається-після-docker-run">1. Архітектура: що відбувається після <code>docker run</code></h2>
+<p>Більшість думають, що Docker — це монолітний демон. Насправді це стек із кількох незалежних компонентів.</p>
+<pre tabindex="0"><code>┌─────────────────────────────────────────────┐
+│  docker CLI  (клієнт, просто шле HTTP запити)│
+└────────────────────┬────────────────────────┘
+                     │ Unix socket /var/run/docker.sock
+                     ▼
+┌─────────────────────────────────────────────┐
+│  dockerd  (Docker daemon)                   │
+│  ├─ Docker API (REST)                       │
+│  ├─ image management                        │
+│  ├─ volume management                       │
+│  └─ network management                      │
+└────────────────────┬────────────────────────┘
+                     │ gRPC (CRI або внутрішній)
+                     ▼
+┌─────────────────────────────────────────────┐
+│  containerd  (OCI-сумісний container runtime)│
+│  ├─ image pull / push / store               │
+│  ├─ snapshot management (overlayfs)         │
+│  └─ task lifecycle (create/start/stop)      │
+└────────────────────┬────────────────────────┘
+                     │ OCI Runtime Spec (JSON)
+                     ▼
+┌─────────────────────────────────────────────┐
+│  runc  (низькорівневий OCI runtime)         │
+│  ├─ clone() системний виклик (namespaces)   │
+│  ├─ cgroup limits                           │
+│  └─ pivot_root / chroot                     │
+└─────────────────────────────────────────────┘
+</code></pre><h3 id="ланцюжок-викликів-при-docker-run">Ланцюжок викликів при <code>docker run</code></h3>
+<ol>
+<li><code>docker</code> CLI → HTTP POST <code>/containers/create</code> → <code>dockerd</code></li>
+<li><code>dockerd</code> → gRPC <code>containerd.TaskService.Create</code> → <code>containerd</code></li>
+<li><code>containerd</code> готує OCI bundle (rootfs + config.json) → запускає <code>runc</code></li>
+<li><code>runc</code> виконує <code>clone()</code> з прапорами namespace, налаштовує cgroup, монтує overlayfs, запускає init-процес</li>
+<li><code>runc</code> виходить — контейнер живе самостійно під управлінням <code>containerd-shim</code></li>
+</ol>
+<blockquote>
+<p><strong>Ключовий момент</strong>: <code>runc</code> — це одноразовий процес. Він запускає контейнер і завершується. Далі процесом-нянею є <code>containerd-shim-runc-v2</code>, який зберігає stdio та exit code.</p>
+</blockquote>
+<hr>
+<h2 id="2-linux-примітиви-під-капотом">2. Linux-примітиви під капотом</h2>
+<p>Docker — це не «магія». Це зручний інтерфейс над двома фічами ядра Linux.</p>
+<h3 id="namespaces--ізоляція">Namespaces — ізоляція</h3>
+<table>
+<thead>
+<tr>
+<th>Namespace</th>
+<th>Прапор clone()</th>
+<th>Що ізолює</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pid</code></td>
+<td><code>CLONE_NEWPID</code></td>
+<td>дерево процесів (PID 1 всередині контейнера)</td>
+</tr>
+<tr>
+<td><code>net</code></td>
+<td><code>CLONE_NEWNET</code></td>
+<td>мережеві інтерфейси, routing table, netfilter</td>
+</tr>
+<tr>
+<td><code>mnt</code></td>
+<td><code>CLONE_NEWNS</code></td>
+<td>точки монтування, filesystems</td>
+</tr>
+<tr>
+<td><code>uts</code></td>
+<td><code>CLONE_NEWUTS</code></td>
+<td>hostname, domainname</td>
+</tr>
+<tr>
+<td><code>ipc</code></td>
+<td><code>CLONE_NEWIPC</code></td>
+<td>System V IPC, POSIX message queues</td>
+</tr>
+<tr>
+<td><code>user</code></td>
+<td><code>CLONE_NEWUSER</code></td>
+<td>UID/GID маппінг (rootless containers)</td>
+</tr>
+<tr>
+<td><code>cgroup</code></td>
+<td><code>CLONE_NEWCGROUP</code></td>
+<td>cgroup root (з ядра 4.6)</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Перевірити namespaces конкретного контейнера</span>
+</span></span><span style="display:flex;"><span>CONTAINER_PID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>docker inspect --format <span style="color:#e6db74">&#39;{{.State.Pid}}&#39;</span> mycontainer<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>ls -la /proc/$CONTAINER_PID/ns/
+</span></span></code></pre></div><h3 id="cgroups--обмеження-ресурсів">Cgroups — обмеження ресурсів</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Де живуть cgroups контейнера (cgroup v2, systemd slice)</span>
+</span></span><span style="display:flex;"><span>ls /sys/fs/cgroup/system.slice/docker-&lt;ID&gt;.scope/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Подивитися ліміти CPU і пам&#39;яті</span>
+</span></span><span style="display:flex;"><span>cat /sys/fs/cgroup/system.slice/docker-&lt;full_id&gt;.scope/memory.max
+</span></span><span style="display:flex;"><span>cat /sys/fs/cgroup/system.slice/docker-&lt;full_id&gt;.scope/cpu.max
+</span></span></code></pre></div><p><strong>Різниця між cgroup v1 і v2:</strong></p>
+<ul>
+<li><strong>v1</strong>: ієрархії окремі для кожного контролера (<code>/sys/fs/cgroup/memory/</code>, <code>/sys/fs/cgroup/cpu/</code>)</li>
+<li><strong>v2</strong>: єдина уніфікована ієрархія (<code>/sys/fs/cgroup/</code>), обов&rsquo;язково з Docker 20.10+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Перевірити яка версія cgroup використовується</span>
+</span></span><span style="display:flex;"><span>stat -fc %T /sys/fs/cgroup/
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># tmpfs → v1, cgroup2fs → v2</span>
+</span></span></code></pre></div><hr>
+<h2 id="3-образи-шари-та-overlayfs">3. Образи, шари та overlayfs</h2>
+<h3 id="що-таке-образ-docker">Що таке образ Docker</h3>
+<p>Образ — це <strong>незмінний</strong> (immutable) набір шарів файлової системи + метадані (manifest). Кожна інструкція <code>RUN</code>, <code>COPY</code>, <code>ADD</code> у Dockerfile створює новий шар.</p>
+<pre tabindex="0"><code>┌──────────────────────────────┐  ← контейнерний шар (read-write)
+│  container layer (writable)  │
+├──────────────────────────────┤
+│  layer N: RUN pip install    │  ← read-only
+├──────────────────────────────┤
+│  layer N-1: COPY . /app      │  ← read-only
+├──────────────────────────────┤
+│  layer 2: RUN apt-get update │  ← read-only
+├──────────────────────────────┤
+│  layer 1: FROM ubuntu:22.04  │  ← базовий образ (read-only)
+└──────────────────────────────┘
+</code></pre><h3 id="overlayfs-як-шари-монтуються">OverlayFS: як шари монтуються</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Подивитися mount point контейнера</span>
+</span></span><span style="display:flex;"><span>docker inspect mycontainer | jq <span style="color:#e6db74">&#39;.[0].GraphDriver&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Приклад виводу:</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Data&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;LowerDir&#34;</span>: <span style="color:#e6db74">&#34;/var/lib/docker/overlay2/abc.../diff:/var/lib/docker/overlay2/def.../diff&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;MergedDir&#34;</span>: <span style="color:#e6db74">&#34;/var/lib/docker/overlay2/xyz.../merged&#34;</span>,  <span style="color:#75715e"># ← це і є / всередині контейнера</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;UpperDir&#34;</span>: <span style="color:#e6db74">&#34;/var/lib/docker/overlay2/xyz.../diff&#34;</span>,     <span style="color:#75715e"># ← writable шар</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;WorkDir&#34;</span>: <span style="color:#e6db74">&#34;/var/lib/docker/overlay2/xyz.../work&#34;</span>       <span style="color:#75715e"># ← тимчасовий, потрібен overlayfs</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Name&#34;</span>: <span style="color:#e6db74">&#34;overlay2&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><strong>Copy-on-Write (CoW)</strong>: якщо контейнер змінює файл з read-only шару, overlayfs копіює його в <code>UpperDir</code>, і далі контейнер бачить змінену копію. Оригінал у <code>LowerDir</code> не змінюється.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Знайти де фізично лежать шари</span>
+</span></span><span style="display:flex;"><span>ls /var/lib/docker/overlay2/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Подивитися вміст конкретного шару</span>
+</span></span><span style="display:flex;"><span>ls /var/lib/docker/overlay2/&lt;layer_id&gt;/diff/
+</span></span></code></pre></div><h3 id="containerd-image-store-docker-29">Containerd image store (Docker 29+)</h3>
+<p>З Docker 29 (і Docker Desktop раніше) з&rsquo;явився <strong>containerd image store</strong> — замість власного сховища образів Docker використовує containerd напряму.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Увімкнути в /etc/docker/daemon.json</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;features&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;containerd-snapshotter&#34;</span>: true
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><strong>Що змінюється:</strong></p>
+<ul>
+<li>Образи тепер зберігаються в <code>/var/lib/containerd/</code>, а не <code>/var/lib/docker/image/</code></li>
+<li><code>docker images</code> і <code>ctr images list</code> показують одне й те саме</li>
+<li>Підтримка multi-platform образів (BuildKit + containerd)</li>
+<li>Snapshotter — <code>overlayfs</code> (раніше був окремий <code>overlay2</code> driver dockerd)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Переглянути образи через containerd напряму</span>
+</span></span><span style="display:flex;"><span>ctr --namespace moby images list
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Namespace docker-а в containerd завжди &#34;moby&#34;</span>
+</span></span><span style="display:flex;"><span>ctr -n moby containers list
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Якщо використовуєте k8s — namespace &#34;k8s.io&#34;</span>
+</span></span><span style="display:flex;"><span>ctr -n k8s.io images list
+</span></span></code></pre></div><hr>
+<h2 id="4-copy-vs-add--коли-що-використовувати">4. COPY vs ADD — коли що використовувати</h2>
+<p>Це класичне питання на співбесіді.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><code>COPY</code></th>
+<th><code>ADD</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Копіює локальні файли</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Розпаковує tar-архів</td>
+<td>❌</td>
+<td>✅ автоматично</td>
+</tr>
+<tr>
+<td>Завантажує з URL</td>
+<td>❌</td>
+<td>✅ (але краще не треба)</td>
+</tr>
+<tr>
+<td>Прозорість</td>
+<td>✅ завжди зрозуміло</td>
+<td>❌ поведінка неочевидна</td>
+</tr>
+<tr>
+<td>Best practice</td>
+<td><strong>Завжди використовуйте</strong></td>
+<td>Тільки якщо потрібен auto-untar</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#75715e"># ✅ Правильно — COPY для звичайних файлів</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> requirements.txt /app/requirements.txt<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> --chown<span style="color:#f92672">=</span>appuser:appgroup ./src /app/src<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># ✅ ADD виправдано — якщо потрібно розпакувати архів</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span> app-data.tar.gz /data/<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># ❌ Неправильно — не використовуйте ADD для URL</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span> https://example.com/file.jar /app/  <span style="color:#75715e"># краще: RUN curl -fsSL ... -o /app/file.jar</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p><strong>Чому <code>ADD</code> з URL — погана ідея</strong>: шар кешується після першого білда. Якщо файл на URL оновився, Docker цього не знає і використовує старий кеш.</p>
+<hr>
+<h2 id="5-volumes-типи-та-коли-що-монтувати">5. Volumes: типи та коли що монтувати</h2>
+<h3 id="три-типи-монтування">Три типи монтування</h3>
+<pre tabindex="0"><code>┌─────────────────┬──────────────────────────────────────────┐
+│  Тип            │  Приклад                                 │
+├─────────────────┼──────────────────────────────────────────┤
+│  Named volume   │  -v mydata:/app/data                     │
+│  Bind mount     │  -v /host/path:/container/path           │
+│  tmpfs mount    │  --tmpfs /tmp:rw,size=100m               │
+└─────────────────┴──────────────────────────────────────────┘
+</code></pre><h3 id="named-volumes--для-даних">Named volumes — для даних</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker volume create pgdata
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>docker run -d <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -v pgdata:/var/lib/postgresql/data <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  postgres:16
+</span></span></code></pre></div><ul>
+<li>Зберігаються в <code>/var/lib/docker/volumes/&lt;name&gt;/_data</code></li>
+<li>Керуються Docker-ом, незалежні від lifecycle контейнера</li>
+<li>Підходять для: БД, черги, persistent state</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Inspect volume</span>
+</span></span><span style="display:flex;"><span>docker volume inspect pgdata
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Backup volume</span>
+</span></span><span style="display:flex;"><span>docker run --rm <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -v pgdata:/data <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -v <span style="color:#66d9ef">$(</span>pwd<span style="color:#66d9ef">)</span>:/backup <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  alpine tar czf /backup/pgdata.tar.gz -C /data .
+</span></span></code></pre></div><h3 id="bind-mounts--для-розробки">Bind mounts — для розробки</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run -d <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -v <span style="color:#66d9ef">$(</span>pwd<span style="color:#66d9ef">)</span>/nginx.conf:/etc/nginx/nginx.conf:ro <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -v <span style="color:#66d9ef">$(</span>pwd<span style="color:#66d9ef">)</span>/html:/usr/share/nginx/html <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  nginx:alpine
+</span></span></code></pre></div><ul>
+<li>Монтується конкретний хост-шлях</li>
+<li><code>:ro</code> — read-only всередині контейнера</li>
+<li>Підходить для: dev-режим, конфіги, code hot-reload</li>
+</ul>
+<h3 id="коли-монтування-файлу-не-директорії--пастка">Коли монтування файлу (не директорії) — пастка</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Це ПОГАНО якщо nginx.conf не існує на хості</span>
+</span></span><span style="display:flex;"><span>-v /host/nginx.conf:/etc/nginx/nginx.conf
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Docker створить /host/nginx.conf як ДИРЕКТОРІЮ, не файл!</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Контейнер впаде з помилкою: IsADirectory</span>
+</span></span></code></pre></div><p><strong>Правило</strong>: якщо монтуєте файл — файл повинен існувати на хості до запуску контейнера. Інакше Docker (bind mount) створить директорію з цим ім&rsquo;ям.</p>
+<h3 id="tmpfs--для-секретів-і-тимчасових-даних">tmpfs — для секретів і тимчасових даних</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run -d <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --tmpfs /run:rw,noexec,nosuid,size<span style="color:#f92672">=</span>65536k <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --tmpfs /tmp <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  myapp
+</span></span></code></pre></div><ul>
+<li>Зберігається в RAM, не записується на диск</li>
+<li>Зникає при зупинці контейнера</li>
+<li>Підходить для: session tokens, тимчасові файли, де важлива безпека</li>
+</ul>
+<hr>
+<h2 id="6-multi-stage-build-пояснення-кожного-рядка">6. Multi-stage build: пояснення кожного рядка</h2>
+<p>Це архітектурний патерн, який зменшує розмір production-образу в 5-20 разів.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#75715e"># ─────────────────────────────────────────────</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># STAGE 1: builder</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Іменуємо стейдж &#34;builder&#34; — можна посилатися на нього далі</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># ─────────────────────────────────────────────</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> golang:1.22-alpine AS builder</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Встановлюємо системні залежності для компіляції</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># alpine не має bash і багатьох GNU-tools, тому apk</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># --no-cache: не кешувати індекс пакетів — зменшує шар</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> apk add --no-cache git ca-certificates tzdata<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Окремо копіюємо файли залежностей ДО копіювання коду</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Причина: кеш Docker. Якщо go.mod/go.sum не змінились —</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># RUN go mod download буде взято з кешу, навіть якщо код змінився</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> /build</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> go.mod go.sum ./<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> go mod download<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Тепер копіюємо весь код</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Цей шар інвалідується при будь-якій зміні коду</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> . .<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Компілюємо статичний бінарник</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># CGO_ENABLED=0: не використовувати C-бібліотеки (важливо для scratch/alpine)</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># GOOS=linux: явно вказуємо target OS</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># -ldflags=&#34;-w -s&#34;: прибираємо debug info та symbol table (менший бінарник)</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># -a: перекомпілювати всі пакети (гарантія чистого білда)</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> CGO_ENABLED<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span> GOOS<span style="color:#f92672">=</span>linux go build <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    -ldflags<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;-w -s&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    -a <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    -o /app/server <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    ./cmd/server<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># ─────────────────────────────────────────────</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># STAGE 2: production image</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># scratch — абсолютно порожній образ, 0 байт</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Якщо потрібен shell для debug — використовуйте alpine замість scratch</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># ─────────────────────────────────────────────</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> scratch AS production</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Копіюємо SSL certificates зі stage builder</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Без них HTTPS-запити провалюються (x509: certificate signed by unknown authority)</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> --from<span style="color:#f92672">=</span>builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Копіюємо timezone data (потрібно якщо додаток парсить timezones)</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> --from<span style="color:#f92672">=</span>builder /usr/share/zoneinfo /usr/share/zoneinfo<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Копіюємо тільки скомпільований бінарник — більше нічого</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> --from<span style="color:#f92672">=</span>builder /app/server /server<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Оголошуємо порт (документація, не відкриває порт)</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">EXPOSE</span><span style="color:#e6db74"> 8080</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># USER: не запускаємо від root</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># scratch не має /etc/passwd — UID задаємо числом</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">USER</span><span style="color:#e6db74"> 65534:65534</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># ENTRYPOINT vs CMD:</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># ENTRYPOINT — що запускається ЗАВЖДИ (не перевизначається без --entrypoint)</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># CMD — аргументи за замовчуванням, які можна замінити при docker run</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ENTRYPOINT</span> [<span style="color:#e6db74">&#34;/server&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#e6db74">&#34;--config&#34;</span>, <span style="color:#e6db74">&#34;/etc/app/config.yaml&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><h3 id="multi-stage-для-python-додатка">Multi-stage для Python додатка</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#75715e"># STAGE 1: встановлення залежностей</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> python:3.12-slim AS deps</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Окрема робоча директорія для залежностей</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> /deps</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Копіюємо тільки requirements — кеш шару залишиться валідним</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># поки requirements.txt не зміниться</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> requirements.txt .<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># --no-cache-dir: не зберігати pip cache (непотрібний в образі)</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># --user: встановлюємо в ~/.local (щоб легше скопіювати)</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> pip install --no-cache-dir --user -r requirements.txt<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># ─────────────────────────────────────────────</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># STAGE 2: production</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># ─────────────────────────────────────────────</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> python:3.12-slim AS production</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Не генерувати .pyc файли при запуску (непотрібні в контейнері)</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ENV</span> PYTHONDONTWRITEBYTECODE<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Не буферизувати stdout/stderr — логи одразу видні в docker logs</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ENV</span> PYTHONUNBUFFERED<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Шлях де pip --user встановлює пакети</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ENV</span> PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/root/.local/bin:</span>$PATH<span style="color:#e6db74">&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> /app</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Копіюємо встановлені пакети зі stage deps</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> --from<span style="color:#f92672">=</span>deps /root/.local /root/.local<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Копіюємо код додатка</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> ./src /app/src<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> addgroup --system appgroup <span style="color:#f92672">&amp;&amp;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    adduser --system --ingroup appgroup appuser<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">USER</span><span style="color:#e6db74"> appuser</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#e6db74">&#34;python&#34;</span>, <span style="color:#e6db74">&#34;-m&#34;</span>, <span style="color:#e6db74">&#34;uvicorn&#34;</span>, <span style="color:#e6db74">&#34;src.main:app&#34;</span>, <span style="color:#e6db74">&#34;--host&#34;</span>, <span style="color:#e6db74">&#34;0.0.0.0&#34;</span>, <span style="color:#e6db74">&#34;--port&#34;</span>, <span style="color:#e6db74">&#34;8000&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><h3 id="корисні-buildkit-фічі-docker-230-включено-за-замовчуванням">Корисні BuildKit-фічі (Docker 23.0+ включено за замовчуванням)</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#75715e"># syntax=docker/dockerfile:1</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> ubuntu:22.04</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Cache mount: кешувати /var/cache/apt між білдами — не заново качати пакети</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> --mount<span style="color:#f92672">=</span>type<span style="color:#f92672">=</span>cache,target<span style="color:#f92672">=</span>/var/cache/apt,sharing<span style="color:#f92672">=</span>locked <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --mount<span style="color:#f92672">=</span>type<span style="color:#f92672">=</span>cache,target<span style="color:#f92672">=</span>/var/lib/apt,sharing<span style="color:#f92672">=</span>locked <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    apt-get update <span style="color:#f92672">&amp;&amp;</span> apt-get install -y --no-install-recommends <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    build-essential <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    <span style="color:#f92672">&amp;&amp;</span> rm -rf /var/lib/apt/lists/*<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Secret mount: пробрасуємо секрет під час білда, не залишаємо в шарі</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># docker build --secret id=npmrc,src=$HOME/.npmrc .</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> --mount<span style="color:#f92672">=</span>type<span style="color:#f92672">=</span>secret,id<span style="color:#f92672">=</span>npmrc,target<span style="color:#f92672">=</span>/root/.npmrc <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    npm install<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># SSH mount: використовуємо SSH-агент для приватних git репозиторіїв</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># docker build --ssh default .</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> --mount<span style="color:#f92672">=</span>type<span style="color:#f92672">=</span>ssh <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    git clone git@github.com:myorg/private-repo.git /app<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><hr>
+<h2 id="7-docker-compose-повний-розбір-конфігу">7. Docker Compose: повний розбір конфігу</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># compose.yaml (новий стандарт, замість docker-compose.yml)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Версія spec більше не потрібна з Compose V2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">myapp </span> <span style="color:#75715e"># Префікс для імен мереж та volumes (замість назви директорії)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">services</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ─────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># PostgreSQL</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ─────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">postgres</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">postgres:16-alpine</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># restart policy: що робити при падінні контейнера</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># unless-stopped: рестартувати завжди, крім явної зупинки (docker stop)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># on-failure: тільки при non-zero exit code</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># always: навіть якщо явно зупинили (корисно для критичних сервісів)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">restart</span>: <span style="color:#ae81ff">unless-stopped</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">environment</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">POSTGRES_DB</span>: <span style="color:#ae81ff">mydb</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">POSTGRES_USER</span>: <span style="color:#ae81ff">myuser</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Краще використовувати secrets або env_file для паролів</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">POSTGRES_PASSWORD_FILE</span>: <span style="color:#ae81ff">/run/secrets/db_password</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Секрети Docker (потрібно оголосити в секції secrets нижче)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">secrets</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">db_password</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Named volume для даних БД</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">pgdata:/var/lib/postgresql/data</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Bind mount для init SQL скриптів (виконуються при першому старті)</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">./db/init:/docker-entrypoint-initdb.d:ro</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Обмеження ресурсів (замінює --memory та --cpus в docker run)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">deploy</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">limits</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">cpus</span>: <span style="color:#e6db74">&#39;2.0&#39;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">memory</span>: <span style="color:#ae81ff">2G</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">reservations</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">cpus</span>: <span style="color:#e6db74">&#39;0.5&#39;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">memory</span>: <span style="color:#ae81ff">512M</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Healthcheck: Compose чекає на healthy перед стартом залежних сервісів</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">healthcheck</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">test</span>: [<span style="color:#e6db74">&#34;CMD-SHELL&#34;</span>, <span style="color:#e6db74">&#34;pg_isready -U myuser -d mydb&#34;</span>]
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">interval</span>: <span style="color:#ae81ff">10s  </span> <span style="color:#75715e"># як часто перевіряти</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">timeout</span>: <span style="color:#ae81ff">5s    </span> <span style="color:#75715e"># timeout одної перевірки</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">retries</span>: <span style="color:#ae81ff">5</span>      <span style="color:#75715e"># скільки разів провалюватись перед unhealthy</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">start_period</span>: <span style="color:#ae81ff">30s </span> <span style="color:#75715e"># не вважати failing під час initial startup</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">networks</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">backend</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ─────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Backend API</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ─────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">api</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Білдуємо з локального Dockerfile</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">build</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">context</span>: <span style="color:#ae81ff">.       </span> <span style="color:#75715e"># директорія для build context (де шукати файли)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">dockerfile</span>: <span style="color:#ae81ff">Dockerfile </span> <span style="color:#75715e"># ім&#39;я Dockerfile (за замовчуванням &#34;Dockerfile&#34;)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">target: production      # multi-stage</span>: <span style="color:#ae81ff">зупинитись на stage &#34;production&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">args</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Build args передаються в Dockerfile як ARG</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">APP_VERSION</span>: <span style="color:#ae81ff">${APP_VERSION:-dev}</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># cache_from: прискорює CI/CD білди</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">cache_from</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#ae81ff">type=registry,ref=myregistry/myapp:cache</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">com.myapp.component</span>: <span style="color:#e6db74">&#34;api&#34;</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Залежності — визначає порядок запуску</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># depends_on з condition чекає на healthcheck</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">depends_on</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">postgres</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">condition</span>: <span style="color:#ae81ff">service_healthy </span> <span style="color:#75715e"># чекаємо поки postgres стане healthy</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">redis</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">condition</span>: <span style="color:#ae81ff">service_started </span> <span style="color:#75715e"># просто чекаємо старту</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">environment</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">DATABASE_URL</span>: <span style="color:#ae81ff">postgresql://myuser@postgres:5432/mydb</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">REDIS_URL</span>: <span style="color:#ae81ff">redis://redis:6379</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># env_file: завантажити змінні з файлу .env</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">env_file</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">.env</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">.env.local </span> <span style="color:#75715e"># локальні overrides, не комітимо в git</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># HOST:CONTAINER — пробрасуємо порт 8000 хосту на 8000 контейнера</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;8000:8000&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Тільки localhost (безпечніше для internal сервісів)</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;127.0.0.1:9090:9090&#34;</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Bind mount конфігу (read-only)</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">./config:/etc/app/config:ro</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Named volume для uploads</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">uploads:/app/uploads</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Обмеження через ulimits (корисно для proxy-сервісів з many connections)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ulimits</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">nofile</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">soft</span>: <span style="color:#ae81ff">65536</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">hard</span>: <span style="color:#ae81ff">65536</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">logging</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">driver</span>: <span style="color:#e6db74">&#34;json-file&#34;</span>       <span style="color:#75715e"># драйвер логування (за замовчуванням)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">options</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">max-size</span>: <span style="color:#e6db74">&#34;50m&#34;</span>         <span style="color:#75715e"># максимальний розмір одного log file</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">max-file</span>: <span style="color:#e6db74">&#34;5&#34;</span>           <span style="color:#75715e"># кількість ротованих файлів</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">compress</span>: <span style="color:#e6db74">&#34;true&#34;</span>        <span style="color:#75715e"># gzip стиснення старих файлів</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">networks</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">frontend</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">backend</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ─────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Redis</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ─────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">redis</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">redis:7-alpine</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">restart</span>: <span style="color:#ae81ff">unless-stopped</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">command</span>: &gt;<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      redis-server
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      --save 60 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      --loglevel warning
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      --maxmemory 256mb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      --maxmemory-policy allkeys-lru</span>      
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">redisdata:/data</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">networks</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">backend</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ─────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Nginx reverse proxy</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ─────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">nginx</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:1.27-alpine</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">restart</span>: <span style="color:#ae81ff">unless-stopped</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;80:80&#34;</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;443:443&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">./nginx/nginx.conf:/etc/nginx/nginx.conf:ro</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">./nginx/conf.d:/etc/nginx/conf.d:ro</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">certbot_data:/etc/letsencrypt:ro</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">certbot_www:/var/www/certbot:ro</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">depends_on</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">api</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">networks</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">frontend</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ─────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Volumes</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ─────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">pgdata</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># driver: local — за замовчуванням, зберігає в /var/lib/docker/volumes/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">driver</span>: <span style="color:#ae81ff">local</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">com.myapp.backup</span>: <span style="color:#e6db74">&#34;daily&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">redisdata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">uploads</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">certbot_data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">certbot_www</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ─────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Networks</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ─────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">networks</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">frontend</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># bridge — стандартна мережа, контейнери спілкуються через veth pairs</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">driver</span>: <span style="color:#ae81ff">bridge</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ipam</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">config</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">subnet</span>: <span style="color:#ae81ff">172.20.0.0</span><span style="color:#ae81ff">/24</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">driver</span>: <span style="color:#ae81ff">bridge</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># internal: true — мережа без виходу в інтернет (додатковий захист для БД)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">internal</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ipam</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">config</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">subnet</span>: <span style="color:#ae81ff">172.20.1.0</span><span style="color:#ae81ff">/24</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ─────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Secrets</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ─────────────────────────────────────────────</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">secrets</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">db_password</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># file: читати секрет з файлу (не комітити в git!)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">file</span>: <span style="color:#ae81ff">./secrets/db_password.txt</span>
+</span></span></code></pre></div><h3 id="корисні-команди-compose">Корисні команди Compose</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Запустити в background (-d) і збілдити якщо треба</span>
+</span></span><span style="display:flex;"><span>docker compose up -d --build
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Переглянути логи з timestamps, follow</span>
+</span></span><span style="display:flex;"><span>docker compose logs -f --timestamps api
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Запустити one-off команду в окремому контейнері (не заново запускати сервіс)</span>
+</span></span><span style="display:flex;"><span>docker compose run --rm api python manage.py migrate
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Exec в запущений контейнер</span>
+</span></span><span style="display:flex;"><span>docker compose exec api sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Scale — запустити 3 інстанси (потрібно прибрати fixed ports)</span>
+</span></span><span style="display:flex;"><span>docker compose up -d --scale api<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірити розгорнуту конфігурацію (з підстановкою змінних)</span>
+</span></span><span style="display:flex;"><span>docker compose config
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Зупинити і видалити контейнери + мережі (volumes лишаються)</span>
+</span></span><span style="display:flex;"><span>docker compose down
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Зупинити і видалити все включно з volumes (НЕБЕЗПЕЧНО — видаляє дані!)</span>
+</span></span><span style="display:flex;"><span>docker compose down -v
+</span></span></code></pre></div><hr>
+<h2 id="8-docker-networking">8. Docker networking</h2>
+<h3 id="типи-мереж">Типи мереж</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker network ls
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NETWORK ID   NAME      DRIVER    SCOPE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># a1b2c3d4e5f6 bridge    bridge    local   ← default для всіх контейнерів без --network</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># b2c3d4e5f6a1 host      host      local   ← контейнер використовує мережу хосту напряму</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># c3d4e5f6a1b2 none      null      local   ← немає мережі (ізольований контейнер)</span>
+</span></span></code></pre></div><h3 id="bridge-network-як-це-працює">Bridge network: як це працює</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Подивитися деталі bridge мережі</span>
+</span></span><span style="display:flex;"><span>docker network inspect bridge
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># На хості з&#39;являється veth pair:</span>
+</span></span><span style="display:flex;"><span>ip link show type veth
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># veth0abc@if4: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; ← хостова сторона</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (парна ethX всередині контейнера)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірити bridge</span>
+</span></span><span style="display:flex;"><span>brctl show docker0
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># або</span>
+</span></span><span style="display:flex;"><span>ip link show docker0
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Створити кастомну bridge мережу</span>
+</span></span><span style="display:flex;"><span>docker network create <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --driver bridge <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --subnet 192.168.100.0/24 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --gateway 192.168.100.1 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --opt <span style="color:#e6db74">&#34;com.docker.network.bridge.name=mybridge&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  mynetwork
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Підключити контейнер до мережі (навіть запущений)</span>
+</span></span><span style="display:flex;"><span>docker network connect mynetwork mycontainer
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Відключити</span>
+</span></span><span style="display:flex;"><span>docker network disconnect mynetwork mycontainer
+</span></span></code></pre></div><p><strong>Важлива різниця</strong>: в default bridge мережі контейнери не резолвяться по імені. В user-defined bridge — так (вбудований DNS).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># В user-defined bridge: &#34;postgres&#34; резолвиться в IP контейнера</span>
+</span></span><span style="display:flex;"><span>docker run --rm --network mynetwork alpine nslookup postgres
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># В default bridge: тільки --link (deprecated) або IP вручну</span>
+</span></span></code></pre></div><h3 id="host-network">Host network</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run --network host nginx
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># nginx слухає на 0.0.0.0:80 ХОСТУ, без NAT</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Підходить для: максимальна мережева продуктивність, складна мережева конфігурація</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Мінус: немає ізоляції, конфлікти портів</span>
+</span></span></code></pre></div><h3 id="macvlan-контейнер-з-real-ip-в-lan">Macvlan: контейнер з real IP в LAN</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker network create <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --driver macvlan <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --subnet 192.168.1.0/24 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --gateway 192.168.1.1 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --opt parent<span style="color:#f92672">=</span>eth0 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  macvlan_net
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>docker run --network macvlan_net --ip 192.168.1.200 nginx
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># nginx доступний з будь-якого пристрою в LAN без port forwarding</span>
+</span></span></code></pre></div><hr>
+<h2 id="9-docker-inspect--твій-кращий-друг">9. <code>docker inspect</code> — твій кращий друг</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Вся інформація про контейнер</span>
+</span></span><span style="display:flex;"><span>docker inspect mycontainer
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Тільки IP адреса</span>
+</span></span><span style="display:flex;"><span>docker inspect -f <span style="color:#e6db74">&#39;{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}&#39;</span> mycontainer
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Порти</span>
+</span></span><span style="display:flex;"><span>docker inspect -f <span style="color:#e6db74">&#39;{{json .NetworkSettings.Ports}}&#39;</span> mycontainer | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># PID процесу всередині контейнера (для nsenter, strace)</span>
+</span></span><span style="display:flex;"><span>docker inspect -f <span style="color:#e6db74">&#39;{{.State.Pid}}&#39;</span> mycontainer
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Точки монтування</span>
+</span></span><span style="display:flex;"><span>docker inspect -f <span style="color:#e6db74">&#39;{{json .Mounts}}&#39;</span> mycontainer | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Environment variables</span>
+</span></span><span style="display:flex;"><span>docker inspect -f <span style="color:#e6db74">&#39;{{json .Config.Env}}&#39;</span> mycontainer | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># GraphDriver (overlayfs paths)</span>
+</span></span><span style="display:flex;"><span>docker inspect -f <span style="color:#e6db74">&#39;{{json .GraphDriver.Data}}&#39;</span> mycontainer | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ресурсні ліміти</span>
+</span></span><span style="display:flex;"><span>docker inspect -f <span style="color:#e6db74">&#39;{{.HostConfig.Memory}} {{.HostConfig.NanoCpus}}&#39;</span> mycontainer
+</span></span></code></pre></div><hr>
+<h2 id="10-топ-команди-для-роботи-і-діагностики">10. Топ команди для роботи і діагностики</h2>
+<h3 id="основні-операції">Основні операції</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Список контейнерів: -a включає зупинені</span>
+</span></span><span style="display:flex;"><span>docker ps -a
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Форматований вивід (корисно в скриптах)</span>
+</span></span><span style="display:flex;"><span>docker ps --format <span style="color:#e6db74">&#34;table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Статистика ресурсів в реальному часі</span>
+</span></span><span style="display:flex;"><span>docker stats
+</span></span><span style="display:flex;"><span>docker stats --no-stream  <span style="color:#75715e"># one-shot</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ресурси конкретного контейнера</span>
+</span></span><span style="display:flex;"><span>docker stats mycontainer --no-stream --format <span style="color:#e6db74">&#34;{{.CPUPerc}} {{.MemUsage}}&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Зайнятий дисковий простір</span>
+</span></span><span style="display:flex;"><span>docker system df
+</span></span><span style="display:flex;"><span>docker system df -v  <span style="color:#75715e"># детально по кожному образу/контейнеру/volume</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Очищення (видаляє зупинені контейнери, dangling images, unused networks)</span>
+</span></span><span style="display:flex;"><span>docker system prune
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Агресивне очищення (включає unused volumes та всі unused images)</span>
+</span></span><span style="display:flex;"><span>docker system prune -af --volumes
+</span></span></code></pre></div><h3 id="image-management">Image management</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Список образів</span>
+</span></span><span style="display:flex;"><span>docker images
+</span></span><span style="display:flex;"><span>docker images --digests  <span style="color:#75715e"># з SHA256 digest</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Dangling images (шари без тегу, залишки після rebuid)</span>
+</span></span><span style="display:flex;"><span>docker images -f dangling<span style="color:#f92672">=</span>true
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Видалити всі dangling</span>
+</span></span><span style="display:flex;"><span>docker image prune
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Переглянути шари образу (history)</span>
+</span></span><span style="display:flex;"><span>docker history myimage:tag
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Детальна інформація про образ</span>
+</span></span><span style="display:flex;"><span>docker manifest inspect myimage:tag
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Експорт образу в tar</span>
+</span></span><span style="display:flex;"><span>docker save myimage:tag | gzip &gt; myimage.tar.gz
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Імпорт</span>
+</span></span><span style="display:flex;"><span>docker load &lt; myimage.tar.gz
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Копіювати образ між registry без docker pull+push</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (потребує skopeo)</span>
+</span></span><span style="display:flex;"><span>skopeo copy docker://source:tag docker://dest:tag
+</span></span></code></pre></div><h3 id="exec-і-debug">Exec і debug</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Shell всередині контейнера</span>
+</span></span><span style="display:flex;"><span>docker exec -it mycontainer sh
+</span></span><span style="display:flex;"><span>docker exec -it mycontainer bash
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Виконати команду і отримати вивід</span>
+</span></span><span style="display:flex;"><span>docker exec mycontainer cat /etc/resolv.conf
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Запустити як root (якщо контейнер запущений під іншим user)</span>
+</span></span><span style="display:flex;"><span>docker exec -u root -it mycontainer sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># nsenter — ввійти в namespace процесу без docker exec</span>
+</span></span><span style="display:flex;"><span>PID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>docker inspect -f <span style="color:#e6db74">&#39;{{.State.Pid}}&#39;</span> mycontainer<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>nsenter --target $PID --mount --uts --ipc --net --pid
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># strace процесу всередині контейнера</span>
+</span></span><span style="display:flex;"><span>nsenter -t $PID -n -- strace -p <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># tcpdump трафіку контейнера</span>
+</span></span><span style="display:flex;"><span>nsenter -t $PID -n -- tcpdump -i eth0 -nn
+</span></span></code></pre></div><h3 id="copy-files">Copy files</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Скопіювати файл з контейнера</span>
+</span></span><span style="display:flex;"><span>docker cp mycontainer:/etc/nginx/nginx.conf ./nginx.conf
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Скопіювати файл в контейнер</span>
+</span></span><span style="display:flex;"><span>docker cp ./config.yaml mycontainer:/app/config.yaml
+</span></span></code></pre></div><hr>
+<h2 id="11-логування-драйвери-json-файли-ротація">11. Логування: драйвери, JSON файли, ротація</h2>
+<h3 id="драйвери-логування">Драйвери логування</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Переглянути поточний logging driver</span>
+</span></span><span style="display:flex;"><span>docker info | grep -i <span style="color:#e6db74">&#34;logging driver&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Логи конкретного контейнера</span>
+</span></span><span style="display:flex;"><span>docker logs mycontainer
+</span></span><span style="display:flex;"><span>docker logs -f mycontainer            <span style="color:#75715e"># follow</span>
+</span></span><span style="display:flex;"><span>docker logs --tail <span style="color:#ae81ff">100</span> mycontainer    <span style="color:#75715e"># останні 100 рядків</span>
+</span></span><span style="display:flex;"><span>docker logs --since 1h mycontainer    <span style="color:#75715e"># за останню годину</span>
+</span></span><span style="display:flex;"><span>docker logs --timestamps mycontainer  <span style="color:#75715e"># з timestamp</span>
+</span></span></code></pre></div><table>
+<thead>
+<tr>
+<th>Драйвер</th>
+<th>Опис</th>
+<th>Коли використовувати</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>json-file</code></td>
+<td>JSON файли на хості (за замовчуванням)</td>
+<td>dev, невеликий prod</td>
+</tr>
+<tr>
+<td><code>journald</code></td>
+<td>systemd journal</td>
+<td>systemd-based хости</td>
+</tr>
+<tr>
+<td><code>syslog</code></td>
+<td>syslog/rsyslog</td>
+<td>централізований syslog</td>
+</tr>
+<tr>
+<td><code>fluentd</code></td>
+<td>Fluentd collector</td>
+<td>великий prod, EFK стек</td>
+</tr>
+<tr>
+<td><code>loki</code></td>
+<td>Grafana Loki</td>
+<td>якщо вже є Prometheus/Grafana</td>
+</tr>
+<tr>
+<td><code>none</code></td>
+<td>вимкнути логування</td>
+<td>для шумних batch jobs</td>
+</tr>
+<tr>
+<td><code>awslogs</code></td>
+<td>CloudWatch</td>
+<td>AWS</td>
+</tr>
+<tr>
+<td><code>splunk</code></td>
+<td>Splunk HEC</td>
+<td>enterprise</td>
+</tr>
+</tbody>
+</table>
+<h3 id="-критична-проблема-json-file-без-ротації">⚠️ Критична проблема: json-file без ротації</h3>
+<p>За замовчуванням <code>json-file</code> драйвер <strong>не ротує логи</strong>. Контейнер може з&rsquo;їсти весь диск.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Перевірити розмір log файлів</span>
+</span></span><span style="display:flex;"><span>find /var/lib/docker/containers -name <span style="color:#e6db74">&#34;*.log&#34;</span> -exec ls -lh <span style="color:#f92672">{}</span> <span style="color:#ae81ff">\;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Небезпечна ситуація: 50GB log файл</span>
+</span></span><span style="display:flex;"><span>ls -lh /var/lib/docker/containers/&lt;id&gt;/&lt;id&gt;-json.log
+</span></span></code></pre></div><p><strong>Рішення 1: глобальна конфігурація</strong> (рекомендовано)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#75715e">// /etc/docker/daemon.json
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;log-driver&#34;</span>: <span style="color:#e6db74">&#34;json-file&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;log-opts&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;max-size&#34;</span>: <span style="color:#e6db74">&#34;50m&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;max-file&#34;</span>: <span style="color:#e6db74">&#34;5&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;compress&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Застосувати</span>
+</span></span><span style="display:flex;"><span>systemctl reload docker
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Увага: нові налаштування застосовуються тільки до нових контейнерів!</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Існуючі контейнери потрібно перезапустити.</span>
+</span></span></code></pre></div><p><strong>Рішення 2: на рівні контейнера</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --log-driver json-file <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --log-opt max-size<span style="color:#f92672">=</span>50m <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --log-opt max-file<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --log-opt compress<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  myapp
+</span></span></code></pre></div><p><strong>Рішення 3: перемкнутись на journald</strong> (якщо systemd)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#75715e">// /etc/docker/daemon.json
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;log-driver&#34;</span>: <span style="color:#e6db74">&#34;journald&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Переглядати через journalctl</span>
+</span></span><span style="display:flex;"><span>journalctl -u docker CONTAINER_NAME<span style="color:#f92672">=</span>mycontainer -f
+</span></span><span style="display:flex;"><span>journalctl CONTAINER_ID<span style="color:#f92672">=</span>abc123 --since <span style="color:#e6db74">&#34;1 hour ago&#34;</span>
+</span></span></code></pre></div><h3 id="де-фізично-лежать-json-логи">Де фізично лежать JSON логи</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Знайти log file для контейнера</span>
+</span></span><span style="display:flex;"><span>CONTAINER_ID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>docker inspect -f <span style="color:#e6db74">&#39;{{.Id}}&#39;</span> mycontainer<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>ls /var/lib/docker/containers/$CONTAINER_ID/
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># abc123...-json.log  ← сам лог</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># config.v2.json      ← конфіг контейнера</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># hostconfig.json     ← host config</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Читати лог напряму (корисно якщо docker logs повільний)</span>
+</span></span><span style="display:flex;"><span>tail -f /var/lib/docker/containers/$CONTAINER_ID/*-json.log | <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  jq -r <span style="color:#e6db74">&#39;.log&#39;</span>
+</span></span></code></pre></div><h3 id="структура-json-file-запису">Структура json-file запису</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;log&#34;</span>: <span style="color:#e6db74">&#34;2024-01-15T10:30:00Z [INFO] Server started on :8080\n&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;stream&#34;</span>: <span style="color:#e6db74">&#34;stdout&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;time&#34;</span>: <span style="color:#e6db74">&#34;2024-01-15T10:30:00.123456789Z&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 id="12-troubleshooting-containerd-namespaces-і-cgroups">12. Troubleshooting: containerd namespaces і cgroups</h2>
+<h3 id="containerd-напряму-bypass-docker">Containerd напряму (bypass docker)</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Встановити ctr (зазвичай входить в пакет containerd)</span>
+</span></span><span style="display:flex;"><span>which ctr
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Docker використовує namespace &#34;moby&#34;</span>
+</span></span><span style="display:flex;"><span>ctr -n moby containers list
+</span></span><span style="display:flex;"><span>ctr -n moby images list
+</span></span><span style="display:flex;"><span>ctr -n moby tasks list
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Snapshots (шари)</span>
+</span></span><span style="display:flex;"><span>ctr -n moby snapshots list
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Kubernetes використовує namespace &#34;k8s.io&#34;</span>
+</span></span><span style="display:flex;"><span>ctr -n k8s.io containers list
+</span></span></code></pre></div><h3 id="перевірка-cgroups-контейнера">Перевірка cgroups контейнера</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>CONTAINER_ID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>docker inspect -f <span style="color:#e6db74">&#39;{{.Id}}&#39;</span> mycontainer<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cgroup v2</span>
+</span></span><span style="display:flex;"><span>CGROUP_PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/sys/fs/cgroup/system.slice/docker-</span><span style="color:#e6db74">${</span>CONTAINER_ID<span style="color:#e6db74">}</span><span style="color:#e6db74">.scope&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Поточне споживання пам&#39;яті</span>
+</span></span><span style="display:flex;"><span>cat $CGROUP_PATH/memory.current
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ліміт пам&#39;яті (max = немає ліміту)</span>
+</span></span><span style="display:flex;"><span>cat $CGROUP_PATH/memory.max
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CPU quota (наприклад &#34;200000 100000&#34; = 2 core)</span>
+</span></span><span style="display:flex;"><span>cat $CGROUP_PATH/cpu.max
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Статистика CPU</span>
+</span></span><span style="display:flex;"><span>cat $CGROUP_PATH/cpu.stat
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірити чи спрацьовував OOM killer</span>
+</span></span><span style="display:flex;"><span>cat $CGROUP_PATH/memory.events
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># oom_kill 3 ← контейнер вбивали OOM 3 рази!</span>
+</span></span></code></pre></div><h3 id="oom-kill-діагностика">OOM kill діагностика</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Чи вбивали контейнер по OOM</span>
+</span></span><span style="display:flex;"><span>docker inspect mycontainer | jq <span style="color:#e6db74">&#39;.[0].State.OOMKilled&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Системний OOM log</span>
+</span></span><span style="display:flex;"><span>dmesg | grep -i <span style="color:#e6db74">&#34;out of memory&#34;</span>
+</span></span><span style="display:flex;"><span>journalctl -k | grep -i oom
+</span></span></code></pre></div><h3 id="перевірка-мережі-всередині-контейнера-без-ipnetstat">Перевірка мережі всередині контейнера (без ip/netstat)</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>PID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>docker inspect -f <span style="color:#e6db74">&#39;{{.State.Pid}}&#39;</span> mycontainer<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Мережеві інтерфейси</span>
+</span></span><span style="display:flex;"><span>nsenter -t $PID -n ip addr
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Routing table</span>
+</span></span><span style="display:flex;"><span>nsenter -t $PID -n ip route
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Відкриті порти (якщо ss доступний)</span>
+</span></span><span style="display:flex;"><span>nsenter -t $PID -n ss -tlnp
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># DNS резолюція</span>
+</span></span><span style="display:flex;"><span>nsenter -t $PID -n cat /etc/resolv.conf
+</span></span></code></pre></div><h3 id="containerd-snapshotter-troubleshooting">Containerd snapshotter troubleshooting</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Перевірити який snapshotter використовується</span>
+</span></span><span style="display:flex;"><span>docker info | grep <span style="color:#e6db74">&#34;Storage Driver&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Якщо overlayfs не працює (наприклад, btrfs filesystem)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /etc/docker/daemon.json</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;storage-driver&#34;</span>: <span style="color:#e6db74">&#34;overlay2&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірити підтримку overlay</span>
+</span></span><span style="display:flex;"><span>cat /proc/filesystems | grep overlay
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірити d_type (потрібно для overlay2)</span>
+</span></span><span style="display:flex;"><span>xfs_info /var/lib/docker | grep ftype
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ftype=1 ← OK</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ftype=0 ← overlay2 не підтримується</span>
+</span></span></code></pre></div><hr>
+<h2 id="13-daemonjson-повна-продакшн-конфігурація">13. daemon.json: повна продакшн конфігурація</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#75715e">// /etc/docker/daemon.json
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Containerd image store (Docker 25+, стабільно з 26+)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">&#34;features&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;containerd-snapshotter&#34;</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Storage driver
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">&#34;storage-driver&#34;</span>: <span style="color:#e6db74">&#34;overlay2&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;storage-opts&#34;</span>: [
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;overlay2.override_kernel_check=true&#34;</span>
+</span></span><span style="display:flex;"><span>  ],
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Логування за замовчуванням для всіх контейнерів
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">&#34;log-driver&#34;</span>: <span style="color:#e6db74">&#34;json-file&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;log-opts&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;max-size&#34;</span>: <span style="color:#e6db74">&#34;50m&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;max-file&#34;</span>: <span style="color:#e6db74">&#34;5&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;compress&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// DNS для контейнерів (якщо хостовий /etc/resolv.conf нестабільний)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">&#34;dns&#34;</span>: [<span style="color:#e6db74">&#34;1.1.1.1&#34;</span>, <span style="color:#e6db74">&#34;8.8.8.8&#34;</span>],
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Registry mirrors (якщо є Nexus/Harbor або проксі)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">&#34;registry-mirrors&#34;</span>: [<span style="color:#e6db74">&#34;https://registry.mycompany.com&#34;</span>],
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Insecure registries (для внутрішніх без TLS)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">&#34;insecure-registries&#34;</span>: [<span style="color:#e6db74">&#34;registry.internal:5000&#34;</span>],
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Live restore: контейнери продовжують роботу при рестарті dockerd
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">&#34;live-restore&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// User namespace remapping (безпека — root в контейнері = unprivileged на хості)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">&#34;userns-remap&#34;</span>: <span style="color:#e6db74">&#34;default&#34;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Обмеження ресурсів за замовчуванням
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">&#34;default-ulimits&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;nofile&#34;</span>: {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Name&#34;</span>: <span style="color:#e6db74">&#34;nofile&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Hard&#34;</span>: <span style="color:#ae81ff">65536</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Soft&#34;</span>: <span style="color:#ae81ff">65536</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Метрики для Prometheus
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">&#34;metrics-addr&#34;</span>: <span style="color:#e6db74">&#34;127.0.0.1:9323&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;experimental&#34;</span>: <span style="color:#66d9ef">false</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Cgroup driver (важливо для Kubernetes — має співпадати з kubelet)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">&#34;exec-opts&#34;</span>: [<span style="color:#e6db74">&#34;native.cgroupdriver=systemd&#34;</span>],
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Subnet для default bridge
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">&#34;bip&#34;</span>: <span style="color:#e6db74">&#34;172.17.0.1/16&#34;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Не дозволяти контейнерам отримувати нові привілеї через setuid
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">&#34;no-new-privileges&#34;</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 id="14-плюси-і-мінуси-docker">14. Плюси і мінуси Docker</h2>
+<h3 id="плюси">Плюси</h3>
+<ul>
+<li><strong>Портативність</strong>: один і той самий образ працює скрізь (dev, staging, prod)</li>
+<li><strong>Ізоляція</strong>: залежності не конфліктують між проектами</li>
+<li><strong>Швидкий деплой</strong>: запуск контейнера — секунди (на відміну від VM)</li>
+<li><strong>Layer caching</strong>: повторні білди швидкі якщо залежності не змінились</li>
+<li><strong>Ecosytem</strong>: Docker Hub, Docker Compose, Swarm, підтримка всіх CI/CD</li>
+<li><strong>Resource efficiency</strong>: на відміну від VM, не тягне повне ядро</li>
+</ul>
+<h3 id="мінуси-і-пастки">Мінуси і пастки</h3>
+<ul>
+<li><strong>Security</strong>: shared kernel — якщо вдалось вийти з контейнера, ти на хості. VM дає кращу ізоляцію</li>
+<li><strong>Persistent storage</strong>: stateful застосунки (БД) складніше керувати ніж на голому металі</li>
+<li><strong>Networking complexity</strong>: overlay, NAT, port mapping — є overhead і складність troubleshoot</li>
+<li><strong>Bloat</strong>: образи часто набувають 1-2GB через неправильний Dockerfile</li>
+<li><strong>Log rotation</strong>: забудеш налаштувати — з&rsquo;їсть диск</li>
+<li><strong>PID 1 проблема</strong>: якщо ваш процес не обробляє SIGTERM — контейнер не зупиняється коректно</li>
+<li><strong>Secret management</strong>: env vars видні через <code>docker inspect</code>, потрібен Vault або Docker secrets</li>
+<li><strong>Live restore обмеження</strong>: <code>--live-restore</code> не підтримує user namespaces</li>
+</ul>
+<hr>
+<h2 id="15-каверзні-питання-на-співбесіді">15. Каверзні питання на співбесіді</h2>
+<p><strong>Q: Чим відрізняється <code>ENTRYPOINT</code> від <code>CMD</code>?</strong></p>
+<p><code>ENTRYPOINT</code> — незмінна точка входу (не можна переписати без <code>--entrypoint</code>). <code>CMD</code> — аргументи за замовчуванням для <code>ENTRYPOINT</code>, або команда якщо <code>ENTRYPOINT</code> не задано. При <code>docker run myimage custom_arg</code> — <code>custom_arg</code> замінює <code>CMD</code>, але не <code>ENTRYPOINT</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#66d9ef">ENTRYPOINT</span> [<span style="color:#e6db74">&#34;python&#34;</span>, <span style="color:#e6db74">&#34;app.py&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#e6db74">&#34;--port&#34;</span>, <span style="color:#e6db74">&#34;8080&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># docker run myimage → python app.py --port 8080</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># docker run myimage --port 9090 → python app.py --port 9090</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><hr>
+<p><strong>Q: Чому контейнер не зупиняється по <code>docker stop</code>?</strong></p>
+<p><code>docker stop</code> спочатку шле <code>SIGTERM</code> процесу PID 1, чекає 10 секунд, потім <code>SIGKILL</code>. Якщо ваш процес запущений через shell (наприклад <code>CMD [&quot;sh&quot;, &quot;-c&quot;, &quot;python app.py&quot;]</code>), то <code>sh</code> отримує <code>SIGTERM</code>, але не форвардить його в дочірній процес.</p>
+<p><strong>Рішення</strong>: використовуйте exec form, а не shell form:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#75715e"># Shell form — BAD, sh не форвардить сигнали</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> python app.py<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Exec form — GOOD, SIGTERM іде напряму в python</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#e6db74">&#34;python&#34;</span>, <span style="color:#e6db74">&#34;app.py&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><hr>
+<p><strong>Q: Що відбувається з даними у volume якщо видалити контейнер?</strong></p>
+<p>Named volumes — залишаються. Bind mounts — залишаються (це файли хосту). Anonymous volumes (<code>-v /data</code> без імені) — видаляються разом з контейнером якщо <code>docker rm -v</code>.</p>
+<hr>
+<p><strong>Q: Як зменшити розмір образу?</strong></p>
+<ol>
+<li>Використовувати multi-stage build</li>
+<li>Base image <code>alpine</code> або <code>distroless</code> або <code>scratch</code></li>
+<li>Об&rsquo;єднати <code>RUN</code> команди через <code>&amp;&amp;</code> (менше шарів)</li>
+<li>Видаляти кеш пакетних менеджерів в тому ж шарі: <code>apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/*</code></li>
+<li><code>.dockerignore</code> — не копіювати непотрібне в build context</li>
+</ol>
+<hr>
+<p><strong>Q: Чим відрізняється <code>docker exec</code> від <code>docker attach</code>?</strong></p>
+<p><code>docker exec</code> запускає <strong>новий</strong> процес всередині контейнера. <code>docker attach</code> приєднується до <strong>існуючого</strong> PID 1 (stdin/stdout/stderr). <code>Ctrl+C</code> в <code>attach</code> може зупинити контейнер! Для інтерактивної роботи завжди використовуй <code>exec</code>.</p>
+<hr>
+<p><strong>Q: Контейнер постійно рестартує. Як дебажити?</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Переглянути чому впав</span>
+</span></span><span style="display:flex;"><span>docker logs mycontainer --tail <span style="color:#ae81ff">50</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Exit code</span>
+</span></span><span style="display:flex;"><span>docker inspect mycontainer | jq <span style="color:#e6db74">&#39;.[0].State.ExitCode&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 0 → нормальне завершення</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1 → помилка застосунку</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 137 → SIGKILL (OOM або docker kill)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 143 → SIGTERM (docker stop)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Запустити з override command для дебагу</span>
+</span></span><span style="display:flex;"><span>docker run --rm -it --entrypoint sh myimage
+</span></span></code></pre></div><hr>
+<p><strong>Q: В чому різниця між <code>containerd</code> і <code>docker</code>?</strong></p>
+<p><code>containerd</code> — OCI-сумісний container runtime, керує lifecycle контейнерів і образів. <code>dockerd</code> — надбудова над containerd, додає Docker API, build (через BuildKit), Compose-сумісність, volume plugins. Kubernetes може використовувати containerd напряму через CRI, без docker взагалі.</p>
+<hr>
+<p><strong>Q: Що таке distroless образи і навіщо?</strong></p>
+<p>Образи від Google без shell, пакетного менеджера і більшості системних утиліт. Тільки runtime потрібний застосунку.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> gcr.io/distroless/java17-debian12</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> --from<span style="color:#f92672">=</span>builder /app/app.jar /app/app.jar<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#e6db74">&#34;/app/app.jar&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>Плюси: менший attack surface, менший розмір. Мінус: неможливо <code>docker exec</code> та дебажити (рішення — debug варіант образу: <code>:debug</code> тег містить busybox).</p>
+<hr>
+<p><strong>Q: Як правильно передати секрети в контейнер?</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Погано: видно в docker inspect та docker history</span>
+</span></span><span style="display:flex;"><span>ENV DB_PASSWORD<span style="color:#f92672">=</span>secret123
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Погано: теж видно в env</span>
+</span></span><span style="display:flex;"><span>docker run -e DB_PASSWORD<span style="color:#f92672">=</span>secret123 myapp
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Краще: читати з файлу/secret на runtime</span>
+</span></span><span style="display:flex;"><span>docker run -v /run/secrets/db_pass:/run/secrets/db_pass myapp
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Застосунок читає /run/secrets/db_pass самостійно</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Docker secrets (тільки в Swarm mode)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;secret123&#34;</span> | docker secret create db_password -
+</span></span><span style="display:flex;"><span>docker service create --secret db_password myapp
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Production: Vault Agent Sidecar або External Secrets Operator (k8s)</span>
+</span></span></code></pre></div><hr>
+<h2 id="висновок">Висновок</h2>
+<p>Docker — це не просто <code>docker run</code>. Щоб розуміти що відбувається, потрібно знати:</p>
+<ul>
+<li><strong>containerd + runc</strong> — реальні виконавці, dockerd — тільки фронтенд</li>
+<li><strong>namespaces + cgroups</strong> — ізоляція і ресурси на рівні ядра Linux</li>
+<li><strong>overlayfs</strong> — як шари образів монтуються і чому CoW важливий для продуктивності</li>
+<li><strong>multi-stage build</strong> — обов&rsquo;язковий патерн для production образів</li>
+<li><strong>logging</strong> — json-file без ротації з&rsquo;їсть диск, налаштовуйте одразу</li>
+<li><strong>containerd image store</strong> — майбутнє Docker, вже стандарт у новому рантаймі</li>
+</ul>
+<p>Для production: <code>live-restore: true</code>, ротація логів глобально, <code>no-new-privileges: true</code>, і ніколи не запускайте контейнери без resource limits якщо це не ізольоване середовище.</p>
+
+</content>
+
+
+
+<p>
+  
+  <a href="//localhost:1313/tags/devops/">#DevOps</a>
+  
+  <a href="//localhost:1313/tags/linux/">#Linux</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

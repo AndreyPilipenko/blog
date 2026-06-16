@@ -65,6 +65,20 @@
       <description>This is a page about »Kubernetes Cheatsheet«.</description>
     </item>
     <item>
+      <title>RAID від A до Z: рівні, парність, mdadm, silent corruption і ZFS</title>
+      <link>//localhost:1313/blog/raid-deep-dive/</link>
+      <pubDate>Tue, 01 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/raid-deep-dive/</guid>
+      <description>Вступ: навіщо взагалі RAID у 2025? Перш ніж розбирати рівні — важливо зрозуміти, що RAID не є заміною бекапу. Це мантра, яку треба вбити в голову перед будь-якою розмовою про RAID. RAID захищає від відмови одного або кількох дисків; він не захищає від:&#xA;випадкового rm -rf / пошкодження файлової системи ransomware людської помилки silent corruption (про це детально нижче) RAID — це availability, а не durability у термінах CAP-теореми. Маючи RAID, ти отримуєш безперервність роботи при відмові диска.</description>
+    </item>
+    <item>
+      <title>Docker зсередини: containerd, runc, образи, мережі</title>
+      <link>//localhost:1313/blog/docker-deep-dive/</link>
+      <pubDate>Mon, 16 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/docker-deep-dive/</guid>
+      <description>Docker зсередини: containerd, runc, образи, мережі та все що треба знати на співбесіді Ця стаття — не «Hello World». Це розбір Docker-стеку від ядра Linux до docker compose up, з поясненням кожного рядка конфігу, каверзними питаннями зі співбесід і реальними прикладами з production.&#xA;1. Архітектура: що відбувається після docker run Більшість думають, що Docker — це монолітний демон. Насправді це стек із кількох незалежних компонентів.&#xA;┌─────────────────────────────────────────────┐ │ docker CLI (клієнт, просто шле HTTP запити)│ └────────────────────┬────────────────────────┘ │ Unix socket /var/run/docker.</description>
+    </item>
+    <item>
       <title>Підготовка до співбесід: глибоке розуміння алгоритмів, структур даних та архітектури</title>
       <link>//localhost:1313/blog/interview/</link>
       <pubDate>Sat, 14 Jun 2025 00:00:00 +0000</pubDate>
@@ -77,6 +91,13 @@
       <pubDate>Sat, 01 Feb 2025 00:27:57 +0300</pubDate>
       <guid>//localhost:1313/blog/top-linux-commands/</guid>
       <description>Linux Commands Cheatsheet&#xA;Особистий довідник по адмініструванню Linux-серверів&#xA;📦 Диски та файлова система # Огляд дисків та розділів lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID fdisk -l smartctl --scan # Визначити фізичні диски (якщо /dev/sda — залізний сервер) # Місце на диску df -h # Файлові системи df -hi # По inode du -h --max-depth=1 /var/virtualizor/ | sort -h du -sh /home # Вага директорії du -sch .[!.]* * | sort -h # З прихованими директоріями sudo du -h -d1 /root/ | sort -nr ncdu -e # Інтерактивно + приховані директорії inode vs файловий дескриптор</description>
+    </item>
+    <item>
+      <title>Git зсередини: GitOps, Git Flow, Cherry-pick, Trunk-based</title>
+      <link>//localhost:1313/blog/git-workflow/</link>
+      <pubDate>Tue, 14 Jun 2022 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/git-workflow/</guid>
+      <description>Що таке GitOps GitOps — це операційна модель, де Git є єдиним джерелом правди (single source of truth) для інфраструктури та застосунків. Будь-яка зміна в системі проходить через PR/MR у репозиторій, а не через ручні команди на сервері.&#xA;Ключові принципи:&#xA;Декларативність — стан системи описаний у Git (Kubernetes manifests, Terraform, Helm charts) Версійність — кожен git commit = знімок стану інфраструктури Автоматична синхронізація — агент (ArgoCD, Flux) постійно порівнює бажаний стан (Git) з реальним (кластер) і вирівнює їх Аудит — git log — це повний журнал операцій Різниця GitOps від CI/CD:</description>
     </item>
     <item>
       <title>Top commands to diagnose Linux system load</title>

@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Git зсередини: GitOps, Git Flow, Cherry-pick, Trunk-based | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="Git зсередини: GitOps, Git Flow, Cherry-pick, Trunk-based" />
+<meta name="description" content="Повний розбір Git-стратегій: Git Flow, GitHub Flow, Trunk-Based Development, cherry-pick, reflog, detached HEAD" />
+<meta name="keywords" content="git," />
+
+
+<meta property="og:title" content="Git зсередини: GitOps, Git Flow, Cherry-pick, Trunk-based" />
+<meta property="og:description" content="Повний розбір Git-стратегій: Git Flow, GitHub Flow, Trunk-Based Development, cherry-pick, reflog, detached HEAD" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/blog/git-workflow/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2022-06-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-06-14T00:00:00+00:00" />
+
+
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Git зсередини: GitOps, Git Flow, Cherry-pick, Trunk-based"/>
+<meta name="twitter:description" content="Повний розбір Git-стратегій: Git Flow, GitHub Flow, Trunk-Based Development, cherry-pick, reflog, detached HEAD"/>
+
+
+
+<meta itemprop="name" content="Git зсередини: GitOps, Git Flow, Cherry-pick, Trunk-based">
+<meta itemprop="description" content="Повний розбір Git-стратегій: Git Flow, GitHub Flow, Trunk-Based Development, cherry-pick, reflog, detached HEAD"><meta itemprop="datePublished" content="2022-06-14T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-06-14T00:00:00+00:00" />
+<meta itemprop="wordCount" content="2757">
+<meta itemprop="keywords" content="git," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</h2>
+</a>
+<nav>
+<a href="/">Home</a>
+
+<a href="/blog/">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Git зсередини: GitOps, Git Flow, Cherry-pick, Trunk-based</h1>
+<p>
+  <i>
+    <time datetime='2022-06-14'>
+      14 Jun, 2022
+    </time>
+  </i>
+</p>
+
+<content>
+  <hr>
+<h2 id="що-таке-gitops">Що таке GitOps</h2>
+<p><strong>GitOps</strong> — це операційна модель, де Git є єдиним джерелом правди (single source of truth) для інфраструктури та застосунків. Будь-яка зміна в системі проходить через PR/MR у репозиторій, а не через ручні команди на сервері.</p>
+<p>Ключові принципи:</p>
+<ul>
+<li><strong>Декларативність</strong> — стан системи описаний у Git (Kubernetes manifests, Terraform, Helm charts)</li>
+<li><strong>Версійність</strong> — кожен <code>git commit</code> = знімок стану інфраструктури</li>
+<li><strong>Автоматична синхронізація</strong> — агент (ArgoCD, Flux) постійно порівнює бажаний стан (Git) з реальним (кластер) і вирівнює їх</li>
+<li><strong>Аудит</strong> — <code>git log</code> — це повний журнал операцій</li>
+</ul>
+<p><strong>Різниця GitOps від CI/CD:</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>CI/CD (push-based)</th>
+<th>GitOps (pull-based)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Хто деплоїть</td>
+<td>Pipeline штовхає артефакт</td>
+<td>Агент тягне зміни з Git</td>
+</tr>
+<tr>
+<td>Доступ до кластера</td>
+<td>У pipeline є credentials</td>
+<td>Тільки агент всередині кластера</td>
+</tr>
+<tr>
+<td>Rollback</td>
+<td>Перезапустити старий pipeline</td>
+<td><code>git revert</code> або <code>git reset</code></td>
+</tr>
+<tr>
+<td>Drift detection</td>
+<td>Немає</td>
+<td>Агент постійно перевіряє</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="git-flow">Git Flow</h2>
+<p><strong>Git Flow</strong> — стратегія гілок Вінсента Дрієссена (2010). Підходить для проєктів із запланованими релізами.</p>
+<h3 id="структура-гілок">Структура гілок</h3>
+<pre tabindex="0"><code>main          ──●──────────────────────────────●──
+                │                              │
+release/1.0   ──●──bugfix──●────────────────●──│──
+                            │                  │
+develop       ──●───────────●──────────────────●──
+                │           │
+feature/A     ──●───────────●
+</code></pre><p><strong>Постійні гілки:</strong></p>
+<ul>
+<li><code>main</code> (або <code>master</code>) — тільки production-ready код, кожен коміт тегується версією</li>
+<li><code>develop</code> — інтеграційна гілка, звідси виходять релізи</li>
+</ul>
+<p><strong>Тимчасові гілки:</strong></p>
+<ul>
+<li><code>feature/*</code> — відгалужується від <code>develop</code>, зливається назад у <code>develop</code></li>
+<li><code>release/*</code> — відгалужується від <code>develop</code>, зливається в <code>main</code> І <code>develop</code></li>
+<li><code>hotfix/*</code> — відгалужується від <code>main</code>, зливається в <code>main</code> І <code>develop</code></li>
+</ul>
+<h3 id="команди">Команди</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Початок нової фічі</span>
+</span></span><span style="display:flex;"><span>git checkout develop
+</span></span><span style="display:flex;"><span>git checkout -b feature/my-feature
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Завершення фічі</span>
+</span></span><span style="display:flex;"><span>git checkout develop
+</span></span><span style="display:flex;"><span>git merge --no-ff feature/my-feature   <span style="color:#75715e"># --no-ff зберігає історію merge commit</span>
+</span></span><span style="display:flex;"><span>git branch -d feature/my-feature
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Початок релізу</span>
+</span></span><span style="display:flex;"><span>git checkout develop
+</span></span><span style="display:flex;"><span>git checkout -b release/1.2.0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Завершення релізу</span>
+</span></span><span style="display:flex;"><span>git checkout main
+</span></span><span style="display:flex;"><span>git merge --no-ff release/1.2.0
+</span></span><span style="display:flex;"><span>git tag -a v1.2.0 -m <span style="color:#e6db74">&#34;Release 1.2.0&#34;</span>
+</span></span><span style="display:flex;"><span>git checkout develop
+</span></span><span style="display:flex;"><span>git merge --no-ff release/1.2.0        <span style="color:#75715e"># важливо: merge і в develop!</span>
+</span></span><span style="display:flex;"><span>git branch -d release/1.2.0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Hotfix</span>
+</span></span><span style="display:flex;"><span>git checkout main
+</span></span><span style="display:flex;"><span>git checkout -b hotfix/critical-bug
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ... fix ...</span>
+</span></span><span style="display:flex;"><span>git checkout main
+</span></span><span style="display:flex;"><span>git merge --no-ff hotfix/critical-bug
+</span></span><span style="display:flex;"><span>git tag -a v1.2.1 -m <span style="color:#e6db74">&#34;Hotfix 1.2.1&#34;</span>
+</span></span><span style="display:flex;"><span>git checkout develop
+</span></span><span style="display:flex;"><span>git merge --no-ff hotfix/critical-bug
+</span></span></code></pre></div><h3 id="коли-використовувати">Коли використовувати</h3>
+<p>✅ Продукт із фіксованими версіями (мобільні додатки, бібліотеки, desktop software)
+✅ Довгий QA-цикл перед релізом
+✅ Підтримка кількох версій одночасно</p>
+<p>❌ Мікросервіси з continuous delivery
+❌ Маленькі команди — надто багато overhead</p>
+<hr>
+<h2 id="github-flow">GitHub Flow</h2>
+<p>Простіша модель від GitHub. Одна довгострокова гілка <code>main</code>, решта — короткоживучі feature-гілки.</p>
+<pre tabindex="0"><code>main     ──●─────────────────────────────●──
+            │                            │
+feature-A ──●──●──●──●── PR/Review ──────●
+</code></pre><h3 id="процес">Процес</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 1. Створити гілку від main</span>
+</span></span><span style="display:flex;"><span>git checkout main
+</span></span><span style="display:flex;"><span>git pull
+</span></span><span style="display:flex;"><span>git checkout -b feature/add-login
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. Коміти</span>
+</span></span><span style="display:flex;"><span>git add .
+</span></span><span style="display:flex;"><span>git commit -m <span style="color:#e6db74">&#34;feat: add OAuth login&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3. Push і відкрити PR</span>
+</span></span><span style="display:flex;"><span>git push -u origin feature/add-login
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 4. Після approve — merge у main (через UI або CLI)</span>
+</span></span><span style="display:flex;"><span>git checkout main
+</span></span><span style="display:flex;"><span>git merge feature/add-login
+</span></span><span style="display:flex;"><span>git push
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 5. Deploy одразу після merge</span>
+</span></span></code></pre></div><h3 id="ключові-відмінності-від-git-flow">Ключові відмінності від Git Flow</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Git Flow</th>
+<th>GitHub Flow</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Постійних гілок</td>
+<td>2 (main + develop)</td>
+<td>1 (main)</td>
+</tr>
+<tr>
+<td>Цикл релізу</td>
+<td>Запланований</td>
+<td>Continuous delivery</td>
+</tr>
+<tr>
+<td>Складність</td>
+<td>Висока</td>
+<td>Низька</td>
+</tr>
+<tr>
+<td>Hotfix</td>
+<td>Окрема гілка hotfix/*</td>
+<td>Просто нова feature-гілка</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="trunk-based-development-tbd">Trunk-Based Development (TBD)</h2>
+<p><strong>TBD</strong> — розробники інтегрують код у <code>main</code> (trunk) мінімум раз на день. Feature branches живуть максимум 1-2 дні.</p>
+<h3 id="чому-це-важливо">Чому це важливо</h3>
+<p>Довгоживучі гілки = merge hell. Чим довше гілка існує окремо, тим більший divergence від main, тим складніший merge.</p>
+<p>TBD вирішує це радикально: немає довгоживучих гілок → немає merge hell.</p>
+<h3 id="feature-flags-замість-гілок">Feature Flags замість гілок</h3>
+<p>Код фічі може потрапити в main, але бути вимкненим через feature flag:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> feature_flags<span style="color:#f92672">.</span>is_enabled(<span style="color:#e6db74">&#34;new_checkout_flow&#34;</span>, user_id):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> new_checkout()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> legacy_checkout()
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Типовий TBD workflow</span>
+</span></span><span style="display:flex;"><span>git checkout main
+</span></span><span style="display:flex;"><span>git pull
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Змінюємо код (невеликий батч)</span>
+</span></span><span style="display:flex;"><span>git add .
+</span></span><span style="display:flex;"><span>git commit -m <span style="color:#e6db74">&#34;feat: add payment gateway stub behind flag&#34;</span>
+</span></span><span style="display:flex;"><span>git push
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CI запускається негайно, deploy якщо тести пройшли</span>
+</span></span></code></pre></div><h3 id="порівняння-стратегій">Порівняння стратегій</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Git Flow</th>
+<th>GitHub Flow</th>
+<th>Trunk-Based</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Кількість гілок</td>
+<td>Багато</td>
+<td>Мало</td>
+<td>Мінімум</td>
+</tr>
+<tr>
+<td>Час life-time гілки</td>
+<td>Тижні</td>
+<td>Дні</td>
+<td>Години-дні</td>
+</tr>
+<tr>
+<td>Merge конфлікти</td>
+<td>Часто</td>
+<td>Рідко</td>
+<td>Дуже рідко</td>
+</tr>
+<tr>
+<td>CI/CD</td>
+<td>Складний</td>
+<td>Простий</td>
+<td>Обов&rsquo;язковий</td>
+</tr>
+<tr>
+<td>Підходить для</td>
+<td>Versioned releases</td>
+<td>Web apps</td>
+<td>Великі команди, SaaS</td>
+</tr>
+<tr>
+<td>Приклад</td>
+<td>GitLab, Linux kernel</td>
+<td>GitHub самого GitHub</td>
+<td>Google, Facebook</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="cherry-pick">Cherry-pick</h2>
+<p><code>git cherry-pick</code> — застосовує зміни з конкретного коміту (або кількох) до поточної гілки. Git бере diff того коміту і застосовує його як новий коміт.</p>
+<h3 id="базовий-синтаксис">Базовий синтаксис</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Взяти один коміт</span>
+</span></span><span style="display:flex;"><span>git cherry-pick &lt;commit-hash&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Взяти кілька комітів</span>
+</span></span><span style="display:flex;"><span>git cherry-pick abc123 def456 ghi789
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Діапазон комітів (виключаючи A, включаючи B)</span>
+</span></span><span style="display:flex;"><span>git cherry-pick A..B
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Діапазон (включаючи A і B)</span>
+</span></span><span style="display:flex;"><span>git cherry-pick A^..B
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Cherry-pick без автоматичного коміту (щоб переглянути зміни)</span>
+</span></span><span style="display:flex;"><span>git cherry-pick -n &lt;hash&gt;   <span style="color:#75715e"># або --no-commit</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Зберегти оригінальний timestamp і автора</span>
+</span></span><span style="display:flex;"><span>git cherry-pick -x &lt;hash&gt;   <span style="color:#75715e"># додає &#34;cherry picked from commit...&#34; у повідомлення</span>
+</span></span></code></pre></div><h3 id="реальний-сценарій-hotfix">Реальний сценарій: hotfix</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Знайшли критичний баг у main, виправили в feature-branch</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Хочемо застосувати тільки цей fix до release/2.0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>git log feature/bugfix --oneline
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># a1b2c3d fix: prevent null pointer in payment handler</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># e4f5g6h wip: new UI components (НЕ хочемо цей)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>git checkout release/2.0
+</span></span><span style="display:flex;"><span>git cherry-pick a1b2c3d
+</span></span></code></pre></div><h3 id="конфлікти-при-cherry-pick">Конфлікти при cherry-pick</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git cherry-pick &lt;hash&gt;
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CONFLICT (content): Merge conflict in src/payment.py</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># error: could not apply a1b2c3d</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Вирішуємо конфлікт вручну</span>
+</span></span><span style="display:flex;"><span>vim src/payment.py
+</span></span><span style="display:flex;"><span>git add src/payment.py
+</span></span><span style="display:flex;"><span>git cherry-pick --continue
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Або скасувати</span>
+</span></span><span style="display:flex;"><span>git cherry-pick --abort
+</span></span></code></pre></div><h3 id="коли-не-використовувати-cherry-pick">Коли НЕ використовувати cherry-pick</h3>
+<p>❌ Як замінник merge/rebase — якщо потрібно взяти всю гілку, використовуй merge</p>
+<p>❌ Для переносу великої кількості комітів — краще rebase</p>
+<p>❌ Якщо є залежності між комітами — cherry-pick бере коміт без його &ldquo;батьків&rdquo;, може зламатися контекст</p>
+<h3 id="cherry-pick-vs-rebase">Cherry-pick vs Rebase</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Cherry-pick: беремо конкретні коміти, вони стають НОВИМИ комітами</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (новий hash, навіть якщо diff той самий)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Rebase: переносимо всю гілку поверх іншої бази</span>
+</span></span><span style="display:flex;"><span>git rebase main feature/my-feature
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Еквівалентно cherry-pick всіх комітів feature/my-feature поверх main</span>
+</span></span></code></pre></div><hr>
+<h2 id="git-reflog--чорна-скринька-git">git reflog — чорна скринька Git</h2>
+<p><code>reflog</code> (reference log) — це журнал всіх переміщень HEAD. Зберігається локально, не синхронізується через <code>push</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git reflog
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># або</span>
+</span></span><span style="display:flex;"><span>git reflog show HEAD
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Приклад виводу:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># a1b2c3d HEAD@{0}: commit: feat: add login</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># e4f5g6h HEAD@{1}: checkout: moving from develop to feature/login</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># d7c8b9a HEAD@{2}: reset --hard: moving to d7c8b9a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># f0e1d2c HEAD@{3}: merge hotfix/fix: Fast-forward</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 9a8b7c6 HEAD@{4}: commit: wip: half-done changes</span>
+</span></span></code></pre></div><h3 id="синтаксис-посилань">Синтаксис посилань</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>HEAD@<span style="color:#f92672">{</span>0<span style="color:#f92672">}</span>   <span style="color:#75715e"># поточна позиція HEAD</span>
+</span></span><span style="display:flex;"><span>HEAD@<span style="color:#f92672">{</span>1<span style="color:#f92672">}</span>   <span style="color:#75715e"># де HEAD був 1 операцію тому</span>
+</span></span><span style="display:flex;"><span>HEAD@<span style="color:#f92672">{</span>2<span style="color:#f92672">}</span>   <span style="color:#75715e"># 2 операції тому</span>
+</span></span><span style="display:flex;"><span>HEAD@<span style="color:#f92672">{</span><span style="color:#ae81ff">1</span> hour ago<span style="color:#f92672">}</span>   <span style="color:#75715e"># де HEAD був годину тому</span>
+</span></span><span style="display:flex;"><span>HEAD@<span style="color:#f92672">{</span>yesterday<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>HEAD@<span style="color:#f92672">{</span>2026-06-15 10:00:00<span style="color:#f92672">}</span>
+</span></span></code></pre></div><h3 id="сценарій-1-відновити-після-випадкового-reset---hard">Сценарій 1: Відновити після &ldquo;випадкового&rdquo; reset &ndash;hard</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Ой, зробили reset --hard і втратили 3 коміти</span>
+</span></span><span style="display:flex;"><span>git reset --hard HEAD~3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Знаходимо загублені коміти через reflog</span>
+</span></span><span style="display:flex;"><span>git reflog
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># a1b2c3d HEAD@{0}: reset: moving to HEAD~3</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># lost1234 HEAD@{1}: commit: feat: payment integration   ← ось він</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># lost5678 HEAD@{2}: commit: feat: checkout page</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># lost9abc HEAD@{3}: commit: feat: cart logic</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Відновлюємо</span>
+</span></span><span style="display:flex;"><span>git reset --hard lost1234   <span style="color:#75715e"># або HEAD@{1}</span>
+</span></span></code></pre></div><h3 id="сценарій-2-знайти-видалену-гілку">Сценарій 2: Знайти видалену гілку</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Видалили гілку feature/important</span>
+</span></span><span style="display:flex;"><span>git branch -D feature/important
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>git reflog
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># знаходимо останній коміт тієї гілки</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># deadbeef HEAD@{5}: commit: last commit on feature/important</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>git checkout -b feature/important deadbeef
+</span></span></code></pre></div><h3 id="сценарій-3-відновити-після-поганого-rebase">Сценарій 3: Відновити після поганого rebase</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git rebase main   <span style="color:#75715e"># щось пішло не так</span>
+</span></span><span style="display:flex;"><span>git reflog
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ORIG_HEAD зберігає стан до небезпечних операцій</span>
+</span></span><span style="display:flex;"><span>git reset --hard ORIG_HEAD
+</span></span></code></pre></div><h3 id="налаштування-reflog">Налаштування reflog</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Reflog зберігається 90 днів (за замовчуванням)</span>
+</span></span><span style="display:flex;"><span>git config gc.reflogExpire <span style="color:#e6db74">&#34;180 days&#34;</span>   <span style="color:#75715e"># збільшити до 180</span>
+</span></span><span style="display:flex;"><span>git config gc.reflogExpireUnreachable <span style="color:#e6db74">&#34;30 days&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перегляд reflog конкретної гілки</span>
+</span></span><span style="display:flex;"><span>git reflog show main
+</span></span><span style="display:flex;"><span>git reflog show origin/main
+</span></span></code></pre></div><hr>
+<h2 id="detached-head--стан-відірваної-голови">Detached HEAD — стан &ldquo;відірваної голови&rdquo;</h2>
+<p>Один із найпоширеніших джерел паніки у розробників.</p>
+<h3 id="що-таке-head">Що таке HEAD</h3>
+<p><code>HEAD</code> — це вказівник на поточний коміт. Зазвичай HEAD вказує на гілку (через symbolic reference), а та гілка вказує на коміт:</p>
+<pre tabindex="0"><code>HEAD → main → commit a1b2c3d
+</code></pre><h3 id="що-таке-detached-head">Що таке Detached HEAD</h3>
+<p>HEAD вказує безпосередньо на коміт, а не на гілку:</p>
+<pre tabindex="0"><code>HEAD → commit a1b2c3d   (минаючи будь-яку гілку)
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ git checkout a1b2c3d
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># або</span>
+</span></span><span style="display:flex;"><span>$ git checkout v1.0.0   <span style="color:#75715e"># тег не є гілкою</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># або</span>
+</span></span><span style="display:flex;"><span>$ git checkout origin/main   <span style="color:#75715e"># remote ref</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Git скаже:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># You are in &#39;detached HEAD&#39; state. You can look around, make experimental</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># changes and commit them, and you can discard any commits you make in this</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># state without impacting any branches by switching back to a branch.</span>
+</span></span></code></pre></div><h3 id="чому-це-небезпечно">Чому це небезпечно</h3>
+<p>Якщо зробити <code>commit</code> у detached HEAD і потім переключитися на гілку — новий коміт стає &ldquo;unreachable&rdquo; і буде видалений garbage collector через 30 днів.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Небезпечний сценарій</span>
+</span></span><span style="display:flex;"><span>git checkout a1b2c3d   <span style="color:#75715e"># detached HEAD</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ... редагуємо файли ...</span>
+</span></span><span style="display:flex;"><span>git commit -m <span style="color:#e6db74">&#34;important fix&#34;</span>   <span style="color:#75715e"># новий коміт orphan1234</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>git checkout main   <span style="color:#75715e"># переходимо на гілку</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># orphan1234 тепер unreachable! </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Git попередить: &#34;warning: detached HEAD&#34;</span>
+</span></span></code></pre></div><h3 id="як-виправити-зберегти-роботу-з-detached-head">Як виправити: зберегти роботу з detached HEAD</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Варіант 1: створити нову гілку з поточної позиції</span>
+</span></span><span style="display:flex;"><span>git checkout -b my-saved-work
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Варіант 2: якщо вже переключились і втратили коміт</span>
+</span></span><span style="display:flex;"><span>git reflog
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># orphan1234 HEAD@{2}: commit: important fix</span>
+</span></span><span style="display:flex;"><span>git checkout -b recovered-work orphan1234
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Варіант 3: cherry-pick в існуючу гілку</span>
+</span></span><span style="display:flex;"><span>git cherry-pick orphan1234
+</span></span></code></pre></div><h3 id="законні-використання-detached-head">Законні використання Detached HEAD</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Переглянути старий стан коду (read-only дослідження)</span>
+</span></span><span style="display:flex;"><span>git checkout v2.1.0
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ... дивимось код, не змінюємо ...</span>
+</span></span><span style="display:flex;"><span>git checkout main   <span style="color:#75715e"># повертаємось</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Bisect (автоматичне) — git сам переходить у detached HEAD</span>
+</span></span><span style="display:flex;"><span>git bisect start
+</span></span><span style="display:flex;"><span>git bisect bad HEAD
+</span></span><span style="display:flex;"><span>git bisect good v1.0.0
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># git тестує коміти у detached HEAD</span>
+</span></span></code></pre></div><hr>
+<h2 id="каверзні-команди--що-де-чому">Каверзні команди — що, де, чому</h2>
+<h3 id="git-reset-vs-git-revert-vs-git-restore">git reset vs git revert vs git restore</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># git reset — переміщує HEAD (і гілку) назад</span>
+</span></span><span style="display:flex;"><span>git reset --soft HEAD~1    <span style="color:#75715e"># скасовує коміт, зміни лишаються у staging</span>
+</span></span><span style="display:flex;"><span>git reset --mixed HEAD~1   <span style="color:#75715e"># (default) скасовує коміт, зміни лишаються у working dir</span>
+</span></span><span style="display:flex;"><span>git reset --hard HEAD~1    <span style="color:#75715e"># скасовує коміт, зміни ВИДАЛЯЮТЬСЯ (небезпечно!)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># git revert — створює НОВИЙ коміт, що скасовує зміни (safe для public history)</span>
+</span></span><span style="display:flex;"><span>git revert HEAD            <span style="color:#75715e"># скасовує останній коміт</span>
+</span></span><span style="display:flex;"><span>git revert a1b2c3d         <span style="color:#75715e"># скасовує конкретний коміт</span>
+</span></span><span style="display:flex;"><span>git revert --no-commit HEAD~3..HEAD  <span style="color:#75715e"># підготувати revert кількох комітів без автокоміту</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># git restore — відновлює файли (не чіпає коміти)</span>
+</span></span><span style="display:flex;"><span>git restore file.txt           <span style="color:#75715e"># відновити з staging/HEAD</span>
+</span></span><span style="display:flex;"><span>git restore --staged file.txt  <span style="color:#75715e"># прибрати з staging (unstage)</span>
+</span></span><span style="display:flex;"><span>git restore --source HEAD~2 file.txt  <span style="color:#75715e"># відновити файл з 2 комітів тому</span>
+</span></span></code></pre></div><p><strong>Правило:</strong> <code>reset</code> — для локальної history (ще не запушили). <code>revert</code> — для публічної history (вже в remote).</p>
+<h3 id="git-stash">git stash</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git stash                      <span style="color:#75715e"># сховати незбережені зміни</span>
+</span></span><span style="display:flex;"><span>git stash push -m <span style="color:#e6db74">&#34;wip: auth&#34;</span> <span style="color:#75715e"># з іменем</span>
+</span></span><span style="display:flex;"><span>git stash list                 <span style="color:#75715e"># переглянути всі stash</span>
+</span></span><span style="display:flex;"><span>git stash apply stash@<span style="color:#f92672">{</span>0<span style="color:#f92672">}</span>      <span style="color:#75715e"># застосувати (stash залишається)</span>
+</span></span><span style="display:flex;"><span>git stash pop                  <span style="color:#75715e"># застосувати і видалити</span>
+</span></span><span style="display:flex;"><span>git stash drop stash@<span style="color:#f92672">{</span>1<span style="color:#f92672">}</span>       <span style="color:#75715e"># видалити конкретний</span>
+</span></span><span style="display:flex;"><span>git stash clear                <span style="color:#75715e"># видалити всі</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Stash тільки staged змін</span>
+</span></span><span style="display:flex;"><span>git stash push --staged
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Stash включаючи untracked файли</span>
+</span></span><span style="display:flex;"><span>git stash push -u
+</span></span></code></pre></div><h3 id="git-rebase--інтерактивний">git rebase — інтерактивний</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Переписати останні 3 коміти</span>
+</span></span><span style="display:flex;"><span>git rebase -i HEAD~3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># У відкритому редакторі:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pick a1b2c3d feat: login</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pick b2c3d4e fix: typo</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pick c3d4e5f wip: half done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Команди:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pick   — залишити як є</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># reword — змінити повідомлення коміту</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># edit   — зупинитись для редагування</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># squash — з&#39;єднати з попереднім (зберегти обидва повідомлення)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># fixup  — з&#39;єднати з попереднім (викинути це повідомлення)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># drop   — видалити коміт</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># exec   — виконати shell команду</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Після збереження git виконає rebase</span>
+</span></span></code></pre></div><h3 id="git-bisect--бінарний-пошук-бага">git bisect — бінарний пошук бага</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git bisect start
+</span></span><span style="display:flex;"><span>git bisect bad                  <span style="color:#75715e"># поточний стан — баг є</span>
+</span></span><span style="display:flex;"><span>git bisect good v2.0.0          <span style="color:#75715e"># тут ще не було</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Git переходить у detached HEAD на середній коміт</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Тестуємо:</span>
+</span></span><span style="display:flex;"><span>git bisect good   <span style="color:#75715e"># або</span>
+</span></span><span style="display:flex;"><span>git bisect bad
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Повторюємо до знаходження першого поганого коміту</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Git виведе: &#34;a1b2c3d is the first bad commit&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>git bisect reset   <span style="color:#75715e"># вийти з bisect mode</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Автоматичний bisect зі скриптом</span>
+</span></span><span style="display:flex;"><span>git bisect run ./test.sh   <span style="color:#75715e"># 0 = good, 1 = bad</span>
+</span></span></code></pre></div><h3 id="git-worktree--кілька-робочих-директорій">git worktree — кілька робочих директорій</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Перевіряти PR без stash/switch</span>
+</span></span><span style="display:flex;"><span>git worktree add ../hotfix-review hotfix/critical-bug
+</span></span><span style="display:flex;"><span>cd ../hotfix-review   <span style="color:#75715e"># окрема директорія, та ж репо</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ... перевіряємо ...</span>
+</span></span><span style="display:flex;"><span>git worktree remove ../hotfix-review
+</span></span></code></pre></div><hr>
+<h2 id="каверзні-питання-на-співбесіді">Каверзні питання на співбесіді</h2>
+<h3 id="яка-різниця-між-merge-і-rebase">&ldquo;Яка різниця між merge і rebase?&rdquo;</h3>
+<p><strong>Merge</strong> зберігає повну історію і створює merge commit:</p>
+<pre tabindex="0"><code>A - B - C - D (main)
+     \       \
+      E - F - G (merge commit)
+</code></pre><p><strong>Rebase</strong> переписує коміти поверх нової бази, лінійна історія:</p>
+<pre tabindex="0"><code>A - B - C - E&#39; - F&#39; (main, після rebase)
+</code></pre><p><code>E'</code> і <code>F'</code> — нові коміти (інший hash), навіть якщо diff той самий.</p>
+<p><strong>Золоте правило rebase:</strong> ніколи не rebase публічні гілки (ті, що вже запушені і хтось ще використовує).</p>
+<hr>
+<h3 id="що-таке-fast-forward-merge-і-коли-він-неможливий">&ldquo;Що таке fast-forward merge і коли він неможливий?&rdquo;</h3>
+<p>Fast-forward відбувається, коли гілка є прямим продовженням main — немає розходжень, Git просто пересуває вказівник:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>main:    A - B
+</span></span><span style="display:flex;"><span>feature:         C - D
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Fast-forward: main → A - B - C - D</span>
+</span></span><span style="display:flex;"><span>git merge feature   <span style="color:#75715e"># автоматично FF якщо можливо</span>
+</span></span><span style="display:flex;"><span>git merge --ff-only feature   <span style="color:#75715e"># примусово тільки FF, інакше помилка</span>
+</span></span><span style="display:flex;"><span>git merge --no-ff feature     <span style="color:#75715e"># завжди merge commit</span>
+</span></span></code></pre></div><p>FF неможливий, якщо main мав нові коміти після відгалуження feature.</p>
+<hr>
+<h3 id="що-відбувається-при-git-push---force">&ldquo;Що відбувається при git push &ndash;force?&rdquo;</h3>
+<p><code>push --force</code> перезаписує remote гілку поточним локальним станом. Якщо хтось інший запушив після тебе — його коміти зникнуть.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Безпечна альтернатива:</span>
+</span></span><span style="display:flex;"><span>git push --force-with-lease   <span style="color:#75715e"># відмовить якщо remote змінився</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># force-with-lease під капотом:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># перевіряє, чи remote ref збігається з тим, що ти бачив (fetch)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># якщо хтось запушив між твоїм fetch і push — помилка</span>
+</span></span></code></pre></div><hr>
+<h3 id="як-знайти-коміт-який-зламав-функціональність">&ldquo;Як знайти коміт, який зламав функціональність?&rdquo;</h3>
+<p>Три підходи:</p>
+<ol>
+<li><code>git bisect</code> — бінарний пошук O(log n)</li>
+<li><code>git log -S &quot;function_name&quot;</code> — знайти коміти, що змінили рядок</li>
+<li><code>git blame file.py</code> — хто і коли змінив кожен рядок</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># git log -S (pickaxe search)</span>
+</span></span><span style="display:flex;"><span>git log -S <span style="color:#e6db74">&#34;calculate_tax&#34;</span> --oneline
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># git log -G (regex пошук)</span>
+</span></span><span style="display:flex;"><span>git log -G <span style="color:#e6db74">&#34;def.*payment&#34;</span> --oneline -p
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># git blame</span>
+</span></span><span style="display:flex;"><span>git blame -L 40,60 src/payment.py   <span style="color:#75715e"># рядки 40-60</span>
+</span></span></code></pre></div><hr>
+<h3 id="що-таке-git-tag-і-яка-різниця-між-lightweight-та-annotated">&ldquo;Що таке git tag і яка різниця між lightweight та annotated?&rdquo;</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Lightweight tag — просто вказівник на коміт (як гілка, але не рухається)</span>
+</span></span><span style="display:flex;"><span>git tag v1.0.0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Annotated tag — повноцінний об&#39;єкт у Git з автором, датою, повідомленням</span>
+</span></span><span style="display:flex;"><span>git tag -a v1.0.0 -m <span style="color:#e6db74">&#34;Release 1.0.0&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Annotated теги рекомендовані для релізів:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># - мають власний hash</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># - зберігаються як окремі об&#39;єкти</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># - можуть бути підписані GPG (git tag -s)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Push тегів (за замовчуванням push не відправляє теги)</span>
+</span></span><span style="display:flex;"><span>git push origin v1.0.0
+</span></span><span style="display:flex;"><span>git push origin --tags   <span style="color:#75715e"># всі теги</span>
+</span></span></code></pre></div><hr>
+<h3 id="що-відбувається-з-комітами-після-git-branch--d">&ldquo;Що відбувається з комітами після git branch -d?&rdquo;</h3>
+<p>Коміти не видаляються одразу. Вони стають &ldquo;unreachable&rdquo; — на них не вказує жодна гілка/тег. Git Garbage Collector (<code>git gc</code>) видалить їх через ~30 днів.</p>
+<p>До того часу їх можна знайти через <code>git reflog</code> або <code>git fsck --unreachable</code>.</p>
+<hr>
+<h3 id="яка-різниця-між-originmain-і-main">&ldquo;Яка різниця між origin/main і main?&rdquo;</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git branch -a
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># main               ← локальна гілка</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># remotes/origin/main ← remote-tracking гілка (локальний кеш стану remote)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># origin/main оновлюється тільки при fetch/pull</span>
+</span></span><span style="display:flex;"><span>git fetch   <span style="color:#75715e"># оновлює origin/main без merge у локальний main</span>
+</span></span><span style="display:flex;"><span>git pull    <span style="color:#75715e"># = git fetch + git merge origin/main</span>
+</span></span></code></pre></div><hr>
+<h3 id="що-таке-orig_head-fetch_head-merge_head">&ldquo;Що таке ORIG_HEAD, FETCH_HEAD, MERGE_HEAD?&rdquo;</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ORIG_HEAD  <span style="color:#75715e"># стан HEAD до небезпечної операції (merge, rebase, reset)</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#75715e"># git reset --hard ORIG_HEAD → скасувати останній merge/rebase</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>FETCH_HEAD <span style="color:#75715e"># що fetch принесло (останній fetch)</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#75715e"># git merge FETCH_HEAD → зробити те, що робить pull</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>MERGE_HEAD <span style="color:#75715e"># в процесі merge — вказує на коміт, який зливається</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#75715e"># існує тільки під час конфлікту</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>CHERRY_PICK_HEAD <span style="color:#75715e"># аналогічно для cherry-pick в конфліктному стані</span>
+</span></span><span style="display:flex;"><span>REBASE_HEAD      <span style="color:#75715e"># під час rebase</span>
+</span></span></code></pre></div><hr>
+<h3 id="як-зробити-git-коміт-порожнім">&ldquo;Як зробити Git коміт порожнім?&rdquo;</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git commit --allow-empty -m <span style="color:#e6db74">&#34;trigger CI&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Корисно щоб запустити CI pipeline без реальних змін</span>
+</span></span></code></pre></div><hr>
+<h3 id="що-таке-git-submodule-і-коли-використовувати">&ldquo;Що таке git submodule і коли використовувати?&rdquo;</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Додати зовнішній репозиторій як підмодуль</span>
+</span></span><span style="display:flex;"><span>git submodule add https://github.com/vendor/lib vendor/lib
+</span></span><span style="display:flex;"><span>git submodule update --init --recursive   <span style="color:#75715e"># ініціалізувати після clone</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Проблеми:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># - submodule вказує на конкретний коміт, не на гілку</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># - легко забути оновити після змін у submodule</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># - clone без --recurse-submodules дає порожні директорії</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Альтернативи: git subtree, package managers (npm, pip, go modules)</span>
+</span></span></code></pre></div><hr>
+<h3 id="як-перевірити-які-файли-зміниться-при-merge">&ldquo;Як перевірити, які файли зміниться при merge?&rdquo;</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Переглянути diff перед merge</span>
+</span></span><span style="display:flex;"><span>git diff main..feature/my-feature
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Тільки назви файлів</span>
+</span></span><span style="display:flex;"><span>git diff --name-only main..feature/my-feature
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Симулювати merge без виконання</span>
+</span></span><span style="display:flex;"><span>git merge --no-commit --no-ff feature/my-feature
+</span></span><span style="display:flex;"><span>git diff --cached   <span style="color:#75715e"># переглянути staged зміни</span>
+</span></span><span style="display:flex;"><span>git merge --abort   <span style="color:#75715e"># скасувати симуляцію</span>
+</span></span></code></pre></div><hr>
+<h2 id="шпаргалка-git-log--фільтрація-та-форматування">Шпаргалка: git log — фільтрація та форматування</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Базові фільтри</span>
+</span></span><span style="display:flex;"><span>git log --oneline --graph --all           <span style="color:#75715e"># дерево гілок</span>
+</span></span><span style="display:flex;"><span>git log --author<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Andrii&#34;</span> --oneline       <span style="color:#75715e"># коміти конкретного автора</span>
+</span></span><span style="display:flex;"><span>git log --since<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2 weeks ago&#34;</span> --until<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;yesterday&#34;</span>
+</span></span><span style="display:flex;"><span>git log --grep<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;hotfix&#34;</span> --oneline         <span style="color:#75715e"># пошук у повідомленнях</span>
+</span></span><span style="display:flex;"><span>git log -- src/payment.py                 <span style="color:#75715e"># коміти що чіпали файл</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Форматування</span>
+</span></span><span style="display:flex;"><span>git log --pretty<span style="color:#f92672">=</span>format:<span style="color:#e6db74">&#34;%h %an %ar %s&#34;</span>  <span style="color:#75715e"># hash, author, relative date, subject</span>
+</span></span><span style="display:flex;"><span>git log --pretty<span style="color:#f92672">=</span>format:<span style="color:#e6db74">&#34;%C(yellow)%h%C(reset) %C(green)%ar%C(reset) %s&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Статистика</span>
+</span></span><span style="display:flex;"><span>git log --stat                            <span style="color:#75715e"># змінені файли і рядки</span>
+</span></span><span style="display:flex;"><span>git log --shortstat                       <span style="color:#75715e"># тільки підсумок</span>
+</span></span><span style="display:flex;"><span>git log -p                                <span style="color:#75715e"># повний diff кожного коміту</span>
+</span></span><span style="display:flex;"><span>git log -p -S <span style="color:#e6db74">&#34;function_name&#34;</span>            <span style="color:#75715e"># diff де зустрічається рядок</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Знайти коміт за вмістом</span>
+</span></span><span style="display:flex;"><span>git log --all --full-history -- <span style="color:#e6db74">&#34;**/payment*&#34;</span>  <span style="color:#75715e"># видалені файли теж</span>
+</span></span></code></pre></div><hr>
+<h2 id="підсумок-вибір-стратегії">Підсумок: вибір стратегії</h2>
+<pre tabindex="0"><code>Ти у великій команді + SaaS + CI/CD є?
+  └─► Trunk-Based Development
+
+Продукт з версіями + довгий QA + команда 5-20?
+  └─► Git Flow
+
+Невелика команда + веб + continuous deploy?
+  └─► GitHub Flow
+
+GitOps + Kubernetes?
+  └─► GitHub Flow або TBD + ArgoCD/Flux
+</code></pre><p>Немає &ldquo;правильної&rdquo; стратегії — є контекст. Головне: коротколивучі гілки, часті інтеграції, автоматичне тестування. Решта — деталі.</p>
+<hr>
+<p>+++</p>
+
+</content>
+
+
+
+<p>
+  
+  <a href="//localhost:1313/tags/git/">#Git</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

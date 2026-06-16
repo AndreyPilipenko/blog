@@ -15,5 +15,12 @@
       <guid>//localhost:1313/blog/ci-cd/</guid>
       <description>Стаття розрахована на тих, хто готується до DevOps-співбесіди або хоче систематизувати знання по CI/CD. Охоплює теорію, практику, GitHub Actions і Jenkins — із реальними прикладами конфігів і поясненням «чому саме так».&#xA;Зміст Що таке CI/CD і навіщо це взагалі Ключові концепції і термінологія GitHub Actions — детально Jenkins — детально Artifacts, кешування, оптимізація Secrets і безпека в пайплайні Стратегії деплою Rollback і disaster recovery Моніторинг і observability пайплайну GitOps і CD у Kubernetes Каверзні питання на співбесіді Що таке CI/CD Continuous Integration (CI) — практика, при якій кожен розробник мінімум раз на день інтегрує свій код у спільну гілку.</description>
     </item>
+    <item>
+      <title>Git зсередини: GitOps, Git Flow, Cherry-pick, Trunk-based</title>
+      <link>//localhost:1313/blog/git-workflow/</link>
+      <pubDate>Tue, 14 Jun 2022 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/git-workflow/</guid>
+      <description>Що таке GitOps GitOps — це операційна модель, де Git є єдиним джерелом правди (single source of truth) для інфраструктури та застосунків. Будь-яка зміна в системі проходить через PR/MR у репозиторій, а не через ручні команди на сервері.&#xA;Ключові принципи:&#xA;Декларативність — стан системи описаний у Git (Kubernetes manifests, Terraform, Helm charts) Версійність — кожен git commit = знімок стану інфраструктури Автоматична синхронізація — агент (ArgoCD, Flux) постійно порівнює бажаний стан (Git) з реальним (кластер) і вирівнює їх Аудит — git log — це повний журнал операцій Різниця GitOps від CI/CD:</description>
+    </item>
   </channel>
 </rss>

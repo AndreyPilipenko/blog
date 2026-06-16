@@ -155,5 +155,12 @@
       <guid>//localhost:1313/tags/debug/</guid>
       <description></description>
     </item>
+    <item>
+      <title>Git</title>
+      <link>//localhost:1313/tags/git/</link>
+      <pubDate>Tue, 14 Jun 2022 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/git/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>

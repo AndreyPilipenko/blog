@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Infrastructure on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+    <link>//localhost:1313/categories/infrastructure/</link>
+    <description>Recent content in Infrastructure on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 01 Jul 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/categories/infrastructure/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>RAID від A до Z: рівні, парність, mdadm, silent corruption і ZFS</title>
+      <link>//localhost:1313/blog/raid-deep-dive/</link>
+      <pubDate>Tue, 01 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/raid-deep-dive/</guid>
+      <description>Вступ: навіщо взагалі RAID у 2025? Перш ніж розбирати рівні — важливо зрозуміти, що RAID не є заміною бекапу. Це мантра, яку треба вбити в голову перед будь-якою розмовою про RAID. RAID захищає від відмови одного або кількох дисків; він не захищає від:&#xA;випадкового rm -rf / пошкодження файлової системи ransomware людської помилки silent corruption (про це детально нижче) RAID — це availability, а не durability у термінах CAP-теореми. Маючи RAID, ти отримуєш безперервність роботи при відмові диска.</description>
+    </item>
+    <item>
+      <title>Docker зсередини: containerd, runc, образи, мережі</title>
+      <link>//localhost:1313/blog/docker-deep-dive/</link>
+      <pubDate>Mon, 16 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/docker-deep-dive/</guid>
+      <description>Docker зсередини: containerd, runc, образи, мережі та все що треба знати на співбесіді Ця стаття — не «Hello World». Це розбір Docker-стеку від ядра Linux до docker compose up, з поясненням кожного рядка конфігу, каверзними питаннями зі співбесід і реальними прикладами з production.&#xA;1. Архітектура: що відбувається після docker run Більшість думають, що Docker — це монолітний демон. Насправді це стек із кількох незалежних компонентів.&#xA;┌─────────────────────────────────────────────┐ │ docker CLI (клієнт, просто шле HTTP запити)│ └────────────────────┬────────────────────────┘ │ Unix socket /var/run/docker.</description>
+    </item>
+  </channel>
+</rss>

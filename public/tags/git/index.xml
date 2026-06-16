@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Git on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+    <link>//localhost:1313/tags/git/</link>
+    <description>Recent content in Git on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 14 Jun 2022 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Git зсередини: GitOps, Git Flow, Cherry-pick, Trunk-based</title>
+      <link>//localhost:1313/blog/git-workflow/</link>
+      <pubDate>Tue, 14 Jun 2022 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/git-workflow/</guid>
+      <description>Що таке GitOps GitOps — це операційна модель, де Git є єдиним джерелом правди (single source of truth) для інфраструктури та застосунків. Будь-яка зміна в системі проходить через PR/MR у репозиторій, а не через ручні команди на сервері.&#xA;Ключові принципи:&#xA;Декларативність — стан системи описаний у Git (Kubernetes manifests, Terraform, Helm charts) Версійність — кожен git commit = знімок стану інфраструктури Автоматична синхронізація — агент (ArgoCD, Flux) постійно порівнює бажаний стан (Git) з реальним (кластер) і вирівнює їх Аудит — git log — це повний журнал операцій Різниця GitOps від CI/CD:</description>
+    </item>
+  </channel>
+</rss>
