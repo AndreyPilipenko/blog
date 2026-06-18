@@ -3,16 +3,58 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>//localhost:1313/</loc>
-    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
   </url><url>
     <loc>//localhost:1313/blog/</loc>
-    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
   </url><url>
     <loc>//localhost:1313/categories/</loc>
-    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/databases/</loc>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/categories/databases/</loc>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/dba/</loc>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/devops/</loc>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/innodb/</loc>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
   </url><url>
     <loc>//localhost:1313/tags/interview/</loc>
-    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/monitoring/</loc>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/mysql/</loc>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/blog/mysql-replication-dba-guide/</loc>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/redis/</loc>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/replication/</loc>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/</loc>
+    <lastmod>2026-06-18T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/ai/</loc>
+    <lastmod>2026-06-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/blog/ai-pazl/</loc>
+    <lastmod>2026-06-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/ml/</loc>
+    <lastmod>2026-06-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>//localhost:1313/tags/kernel/</loc>
     <lastmod>2026-06-16T00:00:00+00:00</lastmod>
@@ -29,9 +71,6 @@
     <loc>//localhost:1313/tags/sysadmin/</loc>
     <lastmod>2026-06-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:1313/tags/</loc>
-    <lastmod>2026-06-16T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>//localhost:1313/tags/udev/</loc>
     <lastmod>2026-06-16T00:00:00+00:00</lastmod>
   </url><url>
@@ -45,9 +84,6 @@
     <lastmod>2026-06-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>//localhost:1313/blog/ci-cd/</loc>
-    <lastmod>2026-06-14T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>//localhost:1313/tags/devops/</loc>
     <lastmod>2026-06-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>//localhost:1313/categories/devops/</loc>
@@ -93,9 +129,6 @@
     <lastmod>2026-05-29T22:26:41+03:00</lastmod>
   </url><url>
     <loc>//localhost:1313/blog/four-golden-signals/</loc>
-    <lastmod>2026-05-02T00:00:00+03:00</lastmod>
-  </url><url>
-    <loc>//localhost:1313/tags/monitoring/</loc>
     <lastmod>2026-05-02T00:00:00+03:00</lastmod>
   </url><url>
     <loc>//localhost:1313/tags/observability/</loc>

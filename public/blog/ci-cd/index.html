@@ -5,13 +5,13 @@
   <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CI/CD: повний гайд &#43; усі каверзні питання для співбесіди | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
-<meta name="title" content="CI/CD: повний гайд &#43; усі каверзні питання для співбесіди" />
+<title>CI/CD: guide | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="CI/CD: guide" />
 <meta name="description" content="Від базових концепцій до підступних питань на Senior-рівні: pipeline, artifacts, secrets, rollback, GitOps — усе в одній статті." />
-<meta name="keywords" content="ci/cd,devops,github-actions,jenkins,interview," />
+<meta name="keywords" content="ci/cd,devops,github-actions,jenkins," />
 
 
-<meta property="og:title" content="CI/CD: повний гайд &#43; усі каверзні питання для співбесіди" />
+<meta property="og:title" content="CI/CD: guide" />
 <meta property="og:description" content="Від базових концепцій до підступних питань на Senior-рівні: pipeline, artifacts, secrets, rollback, GitOps — усе в одній статті." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="//localhost:1313/blog/ci-cd/" /><meta property="article:section" content="blog" />
@@ -21,16 +21,16 @@
 
 
 
-<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="CI/CD: повний гайд &#43; усі каверзні питання для співбесіди"/>
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="CI/CD: guide"/>
 <meta name="twitter:description" content="Від базових концепцій до підступних питань на Senior-рівні: pipeline, artifacts, secrets, rollback, GitOps — усе в одній статті."/>
 
 
 
-<meta itemprop="name" content="CI/CD: повний гайд &#43; усі каверзні питання для співбесіди">
+<meta itemprop="name" content="CI/CD: guide">
 <meta itemprop="description" content="Від базових концепцій до підступних питань на Senior-рівні: pipeline, artifacts, secrets, rollback, GitOps — усе в одній статті."><meta itemprop="datePublished" content="2026-06-14T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2026-06-14T00:00:00+00:00" />
-<meta itemprop="wordCount" content="4195">
-<meta itemprop="keywords" content="ci/cd,devops,github-actions,jenkins,interview," />
+<meta itemprop="wordCount" content="4285">
+<meta itemprop="keywords" content="ci/cd,devops,github-actions,jenkins," />
 <meta name="referrer" content="no-referrer-when-downgrade" />
 
   <style>
@@ -202,7 +202,7 @@
 </header>
   <main>
 
-<h1>CI/CD: повний гайд &#43; усі каверзні питання для співбесіди</h1>
+<h1>CI/CD: guide</h1>
 <p>
   <i>
     <time datetime='2026-06-14'>
@@ -212,10 +212,7 @@
 </p>
 
 <content>
-  <blockquote>
-<p>Стаття розрахована на тих, хто готується до DevOps-співбесіди або хоче систематизувати знання по CI/CD. Охоплює теорію, практику, GitHub Actions і Jenkins — із реальними прикладами конфігів і поясненням «чому саме так».</p>
-</blockquote>
-<hr>
+  <hr>
 <h2 id="зміст">Зміст</h2>
 <ol>
 <li><a href="#%D1%89%D0%BE-%D1%82%D0%B0%D0%BA%D0%B5-cicd">Що таке CI/CD і навіщо це взагалі</a></li>
@@ -230,11 +227,13 @@
 <li><a href="#gitops">GitOps і CD у Kubernetes</a></li>
 <li><a href="#%D0%BA%D0%B0%D0%B2%D0%B5%D1%80%D0%B7%D0%BD%D1%96-%D0%BF%D0%B8%D1%82%D0%B0%D0%BD%D0%BD%D1%8F">Каверзні питання на співбесіді</a></li>
 </ol>
-<hr>
 <h2 id="що-таке-cicd">Що таке CI/CD</h2>
-<p><strong>Continuous Integration (CI)</strong> — практика, при якій кожен розробник мінімум раз на день інтегрує свій код у спільну гілку. Кожна інтеграція автоматично верифікується: запускаються build, тести, линтери. Мета — виявляти конфлікти і баги якомога раніше, поки вони ще дешеві у виправленні.</p>
-<p><strong>Continuous Delivery (CD)</strong> — розширення CI: після успішного пайплайну артефакт готовий до деплою в будь-який момент. Фактичний push на прод — ручна дія (клік кнопки або апрув).</p>
-<p><strong>Continuous Deployment</strong> — ще один крок: якщо всі перевірки пройдені, код автоматично летить на прод без жодного ручного кроку. Вимагає дуже зрілої культури тестування.</p>
+<p><strong>Continuous Integration (CI)</strong> — практика, при якій кожен розробник мінімум раз на день інтегрує свій код у спільну гілку. Кожна інтеграція автоматично верифікується: запускаються build, тести, линтери. Мета — виявляти конфлікти і баги якомога раніше, поки вони ще дешеві у виправленні.
+Результат: перевірений артефакт.</p>
+<p><strong>Continuous Delivery (CD)</strong> — розширення CI: після успішного пайплайну артефакт готовий до деплою в будь-який момент. Фактичний push на прод — ручна дія (клік кнопки або апрув).
+Результат: можна натиснути Deploy to Production.</p>
+<p><strong>Continuous Deployment</strong> — ще один крок: якщо всі перевірки пройдені, код автоматично летить на прод без жодного ручного кроку. Вимагає дуже зрілої культури тестування.
+Результат: кожен успішний commit автоматично в прод.</p>
 <pre tabindex="0"><code>Developer push
       │
       ▼
@@ -260,8 +259,37 @@
 <li>Дає <strong>fast feedback loop</strong>: розробник дізнається про зламаний тест за хвилини, а не на code review через день</li>
 <li>Зменшує <strong>deployment fear</strong>: якщо деплоїти часто, кожен деплой — дрібна і зрозуміла зміна</li>
 </ul>
-<hr>
-<h2 id="ключові-концепції">Ключові концепції</h2>
+<h3 id="heading"></h3>
+<pre tabindex="0"><code>Unit тести (модульні) - Що перевіряють? &gt; Один маленький шматок коду в ізоляції.
+Integration тести (інтеграційні) - Що перевіряють? &gt; Що кілька компонентів правильно працюють разом.
+Functional / End-to-End (E2E) тести &gt; Всю систему так, як її бачить користувач.
+Smoke тести &gt; Це маленький набір найважливіших перевірок після деплою.
+
+Як це зазвичай стоїть в CI/CD
+Developer push
+       |
+       V
+CI
+ ├── Lint
+ ├── Build
+ ├── Unit tests (секунди)
+ ├── Integration tests (хвилини)
+ └── Artifact (Docker image)
+       |
+       V
+CD
+ ├── Deploy Staging
+ ├── E2E / Functional tests
+ ├── Security scans
+ ├── Performance tests (інколи)
+ ├── Manual approval (Delivery)
+       |
+       V
+Production
+       |
+       V
+Smoke tests
+</code></pre><h2 id="ключові-концепції">Ключові концепції</h2>
 <h3 id="pipeline">Pipeline</h3>
 <p>Послідовність автоматизованих етапів (stages/jobs), через які проходить код від коміту до деплою. Типова структура:</p>
 <pre tabindex="0"><code>lint → test → build → security-scan → publish → deploy-staging → smoke-test → deploy-prod
@@ -1192,8 +1220,6 @@
   <a href="//localhost:1313/tags/github-actions/">#Github-Actions</a>
   
   <a href="//localhost:1313/tags/jenkins/">#Jenkins</a>
-  
-  <a href="//localhost:1313/tags/interview/">#Interview</a>
   
 </p>
 

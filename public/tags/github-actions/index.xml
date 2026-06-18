@@ -9,11 +9,11 @@
     <lastBuildDate>Sun, 14 Jun 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:1313/tags/github-actions/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>CI/CD: повний гайд &#43; усі каверзні питання для співбесіди</title>
+      <title>CI/CD: guide</title>
       <link>//localhost:1313/blog/ci-cd/</link>
       <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/blog/ci-cd/</guid>
-      <description>Стаття розрахована на тих, хто готується до DevOps-співбесіди або хоче систематизувати знання по CI/CD. Охоплює теорію, практику, GitHub Actions і Jenkins — із реальними прикладами конфігів і поясненням «чому саме так».&#xA;Зміст Що таке CI/CD і навіщо це взагалі Ключові концепції і термінологія GitHub Actions — детально Jenkins — детально Artifacts, кешування, оптимізація Secrets і безпека в пайплайні Стратегії деплою Rollback і disaster recovery Моніторинг і observability пайплайну GitOps і CD у Kubernetes Каверзні питання на співбесіді Що таке CI/CD Continuous Integration (CI) — практика, при якій кожен розробник мінімум раз на день інтегрує свій код у спільну гілку.</description>
+      <description>Зміст Що таке CI/CD і навіщо це взагалі Ключові концепції і термінологія GitHub Actions — детально Jenkins — детально Artifacts, кешування, оптимізація Secrets і безпека в пайплайні Стратегії деплою Rollback і disaster recovery Моніторинг і observability пайплайну GitOps і CD у Kubernetes Каверзні питання на співбесіді Що таке CI/CD Continuous Integration (CI) — практика, при якій кожен розробник мінімум раз на день інтегрує свій код у спільну гілку. Кожна інтеграція автоматично верифікується: запускаються build, тести, линтери.</description>
     </item>
   </channel>
 </rss>

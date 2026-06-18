@@ -6,21 +6,21 @@
     <description>Recent content in Interview on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 16 Jun 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 18 Jun 2026 12:00:00 +0300</lastBuildDate>
     <atom:link href="//localhost:1313/tags/interview/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL Replication і DBA: повний гайд для DevOps — типи реплікації, InnoDB, моніторинг, Redis</title>
+      <link>//localhost:1313/blog/mysql-replication-dba-guide/</link>
+      <pubDate>Thu, 18 Jun 2026 12:00:00 +0300</pubDate>
+      <guid>//localhost:1313/blog/mysql-replication-dba-guide/</guid>
+      <description>Повний розбір MySQL-реплікації: типи, технічна механіка, команди, моніторинг InnoDB, повний траблшутінг-гайд (зламана реплікація, lag, деадлоки, OOM, Galera split-brain), що зараз популярно (Vitess, ProxySQL, Percona), різниці з іншими базами, основи Redis і питання з відповідями для DevOps/DBA.</description>
+    </item>
     <item>
       <title>Linux inside: what&#39;s /dev, /proc, /sys</title>
       <link>//localhost:1313/blog/linux-virtual-filesystems/</link>
       <pubDate>Tue, 16 Jun 2026 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/blog/linux-virtual-filesystems/</guid>
       <description>Головна ідея: файл як інтерфейс до ядра В Unix є принцип — «всe є файл». І Linux доводить цей принцип до логічного максимуму: навіть сам стан ядра, апаратура і запущені процеси — представлені у вигляді файлів.&#xA;Але є нюанс: ці файли не існують на диску. Вони генеруються ядром on-the-fly, прямо в момент коли ти їх читаєш. Відкрив файл — ядро виконало функцію і повернуло результат у вигляді тексту. Записав у файл — ядро застосувало зміну.</description>
-    </item>
-    <item>
-      <title>CI/CD: повний гайд &#43; усі каверзні питання для співбесіди</title>
-      <link>//localhost:1313/blog/ci-cd/</link>
-      <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/blog/ci-cd/</guid>
-      <description>Стаття розрахована на тих, хто готується до DevOps-співбесіди або хоче систематизувати знання по CI/CD. Охоплює теорію, практику, GitHub Actions і Jenkins — із реальними прикладами конфігів і поясненням «чому саме так».&#xA;Зміст Що таке CI/CD і навіщо це взагалі Ключові концепції і термінологія GitHub Actions — детально Jenkins — детально Artifacts, кешування, оптимізація Secrets і безпека в пайплайні Стратегії деплою Rollback і disaster recovery Моніторинг і observability пайплайну GitOps і CD у Kubernetes Каверзні питання на співбесіді Що таке CI/CD Continuous Integration (CI) — практика, при якій кожен розробник мінімум раз на день інтегрує свій код у спільну гілку.</description>
     </item>
   </channel>
 </rss>

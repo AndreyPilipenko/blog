@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Databases on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+    <link>//localhost:1313/categories/databases/</link>
+    <description>Recent content in Databases on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 18 Jun 2026 12:00:00 +0300</lastBuildDate>
+    <atom:link href="//localhost:1313/categories/databases/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL Replication і DBA: повний гайд для DevOps — типи реплікації, InnoDB, моніторинг, Redis</title>
+      <link>//localhost:1313/blog/mysql-replication-dba-guide/</link>
+      <pubDate>Thu, 18 Jun 2026 12:00:00 +0300</pubDate>
+      <guid>//localhost:1313/blog/mysql-replication-dba-guide/</guid>
+      <description>Повний розбір MySQL-реплікації: типи, технічна механіка, команди, моніторинг InnoDB, повний траблшутінг-гайд (зламана реплікація, lag, деадлоки, OOM, Galera split-brain), що зараз популярно (Vitess, ProxySQL, Percona), різниці з іншими базами, основи Redis і питання з відповідями для DevOps/DBA.</description>
+    </item>
+  </channel>
+</rss>

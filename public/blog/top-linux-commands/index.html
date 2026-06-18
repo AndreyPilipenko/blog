@@ -9,14 +9,14 @@
 <meta name="title" content="Top Linux Commands" />
 <meta name="description" content="Linux Commands Cheatsheet
 Особистий довідник по адмініструванню Linux-серверів
-📦 Диски та файлова система # Огляд дисків та розділів lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID fdisk -l smartctl --scan # Визначити фізичні диски (якщо /dev/sda — залізний сервер) # Місце на диску df -h # Файлові системи df -hi # По inode du -h --max-depth=1 /var/virtualizor/ | sort -h du -sh /home # Вага директорії du -sch .[!.]* * | sort -h # З прихованими директоріями sudo du -h -d1 /root/ | sort -nr ncdu -e # Інтерактивно &#43; приховані директорії inode vs файловий дескриптор" />
+🧰 База: те, без чого нікуди # Навігація та базові операції з файлами pwd # Поточна директорія cd - # Повернутись у попередню директорію ls -lah # Список з прихованими, людським розміром cp -v src dst # Копіювання з виводом дій mv -v src dst # Переміщення/перейменування rm -i file # Видалення з підтвердженням (захист від помилки) # Перегляд вмісту cat file less file # Пагінація (q — вихід, / — пошук) head -n 50 file tail -n 50 -f /var/log/syslog # -f — слідкувати за новими рядками # Права доступу chmod 750 file # rwx для власника, r-x для групи, нічого іншим chmod u&#43;x script." />
 <meta name="keywords" content="" />
 
 
 <meta property="og:title" content="Top Linux Commands" />
 <meta property="og:description" content="Linux Commands Cheatsheet
 Особистий довідник по адмініструванню Linux-серверів
-📦 Диски та файлова система # Огляд дисків та розділів lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID fdisk -l smartctl --scan # Визначити фізичні диски (якщо /dev/sda — залізний сервер) # Місце на диску df -h # Файлові системи df -hi # По inode du -h --max-depth=1 /var/virtualizor/ | sort -h du -sh /home # Вага директорії du -sch .[!.]* * | sort -h # З прихованими директоріями sudo du -h -d1 /root/ | sort -nr ncdu -e # Інтерактивно &#43; приховані директорії inode vs файловий дескриптор" />
+🧰 База: те, без чого нікуди # Навігація та базові операції з файлами pwd # Поточна директорія cd - # Повернутись у попередню директорію ls -lah # Список з прихованими, людським розміром cp -v src dst # Копіювання з виводом дій mv -v src dst # Переміщення/перейменування rm -i file # Видалення з підтвердженням (захист від помилки) # Перегляд вмісту cat file less file # Пагінація (q — вихід, / — пошук) head -n 50 file tail -n 50 -f /var/log/syslog # -f — слідкувати за новими рядками # Права доступу chmod 750 file # rwx для власника, r-x для групи, нічого іншим chmod u&#43;x script." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="//localhost:1313/blog/top-linux-commands/" /><meta property="article:section" content="blog" />
 <meta property="article:published_time" content="2025-02-01T00:27:57+03:00" />
@@ -28,16 +28,16 @@
 <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Top Linux Commands"/>
 <meta name="twitter:description" content="Linux Commands Cheatsheet
 Особистий довідник по адмініструванню Linux-серверів
-📦 Диски та файлова система # Огляд дисків та розділів lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID fdisk -l smartctl --scan # Визначити фізичні диски (якщо /dev/sda — залізний сервер) # Місце на диску df -h # Файлові системи df -hi # По inode du -h --max-depth=1 /var/virtualizor/ | sort -h du -sh /home # Вага директорії du -sch .[!.]* * | sort -h # З прихованими директоріями sudo du -h -d1 /root/ | sort -nr ncdu -e # Інтерактивно &#43; приховані директорії inode vs файловий дескриптор"/>
+🧰 База: те, без чого нікуди # Навігація та базові операції з файлами pwd # Поточна директорія cd - # Повернутись у попередню директорію ls -lah # Список з прихованими, людським розміром cp -v src dst # Копіювання з виводом дій mv -v src dst # Переміщення/перейменування rm -i file # Видалення з підтвердженням (захист від помилки) # Перегляд вмісту cat file less file # Пагінація (q — вихід, / — пошук) head -n 50 file tail -n 50 -f /var/log/syslog # -f — слідкувати за новими рядками # Права доступу chmod 750 file # rwx для власника, r-x для групи, нічого іншим chmod u&#43;x script."/>
 
 
 
 <meta itemprop="name" content="Top Linux Commands">
 <meta itemprop="description" content="Linux Commands Cheatsheet
 Особистий довідник по адмініструванню Linux-серверів
-📦 Диски та файлова система # Огляд дисків та розділів lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID fdisk -l smartctl --scan # Визначити фізичні диски (якщо /dev/sda — залізний сервер) # Місце на диску df -h # Файлові системи df -hi # По inode du -h --max-depth=1 /var/virtualizor/ | sort -h du -sh /home # Вага директорії du -sch .[!.]* * | sort -h # З прихованими директоріями sudo du -h -d1 /root/ | sort -nr ncdu -e # Інтерактивно &#43; приховані директорії inode vs файловий дескриптор"><meta itemprop="datePublished" content="2025-02-01T00:27:57+03:00" />
+🧰 База: те, без чого нікуди # Навігація та базові операції з файлами pwd # Поточна директорія cd - # Повернутись у попередню директорію ls -lah # Список з прихованими, людським розміром cp -v src dst # Копіювання з виводом дій mv -v src dst # Переміщення/перейменування rm -i file # Видалення з підтвердженням (захист від помилки) # Перегляд вмісту cat file less file # Пагінація (q — вихід, / — пошук) head -n 50 file tail -n 50 -f /var/log/syslog # -f — слідкувати за новими рядками # Права доступу chmod 750 file # rwx для власника, r-x для групи, нічого іншим chmod u&#43;x script."><meta itemprop="datePublished" content="2025-02-01T00:27:57+03:00" />
 <meta itemprop="dateModified" content="2025-02-01T00:27:57+03:00" />
-<meta itemprop="wordCount" content="841">
+<meta itemprop="wordCount" content="2575">
 <meta itemprop="keywords" content="" />
 <meta name="referrer" content="no-referrer-when-downgrade" />
 
@@ -222,7 +222,46 @@
 <content>
   <p>Linux Commands Cheatsheet</p>
 <p>Особистий довідник по адмініструванню Linux-серверів</p>
-<h2 id="-диски-та-файлова-система">📦 Диски та файлова система</h2>
+<h2 id="-база-те-без-чого-нікуди">🧰 База: те, без чого нікуди</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Навігація та базові операції з файлами</span>
+</span></span><span style="display:flex;"><span>pwd                                    <span style="color:#75715e"># Поточна директорія</span>
+</span></span><span style="display:flex;"><span>cd -                                   <span style="color:#75715e"># Повернутись у попередню директорію</span>
+</span></span><span style="display:flex;"><span>ls -lah                                <span style="color:#75715e"># Список з прихованими, людським розміром</span>
+</span></span><span style="display:flex;"><span>cp -v src dst                          <span style="color:#75715e"># Копіювання з виводом дій</span>
+</span></span><span style="display:flex;"><span>mv -v src dst                          <span style="color:#75715e"># Переміщення/перейменування</span>
+</span></span><span style="display:flex;"><span>rm -i file                             <span style="color:#75715e"># Видалення з підтвердженням (захист від помилки)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перегляд вмісту</span>
+</span></span><span style="display:flex;"><span>cat file
+</span></span><span style="display:flex;"><span>less file                              <span style="color:#75715e"># Пагінація (q — вихід, / — пошук)</span>
+</span></span><span style="display:flex;"><span>head -n <span style="color:#ae81ff">50</span> file
+</span></span><span style="display:flex;"><span>tail -n <span style="color:#ae81ff">50</span> -f /var/log/syslog          <span style="color:#75715e"># -f — слідкувати за новими рядками</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Права доступу</span>
+</span></span><span style="display:flex;"><span>chmod <span style="color:#ae81ff">750</span> file                         <span style="color:#75715e"># rwx для власника, r-x для групи, нічого іншим</span>
+</span></span><span style="display:flex;"><span>chmod u+x script.sh                    <span style="color:#75715e"># Символьна форма: додати +x власнику</span>
+</span></span><span style="display:flex;"><span>chown user:group file                  <span style="color:#75715e"># Власник:група</span>
+</span></span><span style="display:flex;"><span>chown -R user:group /path              <span style="color:#75715e"># Рекурсивно</span>
+</span></span></code></pre></div><blockquote>
+<p><strong>Чому 750, а не 777?</strong>
+Цифра — це сума прав: read=4, write=2, execute=1. <code>7</code> (4+2+1) = rwx, <code>5</code> (4+1) = r-x, <code>0</code> = нічого. Завжди давай мінімум необхідних прав (принцип найменших привілеїв).</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Довідка та пошук команд</span>
+</span></span><span style="display:flex;"><span>man command                            <span style="color:#75715e"># Повна документація</span>
+</span></span><span style="display:flex;"><span>command --help                         <span style="color:#75715e"># Короткий список флагів</span>
+</span></span><span style="display:flex;"><span>type command                           <span style="color:#75715e"># Чи це alias, builtin чи бінарник</span>
+</span></span><span style="display:flex;"><span>which command                          <span style="color:#75715e"># Шлях до бінарника (тільки $PATH)</span>
+</span></span><span style="display:flex;"><span>whereis command                        <span style="color:#75715e"># Бінарник + man-сторінка + джерела</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Історія та alias</span>
+</span></span><span style="display:flex;"><span>history | grep ssh                     <span style="color:#75715e"># Пошук у історії команд</span>
+</span></span><span style="display:flex;"><span>alias ll<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;ls -lah&#39;</span>                     <span style="color:#75715e"># Тимчасовий alias (додай в ~/.bashrc для постійного)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Змінні середовища</span>
+</span></span><span style="display:flex;"><span>export VAR<span style="color:#f92672">=</span>value                       <span style="color:#75715e"># Встановити для поточної сесії та дочірніх процесів</span>
+</span></span><span style="display:flex;"><span>env | grep PATH                        <span style="color:#75715e"># Список усіх env-змінних</span>
+</span></span><span style="display:flex;"><span>printenv PATH
+</span></span></code></pre></div><h2 id="-диски-та-файлова-система">📦 Диски та файлова система</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Огляд дисків та розділів</span>
 </span></span><span style="display:flex;"><span>lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID
 </span></span><span style="display:flex;"><span>fdisk -l
@@ -236,6 +275,9 @@
 </span></span><span style="display:flex;"><span>du -sch .<span style="color:#f92672">[</span>!.<span style="color:#f92672">]</span>* * | sort -h            <span style="color:#75715e"># З прихованими директоріями</span>
 </span></span><span style="display:flex;"><span>sudo du -h -d1 /root/ | sort -nr
 </span></span><span style="display:flex;"><span>ncdu -e                                <span style="color:#75715e"># Інтерактивно + приховані директорії</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Метадані конкретного файлу</span>
+</span></span><span style="display:flex;"><span>stat file                              <span style="color:#75715e"># inode, права, час доступу/зміни/створення</span>
 </span></span></code></pre></div><blockquote>
 <p><strong>inode vs файловий дескриптор</strong></p>
 <ul>
@@ -252,7 +294,104 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># Коли створена ФС</span>
 </span></span><span style="display:flex;"><span>dumpe2fs <span style="color:#66d9ef">$(</span>mount | grep <span style="color:#e6db74">&#39;on \/ &#39;</span> | awk <span style="color:#e6db74">&#39;{print $1}&#39;</span><span style="color:#66d9ef">)</span> | grep <span style="color:#e6db74">&#39;Filesystem created:&#39;</span>
-</span></span></code></pre></div><h2 id="-smart-та-здоровя-дисків">💿 S.M.A.R.T. та здоров&rsquo;я дисків</h2>
+</span></span></code></pre></div><h2 id="-пошук-файлів-find--locate--xargs">🔍 Пошук файлів (find / locate / xargs)</h2>
+<p><code>find</code> — найпотужніший інструмент для пошуку за метаданими, а не вмістом (для вмісту — <code>grep -r</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Флаг</th>
+<th>Що робить</th>
+<th>Приклад</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-name</code> / <code>-iname</code></td>
+<td>Пошук за іменем (iname — без урахування регістру)</td>
+<td><code>find /var/log -iname &quot;*.log&quot;</code></td>
+</tr>
+<tr>
+<td><code>-type f/d/l</code></td>
+<td>Тип: файл / директорія / симлінк</td>
+<td><code>find . -type d</code></td>
+</tr>
+<tr>
+<td><code>-size +100M</code> / <code>-1k</code></td>
+<td>Більше/менше за розмір</td>
+<td><code>find / -size +1G</code></td>
+</tr>
+<tr>
+<td><code>-mtime +30</code> / <code>-mmin -60</code></td>
+<td>Змінено більше 30 днів тому / менше 60 хв тому</td>
+<td><code>find /tmp -mtime +30</code></td>
+</tr>
+<tr>
+<td><code>-ctime</code> / <code>-atime</code></td>
+<td>Час зміни inode / час доступу</td>
+<td><code>find . -atime +90</code></td>
+</tr>
+<tr>
+<td><code>-perm -4000</code></td>
+<td>SUID-біт встановлено</td>
+<td><code>find / -perm -4000</code></td>
+</tr>
+<tr>
+<td><code>-perm -2000</code></td>
+<td>SGID-біт</td>
+<td><code>find / -perm -2000</code></td>
+</tr>
+<tr>
+<td><code>-perm -o+w</code></td>
+<td>Файли, доступні на запис будь-кому</td>
+<td><code>find / -perm -o+w -type f</code></td>
+</tr>
+<tr>
+<td><code>-user</code> / <code>-group</code></td>
+<td>Власник / група</td>
+<td><code>find /home -user olduser</code></td>
+</tr>
+<tr>
+<td><code>-newer ref</code></td>
+<td>Змінено пізніше за файл-референс</td>
+<td><code>find . -newer /tmp/marker</code></td>
+</tr>
+<tr>
+<td><code>-maxdepth N</code> / <code>-mindepth N</code></td>
+<td>Обмеження глибини рекурсії</td>
+<td><code>find . -maxdepth 1</code></td>
+</tr>
+<tr>
+<td><code>-xtype l</code></td>
+<td>Зламані симлінки (ціль не існує)</td>
+<td><code>find . -xtype l</code></td>
+</tr>
+<tr>
+<td><code>-prune</code></td>
+<td>Виключити директорію з обходу</td>
+<td>див. приклад нижче</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Знайти і видалити логи старші 30 днів</span>
+</span></span><span style="display:flex;"><span>find /var/log/myapp -name <span style="color:#e6db74">&#34;*.log&#34;</span> -mtime +30 -print     <span style="color:#75715e"># спочатку перевір список</span>
+</span></span><span style="display:flex;"><span>find /var/log/myapp -name <span style="color:#e6db74">&#34;*.log&#34;</span> -mtime +30 -delete    <span style="color:#75715e"># тільки після перевірки</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Виключити директорію з пошуку (наприклад node_modules)</span>
+</span></span><span style="display:flex;"><span>find . -path ./node_modules -prune -o -name <span style="color:#e6db74">&#34;*.js&#34;</span> -print
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Файли більші за 1GB у всій системі</span>
+</span></span><span style="display:flex;"><span>find / -xdev -size +1G -exec ls -lh <span style="color:#f92672">{}</span> <span style="color:#ae81ff">\;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Безпечна передача результатів у іншу команду (працює з пробілами в іменах)</span>
+</span></span><span style="display:flex;"><span>find . -name <span style="color:#e6db74">&#34;*.tmp&#34;</span> -print0 | xargs -0 rm -v
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># locate — швидше, але працює з кешем (updatedb), може бути неактуальним</span>
+</span></span><span style="display:flex;"><span>locate nginx.conf
+</span></span><span style="display:flex;"><span>sudo updatedb                          <span style="color:#75715e"># Оновити кеш locate вручну</span>
+</span></span></code></pre></div><blockquote>
+<p>⚠️ <strong>WARNING:</strong> <code>-delete</code> видаляє файли безповоротно і без підтвердження. Завжди спочатку запускай <code>find</code> без <code>-delete</code>/<code>-exec rm</code>, перевір вивід, і лише тоді додавай деструктивний флаг.</p>
+</blockquote>
+<h2 id="-smart-та-здоровя-дисків">💿 S.M.A.R.T. та здоров&rsquo;я дисків</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>smartctl --info /dev/sda               <span style="color:#75715e"># Базова інформація</span>
 </span></span><span style="display:flex;"><span>smartctl -a /dev/sda                   <span style="color:#75715e"># Повний звіт</span>
 </span></span><span style="display:flex;"><span>smartctl -x /dev/sda                   <span style="color:#75715e"># Розширений звіт</span>
@@ -273,9 +412,10 @@
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># RAID</span>
 </span></span><span style="display:flex;"><span>cat /proc/mdstat
 </span></span><span style="display:flex;"><span>vim /etc/mdadm.conf
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># Перезаписати диск</span>
-</span></span><span style="display:flex;"><span>dd <span style="color:#66d9ef">if</span><span style="color:#f92672">=</span>/dev/urandom of<span style="color:#f92672">=</span>/dev/sda bs<span style="color:#f92672">=</span>1M status<span style="color:#f92672">=</span>progress
+</span></span></code></pre></div><blockquote>
+<p>⚠️ <strong>WARNING:</strong> наступна команда безповоротно перезаписує диск випадковими даними — використовується тільки для безпечного знищення даних перед утилізацією/продажем носія, ніколи на робочому диску.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>dd <span style="color:#66d9ef">if</span><span style="color:#f92672">=</span>/dev/urandom of<span style="color:#f92672">=</span>/dev/sda bs<span style="color:#f92672">=</span>1M status<span style="color:#f92672">=</span>progress
 </span></span></code></pre></div><h2 id="-мережа">🌐 Мережа</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Інтерфейси</span>
 </span></span><span style="display:flex;"><span>ip link ls up
@@ -302,20 +442,102 @@
 </span></span><span style="display:flex;"><span>cat /proc/sys/net/netfilter/nf_conntrack_max
 </span></span><span style="display:flex;"><span>cat /proc/sys/net/netfilter/nf_conntrack_count
 </span></span><span style="display:flex;"><span>conntrack -C                           <span style="color:#75715e"># Поточна кількість сесій</span>
+</span></span></code></pre></div><h3 id="-ethtool--діагностика-та-тюнінг-nic">🔧 ethtool — діагностика та тюнінг NIC</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ethtool eth0                           <span style="color:#75715e"># Speed, Duplex, Auto-negotiation, Link detected</span>
+</span></span><span style="display:flex;"><span>ethtool -i eth0                        <span style="color:#75715e"># Драйвер NIC + версія firmware — важливо при багах драйвера</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Лічильники помилок на самій карті (нижче рівня ОС)</span>
+</span></span><span style="display:flex;"><span>ethtool -S eth0 | grep -Ei <span style="color:#e6db74">&#39;drop|error|miss&#39;</span>
+</span></span></code></pre></div><blockquote>
+<p><strong>Навіщо <code>ethtool -S</code>, якщо вже є <code>ip -s link</code>?</strong>
+<code>ip -s link</code> показує статистику з боку ядра. <code>ethtool -S</code> показує лічильники з самого драйвера/чипа NIC — там видно втрати ще до того, як пакет дійшов до стека ядра (наприклад <code>rx_missed_errors</code> через переповнення ring buffer при високому PPS на проксі-серверах).</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Ring buffer (буфер на карті) — типова причина drops при високому PPS</span>
+</span></span><span style="display:flex;"><span>ethtool -g eth0                        <span style="color:#75715e"># Поточні/максимальні значення rx/tx</span>
+</span></span><span style="display:flex;"><span>ethtool -G eth0 rx <span style="color:#ae81ff">4096</span> tx <span style="color:#ae81ff">4096</span>        <span style="color:#75715e"># Збільшити (макс. залежить від драйвера)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Offload-фічі (TSO/GSO/GRO/LRO/checksumming)</span>
+</span></span><span style="display:flex;"><span>ethtool -k eth0                        <span style="color:#75715e"># Список усіх offload-фіч та їх стану</span>
+</span></span><span style="display:flex;"><span>ethtool -K eth0 gro off                <span style="color:#75715e"># Вимкнути GRO (часто потрібно для коректного tcpdump</span>
+</span></span><span style="display:flex;"><span>                                        <span style="color:#75715e"># або коли карта виступає роутером/бриджем)</span>
+</span></span></code></pre></div><blockquote>
+<p>⚠️ <strong>WARNING:</strong> <code>ethtool -s</code> (force speed/duplex/autoneg) може миттєво обірвати лінк, якщо налаштування не співпадають зі свічем. Перевіряй з консолі/IPMI, а не по SSH через той самий інтерфейс.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ethtool -s eth0 speed <span style="color:#ae81ff">10000</span> duplex full autoneg off
+</span></span></code></pre></div><h3 id="-mtu-та-jumbo-frames">📏 MTU та Jumbo Frames</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ip link set eth0 mtu <span style="color:#ae81ff">9000</span>              <span style="color:#75715e"># Jumbo frames (мають підтримуватись усім шляхом: NIC, свіч, апстрім)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Path MTU discovery: -s 1472 + 28 байт (20 IP + 8 ICMP) = 1500 без фрагментації</span>
+</span></span><span style="display:flex;"><span>ping -M <span style="color:#66d9ef">do</span> -s <span style="color:#ae81ff">1472</span> 8.8.8.8             <span style="color:#75715e"># -M do — заборонити фрагментацію, виявити реальний MTU шляху</span>
+</span></span></code></pre></div><h3 id="-bonding--lacp">🔗 Bonding / LACP</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat /proc/net/bonding/bond0            <span style="color:#75715e"># Режим, активні слейви, MII status</span>
+</span></span><span style="display:flex;"><span>ip -d link show bond0
+</span></span></code></pre></div><blockquote>
+<p><strong>Hash policy <code>layer3+4</code></strong>
+Визначає, як трафік розподіляється між слейвами в режимах <code>xor</code>/<code>802.3ad</code>. <code>layer2</code> дивиться лише на MAC (погана балансировка при одному gateway), <code>layer3+4</code> враховує IP+порт — потрібно для реальної агрегації пропускної здатності &gt;1Gbps на одне джерело/призначення.</p>
+</blockquote>
+<h3 id="-маршрутизація">🧭 Маршрутизація</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ip route show table all
+</span></span><span style="display:flex;"><span>ip rule list                           <span style="color:#75715e"># Policy routing rules (fwmark-based)</span>
+</span></span><span style="display:flex;"><span>ip route get 8.8.8.8                   <span style="color:#75715e"># Який маршрут реально обере ядро для цієї цілі</span>
+</span></span></code></pre></div><h3 id="-dns">🌍 DNS</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>dig +short example.com
+</span></span><span style="display:flex;"><span>dig -x 8.8.8.8                         <span style="color:#75715e"># Reverse DNS (PTR)</span>
+</span></span><span style="display:flex;"><span>resolvectl status                      <span style="color:#75715e"># Якщо використовується systemd-resolved</span>
+</span></span></code></pre></div><h3 id="-httptls-діагностика">⏱️ HTTP/TLS діагностика</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Розбивка часу запиту по фазах</span>
+</span></span><span style="display:flex;"><span>curl -o /dev/null -s -w <span style="color:#e6db74">&#39;dns:%{time_namelookup} connect:%{time_connect} ttfb:%{time_starttransfer} total:%{time_total}\n&#39;</span> https://example.com
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Дата експірації TLS-сертифіката без браузера</span>
+</span></span><span style="display:flex;"><span>openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 2&gt;/dev/null | openssl x509 -noout -dates
+</span></span></code></pre></div><h3 id="-traffic-shaping">🚦 Traffic shaping</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tc qdisc show dev eth0                 <span style="color:#75715e"># Поточна дисципліна черги</span>
+</span></span></code></pre></div><blockquote>
+<p>⚠️ <strong>WARNING:</strong> додавання <code>tc qdisc</code> змінює поведінку трафіку миттєво для всього інтерфейсу — тестуй на некритичному interface/VLAN.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tc qdisc add dev eth0 root tbf rate 100mbit burst 32kbit latency 400ms
+</span></span></code></pre></div><h3 id="-sysctl-тюнінг-мережі">⚙️ sysctl тюнінг мережі</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sysctl net.core.somaxconn                       <span style="color:#75715e"># Глибина backlog для accept() — мала=connection refused під навантаженням</span>
+</span></span><span style="display:flex;"><span>sysctl net.ipv4.tcp_congestion_control           <span style="color:#75715e"># bbr/cubic/reno</span>
+</span></span><span style="display:flex;"><span>sysctl net.ipv4.ip_local_port_range              <span style="color:#75715e"># Діапазон ефемерних портів для вихідних з&#39;єднань</span>
+</span></span><span style="display:flex;"><span>sysctl net.netfilter.nf_conntrack_max            <span style="color:#75715e"># Ліміт NAT-таблиці — занадто малий = &#34;table full, dropping packet&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Персистентно (не забувай комент &#34;що/чому&#34; в самому файлі — для майбутнього себе)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;net.ipv4.tcp_congestion_control = bbr&#34;</span> &gt;&gt; /etc/sysctl.d/99-proxy.conf
+</span></span><span style="display:flex;"><span>sysctl --system                                  <span style="color:#75715e"># Застосувати всі sysctl.d/* без перезавантаження</span>
 </span></span></code></pre></div><h2 id="-процеси-та-сервіси">⚙️ Процеси та сервіси</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Огляд процесів</span>
 </span></span><span style="display:flex;"><span>ps axf                                 <span style="color:#75715e"># Дерево з аргументами</span>
 </span></span><span style="display:flex;"><span>ps aux | grep defunct                  <span style="color:#75715e"># Зомбі-процеси</span>
 </span></span><span style="display:flex;"><span>cat /proc/&lt;pid&gt;/cmdline                <span style="color:#75715e"># Командний рядок процесу</span>
+</span></span><span style="display:flex;"><span>cat /proc/&lt;pid&gt;/status                 <span style="color:#75715e"># VmRSS, State, Threads, тощо</span>
 </span></span><span style="display:flex;"><span>ll /proc/&lt;pid&gt;/exe                     <span style="color:#75715e"># Де живе бінарник</span>
+</span></span><span style="display:flex;"><span>ls -l /proc/&lt;pid&gt;/fd                   <span style="color:#75715e"># Усі відкриті файлові дескриптори процесу</span>
+</span></span><span style="display:flex;"><span>cat /proc/&lt;pid&gt;/limits                 <span style="color:#75715e"># Поточні ulimit для процесу (часто причина &#34;too many open files&#34;)</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># Пошук команди</span>
 </span></span><span style="display:flex;"><span>which top
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># Вбити процеси користувача</span>
 </span></span><span style="display:flex;"><span>pkill -u username
+</span></span></code></pre></div><h3 id="-пріоритети-процесів-nice--renice--ionice">🎚️ Пріоритети процесів: nice / renice / ionice</h3>
+<blockquote>
+<p><strong>nice vs renice</strong></p>
+<ul>
+<li><code>nice</code> — задає пріоритет CPU <strong>при старті</strong> процесу. Шкала від <code>-20</code> (найвищий пріоритет) до <code>19</code> (найнижчий), за замовчуванням <code>0</code>.</li>
+<li><code>renice</code> — змінює пріоритет <strong>уже запущеного</strong> процесу за PID.</li>
+<li><code>ionice</code> — те саме, але для пріоритету <strong>дискового I/O</strong> (окрема підсистема, не пов&rsquo;язана з CPU nice).</li>
+</ul>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nice -n <span style="color:#ae81ff">10</span> ./heavy_script.sh           <span style="color:#75715e"># Запустити з пониженим пріоритетом (не заважати іншим процесам)</span>
+</span></span><span style="display:flex;"><span>renice -n -5 -p <span style="color:#ae81ff">1234</span>                   <span style="color:#75715e"># Підняти пріоритет вже запущеного PID 1234 (потрібен root для від&#39;ємних значень)</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># Завантаження системи</span>
+</span></span><span style="display:flex;"><span>ionice -c2 -n7 -p <span style="color:#ae81ff">1234</span>                 <span style="color:#75715e"># Клас 2 (best-effort), найнижчий пріоритет у класі — для фонових backup-задач</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ulimit — ліміти ресурсів для поточної shell-сесії</span>
+</span></span><span style="display:flex;"><span>ulimit -a                              <span style="color:#75715e"># Всі поточні ліміти</span>
+</span></span><span style="display:flex;"><span>ulimit -n <span style="color:#ae81ff">65535</span>                        <span style="color:#75715e"># Підняти ліміт відкритих файлів (тимчасово, для сесії)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Персистентно — через /etc/security/limits.conf або systemd unit (LimitNOFILE=)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Завантаження системи</span>
 </span></span><span style="display:flex;"><span>vmstat <span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># Дивитись: wa (I/O wait, має бути ~0), id (idle), si/so (swap in/out)</span>
 </span></span><span style="display:flex;"><span>
@@ -331,6 +553,12 @@
 </span></span><span style="display:flex;"><span>pstree -h
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># Показати процеси конкретного користувача</span>
 </span></span><span style="display:flex;"><span>pstree username
+</span></span></code></pre></div><h3 id="-systemd">🔁 systemd</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>systemctl list-units --failed          <span style="color:#75715e"># Швидко знайти, що впало</span>
+</span></span><span style="display:flex;"><span>systemctl show nginx -p MainPID        <span style="color:#75715e"># PID без парсингу status</span>
+</span></span><span style="display:flex;"><span>systemctl cat nginx                    <span style="color:#75715e"># Показати unit-файл як він є після override&#39;ів</span>
+</span></span><span style="display:flex;"><span>systemd-analyze blame                  <span style="color:#75715e"># Що найдовше вантажиться при старті системи</span>
+</span></span><span style="display:flex;"><span>systemd-cgtop                          <span style="color:#75715e"># Real-time CPU/RAM по cgroups (control groups systemd)</span>
 </span></span></code></pre></div><h2 id="-залізо-та-середовище">🖥️ Залізо та середовище</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Тип віртуалізації</span>
 </span></span><span style="display:flex;"><span>systemd-detect-virt
@@ -339,6 +567,11 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># Параметри ядра при завантаженні</span>
 </span></span><span style="display:flex;"><span>cat /proc/cmdline
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CPU</span>
+</span></span><span style="display:flex;"><span>lscpu                                  <span style="color:#75715e"># Архітектура, кількість ядер/потоків, кеші</span>
+</span></span><span style="display:flex;"><span>nproc                                  <span style="color:#75715e"># Скільки ядер бачить ОС (враховує cgroup-ліміти контейнера)</span>
+</span></span><span style="display:flex;"><span>numactl --hardware                     <span style="color:#75715e"># NUMA-топологія: скільки нод, скільки RAM на кожній</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># RAM</span>
 </span></span><span style="display:flex;"><span>dmidecode -t <span style="color:#ae81ff">17</span>                        <span style="color:#75715e"># Деталі по планках пам&#39;яті (тип, частота, слот)</span>
@@ -352,7 +585,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># Відеокарта</span>
 </span></span><span style="display:flex;"><span>lshw -c video | grep driver
 </span></span><span style="display:flex;"><span>glxinfo -B
-</span></span></code></pre></div><h2 id="-архіви">📁 Архіви</h2>
+</span></span></code></pre></div><h2 id="-архіви-та-копіювання">📁 Архіви та копіювання</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># tar</span>
 </span></span><span style="display:flex;"><span>tar -czvf archive.tar.gz /path/to/dir   <span style="color:#75715e"># Запакувати</span>
 </span></span><span style="display:flex;"><span>tar -xzvf archive.tar.gz                <span style="color:#75715e"># Розпакувати</span>
@@ -361,13 +594,38 @@
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># xz</span>
 </span></span><span style="display:flex;"><span>xz -z file.txt                          <span style="color:#75715e"># Запакувати</span>
 </span></span><span style="display:flex;"><span>unxz file.txt.xz                        <span style="color:#75715e"># Розпакувати</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># zip</span>
+</span></span><span style="display:flex;"><span>zip -r archive.zip /path/to/dir
+</span></span><span style="display:flex;"><span>unzip -l archive.zip                    <span style="color:#75715e"># Переглянути вміст без розпакування</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># rsync — копіювання з дельтою (синхронізація, а не повне перезаписування)</span>
+</span></span><span style="display:flex;"><span>rsync -avzP --delete src/ user@host:/dst/   <span style="color:#75715e"># -a архів, -z стиснення, -P progress+resume, --delete видаляє зайве на приймачі</span>
+</span></span><span style="display:flex;"><span>rsync -avz --dry-run src/ dst/              <span style="color:#75715e"># Симуляція без реальних змін — завжди спочатку так</span>
+</span></span></code></pre></div><blockquote>
+<p>⚠️ <strong>WARNING:</strong> <code>rsync --delete</code> видаляє на приймачі файли, яких немає у джерелі. Завжди перевіряй спочатку через <code>--dry-run</code>.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># scp — простий разовий перенос</span>
+</span></span><span style="display:flex;"><span>scp -P <span style="color:#ae81ff">2222</span> file.txt user@host:/path/
 </span></span></code></pre></div><h2 id="-символічні-посилання-та-пакети">🔗 Символічні посилання та пакети</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Символьне посилання</span>
 </span></span><span style="display:flex;"><span>ln -s /full/path/to/file /usr/local/bin/alias_name
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># Пакети</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># APT (Debian/Ubuntu)</span>
 </span></span><span style="display:flex;"><span>apt-cache show nginx                    <span style="color:#75715e"># Версія в репозиторії</span>
 </span></span><span style="display:flex;"><span>apt-mark hold nginx                     <span style="color:#75715e"># Заморозити версію (не оновлювати)</span>
+</span></span><span style="display:flex;"><span>apt list --upgradable                   <span style="color:#75715e"># Що можна оновити</span>
+</span></span><span style="display:flex;"><span>dpkg -L nginx                           <span style="color:#75715e"># Які файли встановив пакет</span>
+</span></span><span style="display:flex;"><span>dpkg -S /usr/sbin/nginx                 <span style="color:#75715e"># Якому пакету належить файл</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># YUM/DNF (RHEL/CentOS)</span>
+</span></span><span style="display:flex;"><span>rpm -qa | grep nginx                    <span style="color:#75715e"># Чи встановлений пакет</span>
+</span></span><span style="display:flex;"><span>rpm -ql nginx                           <span style="color:#75715e"># Файли пакету</span>
+</span></span><span style="display:flex;"><span>yum history                             <span style="color:#75715e"># Історія транзакцій yum</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Динамічні бібліотеки</span>
+</span></span><span style="display:flex;"><span>ldd /usr/sbin/nginx                     <span style="color:#75715e"># Які .so-залежності потрібні бінарнику</span>
+</span></span><span style="display:flex;"><span>ldconfig -p | grep ssl                  <span style="color:#75715e"># Кеш динамічного лінкера</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># PHP</span>
 </span></span><span style="display:flex;"><span>php -v
@@ -394,6 +652,22 @@
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірити відкриті порти локально</span>
 </span></span><span style="display:flex;"><span>ss -tlnp
 </span></span><span style="display:flex;"><span>netstat -tlnp
+</span></span></code></pre></div><h3 id="-grep--awk--sed--sort--xargs--текстова-база">🧵 grep / awk / sed / sort / xargs — текстова &ldquo;база&rdquo;</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>grep -i <span style="color:#e6db74">&#34;error&#34;</span> file.log               <span style="color:#75715e"># Без урахування регістру</span>
+</span></span><span style="display:flex;"><span>grep -v <span style="color:#e6db74">&#34;debug&#34;</span> file.log               <span style="color:#75715e"># Інвертувати — показати все, ОКРІМ debug</span>
+</span></span><span style="display:flex;"><span>grep -rn <span style="color:#e6db74">&#34;TODO&#34;</span> ./src                  <span style="color:#75715e"># Рекурсивно по директорії, з номерами рядків</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>awk <span style="color:#e6db74">&#39;{print $1, $3}&#39;</span> file.log          <span style="color:#75715e"># Витягти 1-й і 3-й стовпці (роздільник — пробіл за замовчуванням)</span>
+</span></span><span style="display:flex;"><span>awk -F<span style="color:#e6db74">&#39;,&#39;</span> <span style="color:#e6db74">&#39;{print $2}&#39;</span> file.csv        <span style="color:#75715e"># Свій роздільник</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sed -n <span style="color:#e6db74">&#39;10,20p&#39;</span> file                   <span style="color:#75715e"># Показати тільки рядки 10-20</span>
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#39;s/old/new/g&#39;</span> file              <span style="color:#75715e"># Заміна in-place по всьому файлу</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sort -k2 -n file | uniq -c             <span style="color:#75715e"># Сортувати за 2-м стовпцем чисельно, рахувати унікальні</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>xargs -n1 echo &lt; list.txt              <span style="color:#75715e"># Виконати команду для кожного рядка вхідних даних</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>watch -n2 <span style="color:#e6db74">&#39;ss -tnp | wc -l&#39;</span>            <span style="color:#75715e"># Повторювати команду кожні 2с (моніторинг у реальному часі)</span>
 </span></span></code></pre></div><h2 id="-безпека-та-аудит">🔐 Безпека та аудит</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Перевірити відкриті файли / сокети процесу</span>
 </span></span><span style="display:flex;"><span>lsof -p &lt;pid&gt;
@@ -407,12 +681,34 @@
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># Sudo-активність</span>
 </span></span><span style="display:flex;"><span>grep sudo /var/log/auth.log | tail -30
 </span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Невдалі спроби логіну</span>
+</span></span><span style="display:flex;"><span>lastb -20
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># Перевірити crontab всіх користувачів</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> u in <span style="color:#66d9ef">$(</span>cut -f1 -d: /etc/passwd<span style="color:#66d9ef">)</span>; <span style="color:#66d9ef">do</span> crontab -l -u $u 2&gt;/dev/null <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;--- </span>$u<span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Файли із SUID/SGID — потенційний privilege escalation вектор</span>
+</span></span><span style="display:flex;"><span>find / -xdev -perm -4000 -o -perm -2000 2&gt;/dev/null
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Firewall: поточні правила</span>
+</span></span><span style="display:flex;"><span>iptables -L -n -v
+</span></span><span style="display:flex;"><span>ufw status verbose
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># fail2ban: хто заблокований</span>
+</span></span><span style="display:flex;"><span>fail2ban-client status sshd
+</span></span></code></pre></div><h2 id="-cron-та-systemd-timers">🕐 Cron та systemd timers</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>crontab -l                             <span style="color:#75715e"># Поточні задачі користувача</span>
+</span></span><span style="display:flex;"><span>crontab -e                             <span style="color:#75715e"># Редагувати</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Формат: мин(0-59) год(0-23) день_міс(1-31) місяць(1-12) день_тиж(0-6, 0=нд)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># */15 * * * *  → кожні 15 хвилин</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>systemctl list-timers --all            <span style="color:#75715e"># Системний аналог cron у systemd</span>
+</span></span><span style="display:flex;"><span>journalctl -u myservice.timer          <span style="color:#75715e"># Логи конкретного таймера</span>
 </span></span></code></pre></div><h2 id="-налагодження">🛠️ Налагодження</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Трасування syscall процесу</span>
 </span></span><span style="display:flex;"><span>strace -p &lt;pid&gt;
 </span></span><span style="display:flex;"><span>strace -e trace<span style="color:#f92672">=</span>network -p &lt;pid&gt;       <span style="color:#75715e"># Тільки мережеві syscall</span>
+</span></span><span style="display:flex;"><span>strace -c -p &lt;pid&gt;                     <span style="color:#75715e"># Підсумок: скільки разів і скільки часу на кожен syscall</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># Дампінг мережі</span>
 </span></span><span style="display:flex;"><span>tcpdump -i eth0 -nn port <span style="color:#ae81ff">80</span>
@@ -422,6 +718,11 @@
 </span></span><span style="display:flex;"><span>journalctl -u nginx --since <span style="color:#e6db74">&#34;1 hour ago&#34;</span>
 </span></span><span style="display:flex;"><span>journalctl -f                          <span style="color:#75715e"># Follow (як tail -f)</span>
 </span></span><span style="display:flex;"><span>journalctl -xe                         <span style="color:#75715e"># Останні помилки з контекстом</span>
+</span></span><span style="display:flex;"><span>journalctl --disk-usage                <span style="color:#75715e"># Скільки місця займають логи</span>
+</span></span><span style="display:flex;"><span>journalctl --vacuum-time<span style="color:#f92672">=</span>7d            <span style="color:#75715e"># Почистити логи старші 7 днів</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># dmesg з людськими таймстампами</span>
+</span></span><span style="display:flex;"><span>dmesg -T | tail -50
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># Активні з&#39;єднання</span>
 </span></span><span style="display:flex;"><span>ss -s                                  <span style="color:#75715e"># Статистика по протоколах</span>

@@ -29,7 +29,7 @@
 <meta itemprop="name" content="Linux inside: what&#39;s /dev, /proc, /sys">
 <meta itemprop="description" content="Розбираємо три магічні директорії Linux — /dev, /proc і /sys. Що в них живе, хто ними керує і чому це важливо знати кожному системному адміністратору."><meta itemprop="datePublished" content="2026-06-16T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2026-06-16T00:00:00+00:00" />
-<meta itemprop="wordCount" content="1201">
+<meta itemprop="wordCount" content="1212">
 <meta itemprop="keywords" content="linux,kernel,interview,sysadmin,udev," />
 <meta name="referrer" content="no-referrer-when-downgrade" />
 
@@ -259,6 +259,7 @@
 </span></span><span style="display:flex;"><span>cat /proc/1234/status    <span style="color:#75715e"># CPU, RAM, стан процесу</span>
 </span></span><span style="display:flex;"><span>cat /proc/1234/maps      <span style="color:#75715e"># карта пам&#39;яті процесу</span>
 </span></span><span style="display:flex;"><span>ls /proc/1234/ns/        <span style="color:#75715e"># namespace-и до яких належить процес</span>
+</span></span><span style="display:flex;"><span>cat /proc/1234/environ   <span style="color:#75715e"># environ показує environment variables на момент запуску процесу</span>
 </span></span></code></pre></div><h3 id="системні-файли--не-тільки-про-процеси">Системні файли — не тільки про процеси</h3>
 <p>З часом <code>/proc</code> перетворився на загальне місце для всього що ядро хоче показати назовні:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat /proc/cpuinfo      <span style="color:#75715e"># детальна інфо про кожне ядро CPU</span>

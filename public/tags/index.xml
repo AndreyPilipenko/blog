@@ -6,13 +6,83 @@
     <description>Recent content in Tags on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 16 Jun 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 18 Jun 2026 12:00:00 +0300</lastBuildDate>
     <atom:link href="//localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Databases</title>
+      <link>//localhost:1313/tags/databases/</link>
+      <pubDate>Thu, 18 Jun 2026 12:00:00 +0300</pubDate>
+      <guid>//localhost:1313/tags/databases/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Dba</title>
+      <link>//localhost:1313/tags/dba/</link>
+      <pubDate>Thu, 18 Jun 2026 12:00:00 +0300</pubDate>
+      <guid>//localhost:1313/tags/dba/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>DevOps</title>
+      <link>//localhost:1313/tags/devops/</link>
+      <pubDate>Thu, 18 Jun 2026 12:00:00 +0300</pubDate>
+      <guid>//localhost:1313/tags/devops/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Innodb</title>
+      <link>//localhost:1313/tags/innodb/</link>
+      <pubDate>Thu, 18 Jun 2026 12:00:00 +0300</pubDate>
+      <guid>//localhost:1313/tags/innodb/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Interview</title>
       <link>//localhost:1313/tags/interview/</link>
-      <pubDate>Tue, 16 Jun 2026 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 18 Jun 2026 12:00:00 +0300</pubDate>
       <guid>//localhost:1313/tags/interview/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Monitoring</title>
+      <link>//localhost:1313/tags/monitoring/</link>
+      <pubDate>Thu, 18 Jun 2026 12:00:00 +0300</pubDate>
+      <guid>//localhost:1313/tags/monitoring/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Mysql</title>
+      <link>//localhost:1313/tags/mysql/</link>
+      <pubDate>Thu, 18 Jun 2026 12:00:00 +0300</pubDate>
+      <guid>//localhost:1313/tags/mysql/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Redis</title>
+      <link>//localhost:1313/tags/redis/</link>
+      <pubDate>Thu, 18 Jun 2026 12:00:00 +0300</pubDate>
+      <guid>//localhost:1313/tags/redis/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Replication</title>
+      <link>//localhost:1313/tags/replication/</link>
+      <pubDate>Thu, 18 Jun 2026 12:00:00 +0300</pubDate>
+      <guid>//localhost:1313/tags/replication/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Ai</title>
+      <link>//localhost:1313/tags/ai/</link>
+      <pubDate>Thu, 18 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/ai/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Ml</title>
+      <link>//localhost:1313/tags/ml/</link>
+      <pubDate>Thu, 18 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tags/ml/</guid>
       <description></description>
     </item>
     <item>
@@ -55,13 +125,6 @@
       <link>//localhost:1313/tags/ci/cd/</link>
       <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/tags/ci/cd/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>DevOps</title>
-      <link>//localhost:1313/tags/devops/</link>
-      <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tags/devops/</guid>
       <description></description>
     </item>
     <item>
@@ -125,13 +188,6 @@
       <link>//localhost:1313/tags/virtualization/</link>
       <pubDate>Thu, 04 Jun 2026 00:00:00 +0300</pubDate>
       <guid>//localhost:1313/tags/virtualization/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Monitoring</title>
-      <link>//localhost:1313/tags/monitoring/</link>
-      <pubDate>Sat, 02 May 2026 00:00:00 +0300</pubDate>
-      <guid>//localhost:1313/tags/monitoring/</guid>
       <description></description>
     </item>
     <item>

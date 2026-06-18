@@ -4,7 +4,7 @@ date = 2025-06-16
 draft = false
 tags = ["aws"]
 categories = ["Cloud"]
-description = "Детальний розбір AWS-тем: IAM, EC2, VPC, Route 53, S3, RDS, CloudWatch, Terraform — з прикладами, коментарями та типовими питаннями співбесіди."
+description = "Детальний розбір AWS-тем: IAM, EC2, VPC, Route 53, S3, RDS, CloudWatch, Terraform — з прикладами, коментарями."
 +++
 
 ---

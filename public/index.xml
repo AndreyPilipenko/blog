@@ -6,8 +6,22 @@
     <description>Recent content on Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 16 Jun 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 18 Jun 2026 12:00:00 +0300</lastBuildDate>
     <atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL Replication і DBA: повний гайд для DevOps — типи реплікації, InnoDB, моніторинг, Redis</title>
+      <link>//localhost:1313/blog/mysql-replication-dba-guide/</link>
+      <pubDate>Thu, 18 Jun 2026 12:00:00 +0300</pubDate>
+      <guid>//localhost:1313/blog/mysql-replication-dba-guide/</guid>
+      <description>Повний розбір MySQL-реплікації: типи, технічна механіка, команди, моніторинг InnoDB, повний траблшутінг-гайд (зламана реплікація, lag, деадлоки, OOM, Galera split-brain), що зараз популярно (Vitess, ProxySQL, Percona), різниці з іншими базами, основи Redis і питання з відповідями для DevOps/DBA.</description>
+    </item>
+    <item>
+      <title>AI як великий пазл: нейромережі, CUDA-ядра, трансформери.</title>
+      <link>//localhost:1313/blog/ai-pazl/</link>
+      <pubDate>Thu, 18 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/ai-pazl/</guid>
+      <description>Зміст Термінологічна каша: AI vs ML vs DL vs LLM Нейромережа з нуля: як математика стає &amp;ldquo;інтелектом&amp;rdquo; Чому MLP не вистачило: Attention і трансформери Як народжується LLM: pretraining, fine-tuning, RLHF Залізо: CUDA-ядра, Tensor Cores, чому без GPU це неможливо Тренування vs Inference: де гроші, де вати Як з цим працюють зараз: API, RAG, агенти, MCP, LLMOps Глосарій для співбесіди Реальні питання на співбесідах + відповіді Від мене особисто: що насправді важливо Термінологічна каша Перш ніж лізти в математику — наведемо порядок у термінах, бо саме тут 80% людей.</description>
+    </item>
     <item>
       <title>Linux inside: what&#39;s /dev, /proc, /sys</title>
       <link>//localhost:1313/blog/linux-virtual-filesystems/</link>
@@ -16,11 +30,11 @@
       <description>Головна ідея: файл як інтерфейс до ядра В Unix є принцип — «всe є файл». І Linux доводить цей принцип до логічного максимуму: навіть сам стан ядра, апаратура і запущені процеси — представлені у вигляді файлів.&#xA;Але є нюанс: ці файли не існують на диску. Вони генеруються ядром on-the-fly, прямо в момент коли ти їх читаєш. Відкрив файл — ядро виконало функцію і повернуло результат у вигляді тексту. Записав у файл — ядро застосувало зміну.</description>
     </item>
     <item>
-      <title>CI/CD: повний гайд &#43; усі каверзні питання для співбесіди</title>
+      <title>CI/CD: guide</title>
       <link>//localhost:1313/blog/ci-cd/</link>
       <pubDate>Sun, 14 Jun 2026 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/blog/ci-cd/</guid>
-      <description>Стаття розрахована на тих, хто готується до DevOps-співбесіди або хоче систематизувати знання по CI/CD. Охоплює теорію, практику, GitHub Actions і Jenkins — із реальними прикладами конфігів і поясненням «чому саме так».&#xA;Зміст Що таке CI/CD і навіщо це взагалі Ключові концепції і термінологія GitHub Actions — детально Jenkins — детально Artifacts, кешування, оптимізація Secrets і безпека в пайплайні Стратегії деплою Rollback і disaster recovery Моніторинг і observability пайплайну GitOps і CD у Kubernetes Каверзні питання на співбесіді Що таке CI/CD Continuous Integration (CI) — практика, при якій кожен розробник мінімум раз на день інтегрує свій код у спільну гілку.</description>
+      <description>Зміст Що таке CI/CD і навіщо це взагалі Ключові концепції і термінологія GitHub Actions — детально Jenkins — детально Artifacts, кешування, оптимізація Secrets і безпека в пайплайні Стратегії деплою Rollback і disaster recovery Моніторинг і observability пайплайну GitOps і CD у Kubernetes Каверзні питання на співбесіді Що таке CI/CD Continuous Integration (CI) — практика, при якій кожен розробник мінімум раз на день інтегрує свій код у спільну гілку. Кожна інтеграція автоматично верифікується: запускаються build, тести, линтери.</description>
     </item>
     <item>
       <title>eBash</title>
@@ -55,7 +69,7 @@
       <link>//localhost:1313/blog/four-golden-signals/</link>
       <pubDate>Sat, 02 May 2026 00:00:00 +0300</pubDate>
       <guid>//localhost:1313/blog/four-golden-signals/</guid>
-      <description>Це концепція з книги &amp;ldquo;Site Reliability Engineering&amp;rdquo; (Google SRE Book).&#xA;Основна ідея: замість того щоб моніторити все підряд (сотні метрик), фокусуйся лише на тому, що безпосередньо відображає досвід користувача.&#xA;1. Latency — час відповіді Час обробки запиту від отримання до відповіді.&#xA;Важливо розділяти успішні запити від помилкових — помилка за 1ms не означає що система швидка.&#xA;Треба трекати перцентилі, а не середнє — середнє приховує аномалії:&#xA;Перцентиль Що показує p50 Медіана — &amp;ldquo;типовий&amp;rdquo; користувач p95 95% запитів вкладаються в цей час p99 Найгірший досвід 1% користувачів 2.</description>
+      <description>Це концепція з книги &amp;ldquo;Site Reliability Engineering&amp;rdquo; (Google SRE Book).&#xA;Основна ідея: замість того щоб моніторити все підряд (сотні метрик), фокусуйся лише на тому, що безпосередньо відображає досвід користувача.&#xA;1. Latency — час відповіді Час обробки запиту від отримання до відповіді.&#xA;Важливо розділяти успішні запити від помилкових — помилка за 1ms не означає що система швидка.&#xA;Треба трекати перцентилі, а не середнє — середнє приховує аномалії:&#xA;Перцентиль Що показує p50 Медіана — &amp;ldquo;типовий&amp;rdquo; користувач p95 95% запитів вкладаються в цей час p99 Найгірший досвід 1% користувачів Точний (наївний) спосіб — O(n log n) N = 1000 запитів 1.</description>
     </item>
     <item>
       <title>Kubernetes Cheatsheet</title>
@@ -97,7 +111,7 @@
       <link>//localhost:1313/blog/top-linux-commands/</link>
       <pubDate>Sat, 01 Feb 2025 00:27:57 +0300</pubDate>
       <guid>//localhost:1313/blog/top-linux-commands/</guid>
-      <description>Linux Commands Cheatsheet&#xA;Особистий довідник по адмініструванню Linux-серверів&#xA;📦 Диски та файлова система # Огляд дисків та розділів lsblk -o NAME,MAJ:MIN,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID fdisk -l smartctl --scan # Визначити фізичні диски (якщо /dev/sda — залізний сервер) # Місце на диску df -h # Файлові системи df -hi # По inode du -h --max-depth=1 /var/virtualizor/ | sort -h du -sh /home # Вага директорії du -sch .[!.]* * | sort -h # З прихованими директоріями sudo du -h -d1 /root/ | sort -nr ncdu -e # Інтерактивно + приховані директорії inode vs файловий дескриптор</description>
+      <description>Linux Commands Cheatsheet&#xA;Особистий довідник по адмініструванню Linux-серверів&#xA;🧰 База: те, без чого нікуди # Навігація та базові операції з файлами pwd # Поточна директорія cd - # Повернутись у попередню директорію ls -lah # Список з прихованими, людським розміром cp -v src dst # Копіювання з виводом дій mv -v src dst # Переміщення/перейменування rm -i file # Видалення з підтвердженням (захист від помилки) # Перегляд вмісту cat file less file # Пагінація (q — вихід, / — пошук) head -n 50 file tail -n 50 -f /var/log/syslog # -f — слідкувати за новими рядками # Права доступу chmod 750 file # rwx для власника, r-x для групи, нічого іншим chmod u+x script.</description>
     </item>
     <item>
       <title>Python з поясненнями та прикладами</title>

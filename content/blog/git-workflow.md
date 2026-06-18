@@ -527,8 +527,6 @@ git worktree remove ../hotfix-review
 
 ---
 
-## Каверзні питання на співбесіді
-
 ### "Яка різниця між merge і rebase?"
 
 **Merge** зберігає повну історію і створює merge commit:

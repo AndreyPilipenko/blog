@@ -1,13 +1,11 @@
 ---
-title: "CI/CD: повний гайд + усі каверзні питання для співбесіди"
+title: "CI/CD: guide"
 date: 2026-06-14
 draft: false
-tags: ["ci/cd", "devops", "github-actions", "jenkins", "interview"]
+tags: ["ci/cd", "devops", "github-actions", "jenkins"]
 categories: ["DevOps"]
 description: "Від базових концепцій до підступних питань на Senior-рівні: pipeline, artifacts, secrets, rollback, GitOps — усе в одній статті."
 ---
-
-> Стаття розрахована на тих, хто готується до DevOps-співбесіди або хоче систематизувати знання по CI/CD. Охоплює теорію, практику, GitHub Actions і Jenkins — із реальними прикладами конфігів і поясненням «чому саме так».
 
 ---
 

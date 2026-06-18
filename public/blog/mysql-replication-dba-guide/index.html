@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MySQL Replication і DBA: повний гайд для DevOps — типи реплікації, InnoDB, моніторинг, Redis | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
+<meta name="title" content="MySQL Replication і DBA: повний гайд для DevOps — типи реплікації, InnoDB, моніторинг, Redis" />
+<meta name="description" content="Повний розбір MySQL-реплікації: типи, технічна механіка, команди, моніторинг InnoDB, повний траблшутінг-гайд (зламана реплікація, lag, деадлоки, OOM, Galera split-brain), що зараз популярно (Vitess, ProxySQL, Percona), різниці з іншими базами, основи Redis і питання з відповідями для DevOps/DBA." />
+<meta name="keywords" content="mysql,dba,replication,innodb,redis,databases,devops,interview,monitoring," />
+
+
+<meta property="og:title" content="MySQL Replication і DBA: повний гайд для DevOps — типи реплікації, InnoDB, моніторинг, Redis" />
+<meta property="og:description" content="Повний розбір MySQL-реплікації: типи, технічна механіка, команди, моніторинг InnoDB, повний траблшутінг-гайд (зламана реплікація, lag, деадлоки, OOM, Galera split-brain), що зараз популярно (Vitess, ProxySQL, Percona), різниці з іншими базами, основи Redis і питання з відповідями для DevOps/DBA." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/blog/mysql-replication-dba-guide/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2026-06-18T12:00:00+03:00" />
+<meta property="article:modified_time" content="2026-06-18T12:00:00+03:00" />
+
+
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="MySQL Replication і DBA: повний гайд для DevOps — типи реплікації, InnoDB, моніторинг, Redis"/>
+<meta name="twitter:description" content="Повний розбір MySQL-реплікації: типи, технічна механіка, команди, моніторинг InnoDB, повний траблшутінг-гайд (зламана реплікація, lag, деадлоки, OOM, Galera split-brain), що зараз популярно (Vitess, ProxySQL, Percona), різниці з іншими базами, основи Redis і питання з відповідями для DevOps/DBA."/>
+
+
+
+<meta itemprop="name" content="MySQL Replication і DBA: повний гайд для DevOps — типи реплікації, InnoDB, моніторинг, Redis">
+<meta itemprop="description" content="Повний розбір MySQL-реплікації: типи, технічна механіка, команди, моніторинг InnoDB, повний траблшутінг-гайд (зламана реплікація, lag, деадлоки, OOM, Galera split-brain), що зараз популярно (Vitess, ProxySQL, Percona), різниці з іншими базами, основи Redis і питання з відповідями для DevOps/DBA."><meta itemprop="datePublished" content="2026-06-18T12:00:00+03:00" />
+<meta itemprop="dateModified" content="2026-06-18T12:00:00+03:00" />
+<meta itemprop="wordCount" content="7179">
+<meta itemprop="keywords" content="mysql,dba,replication,innodb,redis,databases,devops,interview,monitoring," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</h2>
+</a>
+<nav>
+<a href="/">Home</a>
+
+<a href="/blog/">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>MySQL Replication і DBA: повний гайд для DevOps — типи реплікації, InnoDB, моніторинг, Redis</h1>
+<p>
+  <i>
+    <time datetime='2026-06-18'>
+      18 Jun, 2026
+    </time>
+  </i>
+</p>
+
+<content>
+  <hr>
+<h2 id="1-що-таке-репліка-і-навіщо-вона-потрібна">1. Що таке репліка і навіщо вона потрібна</h2>
+<p>Простими словами: <strong>реплікація</strong> — це процес, коли одна база (master / source) постійно передає копію всіх своїх змін на одну або кілька інших баз (replica / slave), і та накатує ці зміни в себе, тримаючи дані синхронізованими.</p>
+<p>Навіщо:</p>
+<ul>
+<li><strong>Відмовостійкість (HA)</strong> — якщо master впав, є реплика, на яку можна перемкнутись (failover).</li>
+<li><strong>Масштабування читання (read scaling)</strong> — весь SELECT-трафік розкидують по репліках, а на master лишають тільки INSERT/UPDATE/DELETE.</li>
+<li><strong>Бекапи без даунтайму</strong> — бекап роблять з репліки, не навантажуючи продакшн-master.</li>
+<li><strong>Аналітика/звітність</strong> — важкі звітні запити йдуть на окрему &ldquo;аналітичну&rdquo; репліку, щоб не класти прод.</li>
+<li><strong>Географічний розподіл</strong> — репліки ближче до користувачів у різних регіонах (latency).</li>
+<li><strong>Міграції/тестування</strong> — підняти репліку, перевірити на ній нову версію MySQL чи важку міграцію схеми.</li>
+</ul>
+<p>Аналогія: master — це бухгалтер, який веде головну книгу і щохвилини диктує секретарці (replica), що саме він записав. Секретарка переписує те ж саме у свою книгу. Якщо бухгалтер захворіє — секретарка вже має майже повну копію і може тимчасово підмінити.</p>
+<hr>
+<h2 id="2-архітектура-як-технічно-влаштована-реплікація-mysql">2. Архітектура: як технічно влаштована реплікація MySQL</h2>
+<h3 id="21-binary-log-binlog--серце-реплікації">2.1 Binary Log (binlog) — серце реплікації</h3>
+<p><code>binlog</code> — це послідовний лог усіх змін даних (і структури), які master записує на диск. Без увімкненого binlog реплікація неможлива в принципі.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#75715e"># /etc/mysql/my.cnf — мінімальна конфігурація master</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">[mysqld]</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">server-id</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1                      # унікальний ID у топології, ОБОВ&#39;ЯЗКОВО різний на кожному вузлі</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">log_bin</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">/var/lib/mysql/binlog     # шлях + префікс файлів binlog (binlog.000001, binlog.000002...)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">binlog_format</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">ROW                 # ROW / STATEMENT / MIXED — детальніше нижче</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">binlog_expire_logs_seconds</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">604800 # автоочистка старих binlog через 7 днів (раніше — expire_logs_days)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">sync_binlog</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1                     # 1 = fsync binlog на кожен commit (безпечно, повільніше)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">gtid_mode</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">ON                      # включити GTID (рекомендовано для сучасних версій)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">enforce_gtid_consistency</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">ON       # заборонити транзакції, що ламають GTID-консистентність</span>
+</span></span></code></pre></div><p><strong>Що, де, чому:</strong></p>
+<ul>
+<li><code>server-id</code> — без унікального ID master/replica не зможуть розрізнити, хто кому що шле; колізія ID — класична причина &ldquo;реплікація мовчки не працює&rdquo;.</li>
+<li><code>sync_binlog=1</code> — кожен commit примусово фсинкається на диск перед підтвердженням клієнту. Це гарантує durability навіть якщо сервер впаде відразу після commit, але додає I/O навантаження. <code>sync_binlog=0</code> швидше, але при краші можна втратити останні транзакції з binlog.</li>
+<li><code>binlog_expire_logs_seconds</code> — якщо забути це налаштувати, binlog-и можуть зʼїсти весь диск за тижні безперервного запису.</li>
+</ul>
+<h3 id="22-що-відбувається-технічно-крок-за-кроком">2.2 Що відбувається технічно, крок за кроком</h3>
+<ol>
+<li>Клієнт виконує <code>UPDATE</code>/<code>INSERT</code>/<code>DELETE</code> на <strong>master</strong>.</li>
+<li>Зміна записується в <strong>InnoDB redo log</strong> (для durability транзакції) і одночасно формується <strong>binlog event</strong>.</li>
+<li>На commit транзакції binlog event дописується у файл binlog (атомарно, в одному файлі з InnoDB-комітом через <strong>2-phase commit</strong> між InnoDB та binlog — це і гарантує консистентність даних і логу).</li>
+<li>На master запускається <strong>Binlog Dump Thread</strong> — окремий тред на кожне підключення репліки, який читає binlog і стрімить події реплікам.</li>
+<li>На <strong>replica</strong> є <strong>IO Thread</strong> — підключається до master (через <code>replication user</code>), отримує binlog events і пише їх <strong>у себе</strong> в <strong>relay log</strong> (це локальна копія тих самих подій, ще не застосована до даних).</li>
+<li>Окремий <strong>SQL Thread</strong> (в сучасних версіях — <strong>multi-threaded replication / MTS</strong>, кілька паралельних worker-тредів) читає relay log і <strong>застосовує</strong> події до власних таблиць реплики.</li>
+<li>Прогрес зберігається в <code>mysql.slave_relay_log_info</code> / <code>performance_schema.replication_applier_status</code> (раніше — у файлах <code>relay-log.info</code>, <code>master.info</code>).</li>
+</ol>
+<pre tabindex="0"><code>MASTER                                    REPLICA
+┌─────────────┐                      ┌─────────────────┐
+│ клієнт пише │                      │                  │
+│   UPDATE    │                      │                  │
+└──────┬──────┘                      │                  │
+       ▼                             │                  │
+┌─────────────┐   binlog dump thread │  IO Thread       │
+│   binlog    ├────────────────────► │  (мережа)        │
+│  (на диску) │                      │       │          │
+└─────────────┘                      │       ▼          │
+                                      │  relay log       │
+                                      │  (на диску)      │
+                                      │       │          │
+                                      │       ▼          │
+                                      │  SQL Thread(и)   │
+                                      │  (apply events)  │
+                                      │       │          │
+                                      │       ▼          │
+                                      │  власні таблиці  │
+                                      └──────────────────┘
+</code></pre><p>Чому це важливо розуміти: <strong>затримка реплікації (replication lag)</strong> — це не одне число, а сума двох незалежних затримок: (а) скільки часу IO Thread тягне дані по мережі і (б) скільки часу SQL Thread встигає їх застосувати. Можна мати ідеальну мережу, але повільний disk I/O на репліці — і lag буде рости саме на фазі apply.</p>
+<h3 id="23-чому-одна-реплика-може-відставати-навіть-якщо-вона-потужніша-за-master">2.3 Чому одна реплика може відставати, навіть якщо вона потужніша за master</h3>
+<p>Класична пастка на інтерв&rsquo;ю: &ldquo;У нас replica на залізі потужнішому за master, але вона постійно відстає. Чому?&rdquo;</p>
+<p>Історично (до MySQL 5.6) SQL Thread був <strong>один</strong>, і він застосовував binlog events <strong>строго послідовно</strong>, в один потік — навіть якщо на master 50 паралельних з&rsquo;єднань одночасно писали в різні таблиці. Реплика фізично не могла &ldquo;розпаралелити&rdquo; застосування, тому будь-яке потужне залізо не допомагало — бутылочне горлечко було архітектурне, не апаратне.</p>
+<p>Рішення — <strong>Multi-Threaded Replication (MTS)</strong>, з&rsquo;явилось у 5.6+:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#75715e"># на replica</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">slave_parallel_workers</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">8          # кількість паралельних SQL worker-тредів (сучасна назва: replica_parallel_workers)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">slave_parallel_type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">LOGICAL_CLOCK # групує транзакції, що commit-ились одночасно на master, для паралельного apply</span>
+</span></span></code></pre></div><p><code>LOGICAL_CLOCK</code> дозволяє паралельно застосовувати транзакції, які на master комітились конкурентно (а значить — не залежали одна від одної). Якщо паралелізм усе ще недостатній — означає, що на master транзакції йдуть переважно послідовно (наприклад, весь трафік у одну &ldquo;гарячу&rdquo; таблицю), і тут MTS вже не врятує.</p>
+<hr>
+<h2 id="3-типи-реплікації--класифікація-по-трьох-осях">3. Типи реплікації — класифікація по трьох осях</h2>
+<p>Це питання &ldquo;які є типи реплікації&rdquo; насправді складається з трьох незалежних осей, і їх часто плутають. Розберемо кожну окремо.</p>
+<h3 id="31-ось-1--за-способом-синхронізації-наскільки-master-чекає-на-replica">3.1 Ось №1 — за способом синхронізації (наскільки master чекає на replica)</h3>
+<p><strong>Asynchronous replication (за замовчуванням)</strong>
+Master комітить транзакцію і відразу відповідає клієнту &ldquo;OK&rdquo;, <strong>не чекаючи</strong>, поки хоч одна реплика підтвердить отримання даних. Це найшвидший варіант, але якщо master впаде відразу після commit — той commit може <strong>ніколи не дійти</strong> до реплік → втрата даних (data loss) при failover.</p>
+<p><strong>Semi-synchronous replication (semi-sync)</strong>
+Master комітить локально, але <strong>перед тим, як підтвердити клієнту</strong>, чекає підтвердження (ACK), що <strong>хоча б одна</strong> реплика отримала і записала транзакцію у свій relay log (саме отримала, не обов&rsquo;язково застосувала!). Це зменшує (але не зводить до нуля) ймовірність втрати даних і додає невелику затримку (network round-trip).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- На master:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>INSTALL PLUGIN rpl_semi_sync_master SONAME <span style="color:#e6db74">&#39;semisync_master.so&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SET</span> <span style="color:#66d9ef">GLOBAL</span> rpl_semi_sync_master_enabled <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SET</span> <span style="color:#66d9ef">GLOBAL</span> rpl_semi_sync_master_timeout <span style="color:#f92672">=</span> <span style="color:#ae81ff">10000</span>; <span style="color:#75715e">-- мс; якщо жодна репліка не відповіла за 10с — fallback в async
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- На replica:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>INSTALL PLUGIN rpl_semi_sync_replica SONAME <span style="color:#e6db74">&#39;semisync_replica.so&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SET</span> <span style="color:#66d9ef">GLOBAL</span> rpl_semi_sync_replica_enabled <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span></code></pre></div><p>Важливий нюанс: якщо всі semi-sync реплики недоступні і <code>timeout</code> минув — master <strong>автоматично перемикається в async режим</strong>, щоб не зупинити продакшн. Це означає, що &ldquo;semi-sync&rdquo; — не залізна гарантія, а best-effort з деградацією.</p>
+<p><strong>Synchronous (virtually synchronous) replication</strong>
+Тут транзакція <strong>не вважається завершеною</strong>, поки кворум вузлів не підтвердив її застосування (certification). В MySQL це реалізовано не в &ldquo;класичній&rdquo; реплікації, а в окремих технологіях:</p>
+<ul>
+<li><strong>Galera Cluster</strong> (Percona XtraDB Cluster, MariaDB Galera Cluster)</li>
+<li><strong>MySQL Group Replication</strong> (і InnoDB Cluster на його основі)</li>
+</ul>
+<p>Деталі — у розділі 3.4.</p>
+<h3 id="32-ось-2--за-форматом-запису-в-binlog-що-саме-реплікується">3.2 Ось №2 — за форматом запису в binlog (що саме реплікується)</h3>
+<p><strong>Statement-Based Replication (SBR)</strong> — у binlog пишеться <strong>сам SQL-запит</strong> (текст), і replica повторно виконує цей самий запит у себе.</p>
+<ul>
+<li>Плюс: компактний binlog, добре читається людиною.</li>
+<li>Мінус: <strong>недетерміновані функції</strong> (<code>NOW()</code>, <code>UUID()</code>, <code>RAND()</code>, <code>CONNECTION_ID()</code>) можуть дати різний результат на master і на replica → розсинхрон даних. Це класична каверзна тема на інтерв&rsquo;ю.</li>
+</ul>
+<p><strong>Row-Based Replication (RBR)</strong> — у binlog пишуться <strong>фактичні зміни рядків</strong> (before/after image), а не SQL-текст.</p>
+<ul>
+<li>Плюс: 100% детермінізм — реплікуються вже обчислені значення, без UUID()/NOW() проблем.</li>
+<li>Мінус: binlog більший за розміром (особливо при <code>UPDATE ... WHERE</code> на мільйони рядків), важче читати людьми (events бінарні, треба <code>mysqlbinlog</code> з декодуванням).</li>
+<li>Це <strong>рекомендований/дефолтний формат</strong> у сучасних версіях MySQL.</li>
+</ul>
+<p><strong>Mixed-Based Replication (MBR)</strong> — MySQL сам вирішує: для &ldquo;безпечних&rdquo; детермінованих запитів пише STATEMENT, для недетермінованих — автоматично перемикається на ROW.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- Подивитись поточний формат
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SHOW</span> VARIABLES <span style="color:#66d9ef">LIKE</span> <span style="color:#e6db74">&#39;binlog_format&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Подивитись вміст бінарного лога в людському вигляді
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>mysqlbinlog <span style="color:#75715e">--base64-output=decode-rows -v /var/lib/mysql/binlog.000045
+</span></span></span></code></pre></div><h3 id="33-ось-3--за-топологією-хто-з-ким-і-як-зєднаний">3.3 Ось №3 — за топологією (хто з ким і як з&rsquo;єднаний)</h3>
+<p><strong>Source → Replica (раніше Master-Slave)</strong> — класична топологія &ldquo;один master, N реплік&rdquo;. Найпростіша, найпоширеніша.</p>
+<p><strong>Master-Master (Dual-Master / Active-Active)</strong> — два сервери, кожен є master для іншого (циклічна реплікація). Технічно працює, але на практиці <strong>дуже ризиковано</strong>: якщо на обох вузлах одночасно прийде write в один і той самий рядок — отримаєш конфлікт, який класична async-реплікація <strong>не вміє автоматично вирішувати</strong> (на відміну від Galera, де є certification-based conflict resolution). Тому Master-Master в &ldquo;чистому&rdquo; вигляді зараз вважається анти-паттерном; замість нього використовують Galera/Group Replication, де multi-master зроблено правильно — з conflict detection.</p>
+<p><strong>Chained replication (Relay / Intermediate Master)</strong> — Master → Replica-A (яка одночасно є relay-джерелом) → Replica-B. Replica-A передає далі ті ж binlog events, які отримала від master, не &ldquo;перезаписуючи&rdquo; їх власноруч.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#75715e"># на Replica-A (intermediate master)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">log_slave_updates</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">ON   # КРИТИЧНО: без цього параметра Replica-A не пише
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                          # отримані від master зміни у власний binlog,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                          # і Replica-B нічого не отримає</span>
+</span></span></code></pre></div><p>Навіщо chained: розвантажити master від великої кількості Binlog Dump Thread-ів (кожне підключення реплік — це окремий тред і I/O на master), особливо при географічно розкиданих репліках (один &ldquo;хаб&rdquo; у регіоні, що далі роздає локальним репліками).</p>
+<p><strong>Multi-Source Replication</strong> — одна replica одночасно отримує дані з <strong>кількох незалежних master</strong>-ів (у різні &ldquo;канали&rdquo;, <code>CHANNEL</code>). Використовується для консолідації даних з кількох шардів/джерел в одну аналітичну базу.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>CHANGE REPLICATION <span style="color:#66d9ef">SOURCE</span> <span style="color:#66d9ef">TO</span>
+</span></span><span style="display:flex;"><span>  SOURCE_HOST<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;master1.internal&#39;</span>,
+</span></span><span style="display:flex;"><span>  SOURCE_USER<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;repl&#39;</span>,
+</span></span><span style="display:flex;"><span>  SOURCE_PASSWORD<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;secret&#39;</span>,
+</span></span><span style="display:flex;"><span>  SOURCE_AUTO_POSITION<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">FOR</span> CHANNEL <span style="color:#e6db74">&#39;from-master1&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>CHANGE REPLICATION <span style="color:#66d9ef">SOURCE</span> <span style="color:#66d9ef">TO</span>
+</span></span><span style="display:flex;"><span>  SOURCE_HOST<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;master2.internal&#39;</span>,
+</span></span><span style="display:flex;"><span>  SOURCE_USER<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;repl&#39;</span>,
+</span></span><span style="display:flex;"><span>  SOURCE_PASSWORD<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;secret&#39;</span>,
+</span></span><span style="display:flex;"><span>  SOURCE_AUTO_POSITION<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">FOR</span> CHANNEL <span style="color:#e6db74">&#39;from-master2&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">START</span> REPLICA <span style="color:#66d9ef">FOR</span> CHANNEL <span style="color:#e6db74">&#39;from-master1&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">START</span> REPLICA <span style="color:#66d9ef">FOR</span> CHANNEL <span style="color:#e6db74">&#39;from-master2&#39;</span>;
+</span></span></code></pre></div><h3 id="34-galera-cluster-та-group-replication--справжній-multi-master">3.4 Galera Cluster та Group Replication — справжній multi-master</h3>
+<p>Це окремий клас рішень, де всі вузли рівноправні (multi-master), і запис можна робити <strong>в будь-який вузол одночасно</strong>, без класичних binlog dump/IO/SQL тредів.</p>
+<p><strong>Galera Cluster</strong> (Percona XtraDB Cluster, MariaDB Galera):</p>
+<ul>
+<li>Працює через <strong>certification-based replication</strong>: коли транзакція готова до commit на одному вузлі, вона розсилається всім іншим вузлам через груповий комунікаційний шар (wsrep API), і кожен вузол перевіряє (certify) — чи не конфліктує вона з іншими транзакціями, що паралельно виконуються в кластері.</li>
+<li>Якщо конфлікт — одна з транзакцій <strong>відкатується</strong> (rollback) з помилкою deadlock на клієнтській стороні; клієнт має retry-логіку.</li>
+<li>Це фактично synchronous replication: commit вважається успішним лише після certification на всіх вузлах.</li>
+<li>Класична проблема — <strong>flow control</strong>: якщо один вузол повільніший за інших (слабше залізо, повільний диск), кластер штучно сповільнює запис на всіх вузлах, щоб слабкий вузол не відстав критично.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># приклад статусу Galera-вузла</span>
+</span></span><span style="display:flex;"><span>mysql -e <span style="color:#e6db74">&#34;SHOW STATUS LIKE &#39;wsrep_%&#39;;&#34;</span> | grep -E <span style="color:#e6db74">&#34;cluster_size|local_state_comment|flow_control_paused&#34;</span>
+</span></span></code></pre></div><p><strong>MySQL Group Replication</strong> — офіційна (Oracle) альтернатива Galera, на базі <strong>Paxos-подібного протоколу</strong> для консенсусу. Може працювати в <strong>Single-Primary Mode</strong> (тільки один вузол приймає write, інші — read-only репліки, з автоматичним failover) або <strong>Multi-Primary Mode</strong> (аналог Galera). На основі Group Replication будується <strong>InnoDB Cluster</strong> + <strong>MySQL Router</strong> (проксі, що автоматично направляє трафік на актуальний primary).</p>
+<p><strong>Коротке порівняння:</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Async</th>
+<th>Semi-sync</th>
+<th>Galera / Group Replication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Гарантія доставки</td>
+<td>Немає</td>
+<td>&ldquo;Хоч одна репліка отримала&rdquo;</td>
+<td>Консенсус усього кластера</td>
+</tr>
+<tr>
+<td>Затримка запису</td>
+<td>Найменша</td>
+<td>+RTT до однієї репліки</td>
+<td>+RTT до кворуму вузлів</td>
+</tr>
+<tr>
+<td>Multi-master &ldquo;з коробки&rdquo;</td>
+<td>Ні (ризиковано)</td>
+<td>Ні</td>
+<td>Так, із conflict detection</td>
+</tr>
+<tr>
+<td>Складність підтримки</td>
+<td>Низька</td>
+<td>Низька</td>
+<td>Висока (flow control, SST/IST, quorum)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="35-gtid-vs-binlog-fileposition--як-реплікація-знає-де-вона-зупинилась">3.5 GTID vs Binlog File:Position — як реплікація &ldquo;знає, де вона зупинилась&rdquo;</h3>
+<p><strong>Класичний (legacy) спосіб</strong> — реплікація відстежує позицію як пару <code>(назва_файлу_binlog, offset_в_байтах)</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>CHANGE MASTER <span style="color:#66d9ef">TO</span>
+</span></span><span style="display:flex;"><span>  MASTER_HOST<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;master.internal&#39;</span>,
+</span></span><span style="display:flex;"><span>  MASTER_LOG_FILE<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;binlog.000045&#39;</span>,
+</span></span><span style="display:flex;"><span>  MASTER_LOG_POS<span style="color:#f92672">=</span><span style="color:#ae81ff">15829203</span>;
+</span></span></code></pre></div><p>Проблема: при failover (коли стара replica стає новим master) потрібно <strong>вручну</strong> вирахувати правильний файл і позицію для всіх інших реплік — легко помилитись, легко &ldquo;загубити&rdquo; або &ldquo;продублювати&rdquo; транзакції.</p>
+<p><strong>GTID (Global Transaction Identifier)</strong> — кожній транзакції автоматично присвоюється глобально унікальний ID у форматі <code>server_uuid:transaction_id</code>. Реплікація відстежує <strong>набір застосованих GTID</strong>, а не файл/байт.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- з GTID все, що треба — це сказати &#34;продовжуй з того місця, де зупинився&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>CHANGE REPLICATION <span style="color:#66d9ef">SOURCE</span> <span style="color:#66d9ef">TO</span>
+</span></span><span style="display:flex;"><span>  SOURCE_HOST<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;new-master.internal&#39;</span>,
+</span></span><span style="display:flex;"><span>  SOURCE_USER<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;repl&#39;</span>,
+</span></span><span style="display:flex;"><span>  SOURCE_PASSWORD<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;secret&#39;</span>,
+</span></span><span style="display:flex;"><span>  SOURCE_AUTO_POSITION<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>;   <span style="color:#75715e">-- MySQL сам обчислює потрібну позицію за GTID
+</span></span></span></code></pre></div><p>Переваги GTID: автоматичний failover без ручних обчислень позицій, легше переключати репліку на новий master, вбудована захист від &ldquo;застосування тієї самої транзакції двічі&rdquo; (<code>enforce_gtid_consistency</code>). Майже всі сучасні failover-інструменти (orchestrator, MHA, ProxySQL) розраховані саме на GTID.</p>
+<hr>
+<h2 id="4-налаштування-реплікації-руками--повний-покроковий-приклад">4. Налаштування реплікації руками — повний покроковий приклад</h2>
+<p>Класичний сценарій: піднімаємо нову Source → Replica топологію з GTID.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># === КРОК 1: на MASTER — створюємо користувача для реплікації ===</span>
+</span></span><span style="display:flex;"><span>mysql -u root -p <span style="color:#e6db74">&lt;&lt; &#39;SQL&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">CREATE USER &#39;repl&#39;@&#39;10.0.%&#39; IDENTIFIED WITH mysql_native_password BY &#39;StrongPassHere&#39;;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">GRANT REPLICATION SLAVE ON *.* TO &#39;repl&#39;@&#39;10.0.%&#39;;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">-- REPLICATION SLAVE — спеціальний привілей, що дозволяє ТІЛЬКИ читати binlog,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">-- без доступу до самих даних (репліка читає дані вже через сам процес реплікації)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">FLUSH PRIVILEGES;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">SQL</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># === КРОК 2: знімаємо консистентний снепшот даних master ===</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Варіант А (для невеликих баз, з даунтаймом запису):</span>
+</span></span><span style="display:flex;"><span>mysql -u root -p -e <span style="color:#e6db74">&#34;FLUSH TABLES WITH READ LOCK;&#34;</span>   <span style="color:#75715e"># блокує всі write, але дозволяє SELECT</span>
+</span></span><span style="display:flex;"><span>mysqldump -u root -p --all-databases --master-data<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span> --single-transaction &gt; /backup/dump.sql
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --master-data=2 ВПИШЕ у dump.sql коментар з поточною GTID/позицією binlog у момент дампа —</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># саме звідси replica дізнається, з якої точки починати реплікацію</span>
+</span></span><span style="display:flex;"><span>mysql -u root -p -e <span style="color:#e6db74">&#34;UNLOCK TABLES;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Варіант Б (продакшн без даунтайму, на InnoDB):</span>
+</span></span><span style="display:flex;"><span>xtrabackup --backup --target-dir<span style="color:#f92672">=</span>/backup/full <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --user<span style="color:#f92672">=</span>root --password<span style="color:#f92672">=</span>xxx
+</span></span><span style="display:flex;"><span>xtrabackup --prepare --target-dir<span style="color:#f92672">=</span>/backup/full
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Percona XtraBackup робить hot-бекап без FLUSH TABLES WITH READ LOCK для InnoDB-таблиць —</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># критично для великих баз, де лок на запис навіть на секунди недопустимий</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># === КРОК 3: переносимо дамп/бекап на replica і відновлюємо ===</span>
+</span></span><span style="display:flex;"><span>scp /backup/dump.sql replica1:/tmp/
+</span></span><span style="display:flex;"><span>mysql -u root -p &lt; /tmp/dump.sql
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- === КРОК 4: на REPLICA — конфігуруємо джерело і запускаємо ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>CHANGE REPLICATION <span style="color:#66d9ef">SOURCE</span> <span style="color:#66d9ef">TO</span>
+</span></span><span style="display:flex;"><span>  SOURCE_HOST <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;master.internal.lan&#39;</span>,
+</span></span><span style="display:flex;"><span>  SOURCE_PORT <span style="color:#f92672">=</span> <span style="color:#ae81ff">3306</span>,
+</span></span><span style="display:flex;"><span>  SOURCE_USER <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;repl&#39;</span>,
+</span></span><span style="display:flex;"><span>  SOURCE_PASSWORD <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;StrongPassHere&#39;</span>,
+</span></span><span style="display:flex;"><span>  SOURCE_AUTO_POSITION <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>,             <span style="color:#75715e">-- 1 = використовувати GTID замість файл:позиція
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  SOURCE_SSL <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;                        <span style="color:#75715e">-- реплікація трафіку має йти через TLS, особливо між дата-центрами
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">START</span> REPLICA;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- === КРОК 5: перевірка стану ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SHOW</span> REPLICA STATUS<span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>
+</span></span></code></pre></div><p>Ключові поля з <code>SHOW REPLICA STATUS</code> (раніше <code>SHOW SLAVE STATUS</code>), на які завжди дивляться першими:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Replica_IO_Running: Yes        -- IO Thread живий і тягне дані з master
+</span></span><span style="display:flex;"><span>Replica_SQL_Running: Yes       -- SQL Thread живий і застосовує relay log
+</span></span><span style="display:flex;"><span>Seconds_Behind_Source: 0       -- НАСКІЛЬКИ репліка відстає (раніше Seconds_Behind_Master)
+</span></span><span style="display:flex;"><span>Last_IO_Error:                 -- якщо тут не пусто — проблема з мережею/правами
+</span></span><span style="display:flex;"><span>Last_SQL_Error:                -- якщо тут не пусто — конфлікт даних/дублікат ключа при apply
+</span></span><span style="display:flex;"><span>Retrieved_Gtid_Set:             -- які GTID отримані по мережі
+</span></span><span style="display:flex;"><span>Executed_Gtid_Set:               -- які GTID реально застосовані
+</span></span></code></pre></div><p>Якщо <code>Replica_IO_Running: No</code> — проблема на рівні мережі/автентифікації/прав. Якщо <code>Replica_SQL_Running: No</code> — проблема на рівні даних (наприклад, дублікат ключа: репліку записали руками, і вона розійшлась з master).</p>
+<h3 id="41-корисні-команди-в-щоденній-роботі">4.1 Корисні команди в щоденній роботі</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- Поточна позиція master (де він зараз пише binlog)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SHOW</span> MASTER STATUS;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SHOW</span> BINARY LOG STATUS;        <span style="color:#75715e">-- сучасна назва тієї ж команди
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Список усіх файлів binlog, що зберігаються на диску
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SHOW</span> BINARY LOGS;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Зупинити/запустити реплікацію (наприклад, перед обслуговуванням)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>STOP REPLICA;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">START</span> REPLICA;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Зупинити тільки SQL Thread, лишивши IO Thread (накопичувати relay log, не застосовуючи —
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- корисно, якщо треба &#34;притримати&#34; репліку, не відключаючи її від мережі)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>STOP REPLICA SQL_THREAD;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Перезапустити реплікацію &#34;з нуля&#34; (видаляє всю інформацію про джерело!)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>STOP REPLICA;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">RESET</span> REPLICA <span style="color:#66d9ef">ALL</span>;             <span style="color:#75715e">-- ОБЕРЕЖНО: видаляє SOURCE_HOST/USER/GTID-позицію повністю
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Пропустити одну &#34;зламану&#34; транзакцію вручну (аварійний костиль, не для продакшн-звички)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>STOP REPLICA;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SET</span> GTID_NEXT<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee:42&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">BEGIN</span>; <span style="color:#66d9ef">COMMIT</span>;                  <span style="color:#75715e">-- &#34;імітуємо&#34; виконання проблемної транзакції порожньою
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SET</span> GTID_NEXT<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;AUTOMATIC&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">START</span> REPLICA;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Перевірити, чи master і replica реально синхронні по даних (а не тільки по позиції)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- через Percona pt-table-checksum / pt-table-sync (зовнішні утиліти, не вбудовані)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>pt<span style="color:#f92672">-</span><span style="color:#66d9ef">table</span><span style="color:#f92672">-</span>checksum <span style="color:#75715e">--replicate=test.checksums h=master.internal.lan
+</span></span></span></code></pre></div><hr>
+<h2 id="5-хто-і-як-займається-репліками-ролі-авто-failover-проксі">5. Хто і як займається репліками: ролі, авто-failover, проксі</h2>
+<h3 id="51-хто-відповідає-за-що">5.1 Хто відповідає за що</h3>
+<ul>
+<li><strong>DBA (Database Administrator)</strong> — власник усієї стратегії: яка топологія, які параметри durability/consistency, capacity planning, performance tuning запитів, бекапи, права доступу.</li>
+<li><strong>SRE/DevOps</strong> — інфраструктура навколо бази: моніторинг, алертинг, автоматизація провижену (Ansible/Terraform), failover-оркестрація, networking/firewall між вузлами, диски/RAID під дані (тут і твій профіль — моніторинг через Prometheus/Grafana, Ansible-плейбуки для розгортання).</li>
+<li>На практиці в невеликих/середніх компаніях ці дві ролі часто зливаються в одну людину (DevOps-інженер, що &ldquo;теж трохи DBA&rdquo;).</li>
+</ul>
+<h3 id="52-автоматичний-failover--чому-ручний-failover-це-погана-ідея-в-2026">5.2 Автоматичний failover — чому &ldquo;ручний&rdquo; failover це погана ідея в 2026</h3>
+<p>Якщо master впав, потрібно: (1) визначити, яка з реплік найбільш &ldquo;свіжа&rdquo; (найменший lag / найбільший Executed_Gtid_Set), (2) промоутнути її в master, (3) переналаштувати інші репліки слухати новий master, (4) переключити трафік застосунку на нову адресу. Робити це руками під час інциденту вночі — рецепт для людської помилки.</p>
+<p><strong>Інструменти для авто-failover:</strong></p>
+<ul>
+<li><strong>Orchestrator</strong> (GitHub) — топологія-aware HA менеджер: будує карту master/реплік через <code>SHOW REPLICA STATUS</code>, детектує падіння master через множинні незалежні перевірки (uyникнення false positive через мережевий &ldquo;сплеск&rdquo;), сам обирає найкращого кандидата на промоушн і виконує <code>CHANGE REPLICATION SOURCE</code> на всіх інших репліках.</li>
+<li><strong>MHA (Master High Availability Manager)</strong> — старіший, але ще зустрічається; робить схожу роботу, фокус на мінімізації втрати даних при failover.</li>
+<li><strong>ProxySQL</strong> — це не failover-менеджер у чистому вигляді, а <strong>proxy/router</strong> перед MySQL: розрізняє read/write трафік (читання → на репліки, запис → на master), приховує від застосунку факт зміни топології (застосунок підключається до ProxySQL, а не напряму до MySQL-вузла), має вбудовану логіку query routing, query caching, connection pooling.</li>
+<li><strong>Vitess</strong> — окрема велика тема (розділ 7), включає власний шар оркестрації і шардингу.</li>
+</ul>
+<h3 id="53-типова-продакшн-схема-разом">5.3 Типова продакшн-схема разом</h3>
+<pre tabindex="0"><code>                     ┌─────────────┐
+  застосунок ───────►│  ProxySQL   │ (read/write split, connection pooling)
+                     └──────┬──────┘
+              write ────────┼──────── read
+                     ▼              ▼
+              ┌───────────┐   ┌───────────┐   ┌───────────┐
+              │  MASTER   │──►│ REPLICA-1 │   │ REPLICA-2 │
+              └───────────┘   └───────────┘   └───────────┘
+                     ▲
+                     │ детектує падіння, виконує промоушн
+              ┌───────────┐
+              │Orchestrator│
+              └───────────┘
+</code></pre><hr>
+<h2 id="6-innodb-глибше-що-треба-знати-щоб-впевнено-говорити-про-движок-бази">6. InnoDB глибше: що треба знати, щоб впевнено говорити про &ldquo;движок бази&rdquo;</h2>
+<p>InnoDB — це <strong>storage engine</strong> (механізм зберігання даних) MySQL за замовчуванням з версії 5.5+, і саме про нього зараз 95% усіх питань на інтерв&rsquo;ю по &ldquo;движках бази&rdquo;.</p>
+<h3 id="61-ключові-внутрішні-структури">6.1 Ключові внутрішні структури</h3>
+<ul>
+<li><strong>Buffer Pool</strong> — основний кеш у RAM. Тримає сторінки даних та індексів. Чим більший buffer pool (<code>innodb_buffer_pool_size</code>), тим менше дискових I/O на читання — головний параметр для тюнінгу пам&rsquo;яті.</li>
+<li><strong>Redo Log</strong> (<code>innodb_log_file_size</code> / <code>innodb_redo_log_capacity</code> у новіших версіях) — circular-буфер на диску, куди записуються <strong>фізичні</strong> зміни сторінок ще ДО того, як вони фізично потраплять у сам файл даних (.ibd). Це і є механізм <strong>durability</strong>: якщо MySQL впаде, при старті він &ldquo;доганяє&rdquo; незакомічені зміни з redo log (<strong>crash recovery</strong>).</li>
+<li><strong>Undo Log</strong> — зберігає &ldquo;попередні версії&rdquo; рядків, потрібен для (а) rollback транзакцій і (б) <strong>MVCC</strong> (Multi-Version Concurrency Control) — щоб інша транзакція, яка читає той самий рядок паралельно, бачила консистентний &ldquo;знімок&rdquo; даних, не чекаючи на лок.</li>
+<li><strong>Doublewrite Buffer</strong> — захист від &ldquo;partial page write&rdquo;: якщо сторінка (зазвичай 16KB) записується на диск, а диск фізично пише блоками меншого розміру (наприклад, 4KB сектор), крах посередині запису може дати &ldquo;напіврозбиту&rdquo; сторінку. Doublewrite спочатку пише копію сторінки в спеціальну безпечну область, і якщо основний запис не вдався — відновлює з цієї копії.</li>
+<li><strong>Adaptive Hash Index</strong> — InnoDB сам, автоматично, будує hash-індекс над &ldquo;гарячими&rdquo; частинами B-Tree індексу, якщо бачить, що до них іде багато точкових (equality) запитів.</li>
+</ul>
+<h3 id="62-acid-і-як-innodb-його-забезпечує">6.2 ACID і як InnoDB його забезпечує</h3>
+<ul>
+<li><strong>Atomicity</strong> — undo log: або всі зміни транзакції застосовані, або жодна (rollback по undo).</li>
+<li><strong>Consistency</strong> — constraints, foreign keys, тригери — гарантують, що дані не порушують бізнес-правила.</li>
+<li><strong>Isolation</strong> — рівні ізоляції + MVCC + locking (нижче).</li>
+<li><strong>Durability</strong> — redo log + <code>sync_binlog</code>/<code>innodb_flush_log_at_trx_commit</code>.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#a6e22e">innodb_flush_log_at_trx_commit</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1   # 1 = fsync redo log на КОЖЕН commit (максимальна durability, найповільніше)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                                      # 2 = записати в OS cache на commit, fsync раз/сек (швидше, ризик втрати ~1с даних при краху ОС)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                                      # 0 = писати й fsync-ати раз/сек незалежно від commit (найшвидше, найризиковано)</span>
+</span></span></code></pre></div><p>Це один з найпопулярніших &ldquo;практичних&rdquo; компромісів durability vs throughput, про які питають на інтерв&rsquo;ю: <code>1+1</code> (innodb_flush_log_at_trx_commit=1, sync_binlog=1) — найбезпечніше і рекомендовано для master із критичними даними (наприклад, фінансові транзакції); комбінації з 0/2 — для систем, де допустима втрата останньої секунди даних в обмін на throughput.</p>
+<h3 id="63-рівні-ізоляції-транзакцій-isolation-levels">6.3 Рівні ізоляції транзакцій (isolation levels)</h3>
+<table>
+<thead>
+<tr>
+<th>Рівень</th>
+<th>Dirty Read</th>
+<th>Non-Repeatable Read</th>
+<th>Phantom Read</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>READ UNCOMMITTED</td>
+<td>можливий</td>
+<td>можливий</td>
+<td>можливий</td>
+</tr>
+<tr>
+<td>READ COMMITTED</td>
+<td>ні</td>
+<td>можливий</td>
+<td>можливий</td>
+</tr>
+<tr>
+<td>REPEATABLE READ (дефолт в InnoDB)</td>
+<td>ні</td>
+<td>ні</td>
+<td>ні*</td>
+</tr>
+<tr>
+<td>SERIALIZABLE</td>
+<td>ні</td>
+<td>ні</td>
+<td>ні</td>
+</tr>
+</tbody>
+</table>
+<p>* В InnoDB <code>REPEATABLE READ</code> додатково захищає від phantom read через <strong>gap locks</strong> / <strong>next-key locks</strong> — це нестандартна (сильніша за SQL-стандарт) поведінка, і про це теж люблять питати: &ldquo;Чому в InnoDB REPEATABLE READ вже захищає від phantom read, хоча по стандарту SQL це мав робити лише SERIALIZABLE?&rdquo;</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">@@</span>transaction_isolation;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SET</span> <span style="color:#66d9ef">SESSION</span> <span style="color:#66d9ef">TRANSACTION</span> <span style="color:#66d9ef">ISOLATION</span> <span style="color:#66d9ef">LEVEL</span> <span style="color:#66d9ef">READ</span> <span style="color:#66d9ef">COMMITTED</span>;
+</span></span></code></pre></div><h3 id="64-locking-row-level-vs-table-level-gap-locks-deadlocks">6.4 Locking: row-level vs table-level, gap locks, deadlocks</h3>
+<p>InnoDB робить <strong>row-level locking</strong> (на відміну від MyISAM, що блокує цілу таблицю на запис) — це і є головна причина, чому InnoDB набагато краще масштабується на конкурентний запис.</p>
+<ul>
+<li><strong>Record Lock</strong> — лок на конкретний існуючий рядок.</li>
+<li><strong>Gap Lock</strong> — лок на &ldquo;проміжок&rdquo; між значеннями індексу (навіть якщо рядків там немає!) — захищає від вставки нових рядків у цей діапазон іншою транзакцією, поки перша не завершилась.</li>
+<li><strong>Next-Key Lock</strong> — комбінація Record Lock + Gap Lock одночасно (дефолтна поведінка в REPEATABLE READ).</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- Подивитись поточні локи й транзакції, що чекають
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> performance_schema.data_locks;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> performance_schema.data_lock_waits;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Класична InnoDB-команда для діагностики (включає й секцію LATEST DETECTED DEADLOCK)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SHOW</span> ENGINE INNODB STATUS<span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>
+</span></span></code></pre></div><p><strong>Deadlock</strong> — два транзакції взаємно блокують одна одну (A чекає лок, що тримає B; B чекає лок, що тримає A). InnoDB сам детектує цикл і <strong>примусово відкочує</strong> одну з транзакцій (ту, що &ldquo;дешевша&rdquo; для rollback), повертаючи клієнту помилку <code>Deadlock found when trying to get lock</code>. Правильна поведінка застосунку — retry-логіка на цю конкретну помилку.</p>
+<h2 id="7-моніторинг-innodb-і-реплікації-на-практиці-prometheusgrafana-stack">7. Моніторинг InnoDB і реплікації на практиці (Prometheus/Grafana stack)</h2>
+<p>Раз ти вже живеш у Prometheus/Grafana — ось конкретно, що й навіщо знімати з MySQL.</p>
+<h3 id="71-джерела-метрик">7.1 Джерела метрик</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># mysqld_exporter — стандартний шлях метрик MySQL у Prometheus</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Створюємо окремого користувача з мінімальними правами саме для моніторингу</span>
+</span></span><span style="display:flex;"><span>mysql -u root -p <span style="color:#e6db74">&lt;&lt; &#39;SQL&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">CREATE USER &#39;exporter&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;ExporterPass&#39; WITH MAX_USER_CONNECTIONS 3;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO &#39;exporter&#39;@&#39;localhost&#39;;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">-- PROCESS — бачити SHOW PROCESSLIST/engine status
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">-- REPLICATION CLIENT — дозволяє виконувати SHOW REPLICA STATUS / SHOW MASTER STATUS
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">SQL</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># docker-compose фрагмент, типовий для твого стеку</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">mysqld-exporter</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">image</span>: <span style="color:#ae81ff">prom/mysqld-exporter</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">environment</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">DATA_SOURCE_NAME=exporter:ExporterPass@(mysql:3306)/</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">command</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#e6db74">&#34;--collect.info_schema.innodb_metrics&#34;</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#e6db74">&#34;--collect.engine_innodb_status&#34;</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#e6db74">&#34;--collect.slave_status&#34;</span>          <span style="color:#75715e"># критично для метрик реплікації</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#e6db74">&#34;--collect.global_status&#34;</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#e6db74">&#34;--collect.global_variables&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#e6db74">&#34;9104:9104&#34;</span>
+</span></span></code></pre></div><h3 id="72-метрики-на-які-варто-ставити-алерти">7.2 Метрики, на які варто ставити алерти</h3>
+<p><strong>Реплікація:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># Lag реплікації в секундах — найважливіша метрика взагалі</span>
+</span></span><span style="display:flex;"><span>mysql_slave_status_seconds_behind_master <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">30</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IO/SQL Thread впали</span>
+</span></span><span style="display:flex;"><span>mysql_slave_status_slave_io_running <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>mysql_slave_status_slave_sql_running <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+</span></span></code></pre></div><p><strong>InnoDB Buffer Pool:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#75715e"># Hit ratio буферного пулу — якщо падає нижче ~95%, означає що</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># буфер замалий для робочого набору даних, диск читається частіше ніж треба</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span> <span style="color:#f92672">-</span> <span style="color:#f92672">(</span>mysql_global_status_innodb_buffer_pool_reads <span style="color:#f92672">/</span> mysql_global_status_innodb_buffer_pool_read_requests<span style="color:#f92672">))</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">100</span>
+</span></span></code></pre></div><p><strong>Locks / Threads:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span>mysql_global_status_threads_running          <span style="color:#75715e"># активні треди — раптовий стрибок = можливий стопор/lock contention</span>
+</span></span><span style="display:flex;"><span>mysql_global_status_innodb_row_lock_waits     <span style="color:#75715e"># скільки разів запити чекали на row lock</span>
+</span></span><span style="display:flex;"><span>mysql_global_status_innodb_row_lock_time_avg  <span style="color:#75715e"># середній час очікування на лок (мс)</span>
+</span></span></code></pre></div><p><strong>Connections / Slow queries:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-promql" data-lang="promql"><span style="display:flex;"><span><span style="color:#66d9ef">rate</span><span style="color:#f92672">(</span>mysql_global_status_slow_queries[<span style="color:#e6db74">5m</span>]<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>mysql_global_status_threads_connected <span style="color:#f92672">/</span> mysql_global_variables_max_connections
+</span></span></code></pre></div><h3 id="73-performance-schema-і-sys-schema--вбудована-обсерваторія">7.3 Performance Schema і sys schema — вбудована &ldquo;обсерваторія&rdquo;</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- Топ запитів за сумарним часом виконання (найкорисніший запит для performance tuning)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> digest_text, count_star, sum_timer_wait<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000000</span> <span style="color:#66d9ef">AS</span> total_sec
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> performance_schema.events_statements_summary_by_digest
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> sum_timer_wait <span style="color:#66d9ef">DESC</span> <span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- sys schema — людиночитабельні view над performance_schema
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> sys.statement_analysis <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> total_latency <span style="color:#66d9ef">DESC</span> <span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> sys.schema_unused_indexes;     <span style="color:#75715e">-- індекси, які ніхто не використовує (баласт на write)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> sys.innodb_lock_waits;          <span style="color:#75715e">-- хто кого блокує прямо зараз
+</span></span></span></code></pre></div><h3 id="74-percona-monitoring-and-management-pmm">7.4 Percona Monitoring and Management (PMM)</h3>
+<p>Якщо хочеш готове рішення &ldquo;з коробки&rdquo; замість збирання власного дашборду — <strong>PMM</strong> від Percona розгортається одним Docker-контейнером, сам тягне метрики через <code>mysqld_exporter</code>, додає готові Grafana-дашборди саме під MySQL/InnoDB/реплікацію, плюс <strong>Query Analytics (QAN)</strong> — окремий UI для аналізу повільних запитів з розбивкою по часу. Для твого випадку (вже є власний Prometheus/Grafana) логічніше інтегрувати <code>mysqld_exporter</code> в існуючий стек, а PMM розглядати, якщо MySQL стає основним фокусом, а не одним з компонентів великої інфраструктури.</p>
+<hr>
+<h2 id="8-що-зараз-найбільш-популярне-в-екосистемі-mysql-2026">8. Що зараз найбільш популярне в екосистемі MySQL (2026)</h2>
+<ul>
+<li><strong>InnoDB</strong> — беззаперечний стандарт для будь-яких транзакційних навантажень; <code>MyISAM</code> лишився хіба що в legacy-системах (немає транзакцій, table-level locking, але трохи компактніший для read-only/архівних таблиць).</li>
+<li><strong>MySQL vs MariaDB vs Percona Server</strong> — три відгалуження одного коріння:
+<ul>
+<li><strong>MySQL (Oracle)</strong> — офіційна версія, найновіші фічі (Group Replication, Document Store з JSON).</li>
+<li><strong>MariaDB</strong> — форк від оригінальних розробників MySQL після покупки Oracle; має власні фічі (інший Galera-інтеграція з коробки, інший optimizer в деяких версіях). Несумісність з MySQL поступово зростає з кожною major-версією.</li>
+<li><strong>Percona Server for MySQL</strong> — drop-in заміна MySQL з додатковими enterprise-фічами безкоштовно (розширена діагностика, XtraDB engine історично, краща Performance Schema деталізація). Часто вибір для тих, хто хоче MySQL-сумісність + краще тулінг.</li>
+</ul>
+</li>
+<li><strong>ProxySQL</strong> — фактичний стандарт для read/write split і connection pooling перед MySQL-кластером, незалежно від того InnoDB Cluster, Galera чи звичайна async-реплікація позаду нього.</li>
+<li><strong>Vitess</strong> — створений у YouTube, тепер CNCF graduated проєкт. Розв&rsquo;язує проблему <strong>шардингу</strong> на рівні, де &ldquo;звичайна&rdquo; реплікація вже не масштабується горизонтально (мільярди рядків в одній таблиці). Vitess представляє кластер шардованих MySQL-інстансів як <strong>одну логічну базу</strong> для застосунку (через VTGate proxy), сам керує resharding-ом без даунтайму. Активно використовується там, де Kubernetes-native управління базою — вимога (Vitess Operator для k8s).</li>
+<li><strong>Group Replication / InnoDB Cluster</strong> — офіційний шлях Oracle до multi-master HA без сторонніх Galera-патчів.</li>
+</ul>
+<hr>
+<h2 id="9-бекапи-і-point-in-time-recovery-pitr--must-know-для-dba">9. Бекапи і Point-in-Time Recovery (PITR) — must-know для DBA</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Логічний бекап (повільніше, але портативний між версіями/платформами)</span>
+</span></span><span style="display:flex;"><span>mysqldump --single-transaction --master-data<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span> --routines --triggers --all-databases &gt; full.sql
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Фізичний бекап (швидше відновлення на великих базах, специфічний до версії/engine)</span>
+</span></span><span style="display:flex;"><span>xtrabackup --backup --target-dir<span style="color:#f92672">=</span>/backup/full
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># PITR — відновлення &#34;на конкретний момент часу між бекапами&#34;:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1. Відновлюємо останній full backup</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. Накатуємо binlog від позиції бекапа до потрібного моменту (наприклад, ПЕРЕД помилковим DELETE)</span>
+</span></span><span style="display:flex;"><span>mysqlbinlog --start-position<span style="color:#f92672">=</span><span style="color:#ae81ff">15829203</span> --stop-datetime<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2026-06-18 14:23:00&#34;</span> binlog.000045 | mysql -u root -p
+</span></span></code></pre></div><p><strong>Правило 3-2-1</strong>, яке варто згадати на інтерв&rsquo;ю: 3 копії даних, на 2 різних типах носіїв, 1 копія off-site (інший дата-центр/регіон). Для MySQL це типово: локальний xtrabackup + копія в S3/Glacier-подібне сховище + репліка в іншому регіоні (яка сама по собі НЕ замінює бекап — людська помилка <code>DROP TABLE</code> реплікується теж).</p>
+<hr>
+<h2 id="10-mysql-vs-postgresql-vs-mongodb--короткі-практичні-різниці">10. MySQL vs PostgreSQL vs MongoDB — короткі практичні різниці</h2>
+<ul>
+<li><strong>MySQL vs PostgreSQL</strong> — обидві реляційні/ACID, але PostgreSQL історично сильніший у складних запитах (window functions, CTE з&rsquo;явились раніше), розширюваності (custom types, extensions типу PostGIS), точнішій відповідності SQL-стандарту. MySQL історично простіший в адмініструванні, легший replication setup &ldquo;з коробки&rdquo;, дуже широка індустріальна підтримка (більшість CMS/web-стеків). InnoDB робить MVCC через undo log; PostgreSQL — через зберігання кількох версій рядка прямо в таблиці (і потребує <code>VACUUM</code> для прибирання &ldquo;мертвих&rdquo; версій — концептуально інший підхід до того ж завдання).</li>
+<li><strong>MySQL vs MongoDB</strong> — реляційна модель (таблиці, JOIN, жорстка схема, ACID-транзакції) проти документної моделі (JSON-подібні документи, гнучка схема, traditionally слабші гарантії консистентності, хоча сучасний MongoDB вже підтримує multi-document ACID-транзакції). MongoDB природньо шардиться &ldquo;з коробки&rdquo; (на відміну від MySQL, де шардинг — це або Vitess, або ручна робота).</li>
+</ul>
+<hr>
+<h2 id="11-redis--коротко-що-треба-знати-поруч-з-mysql">11. Redis — коротко, що треба знати поруч з MySQL</h2>
+<p>Redis — це <strong>in-memory</strong> key-value хранилище (структури даних: string, hash, list, set, sorted set, stream), а не реляційна СУБД. Використовують як кеш перед MySQL, для сесій, rate-limiting, черг (через Streams/Lists), pub/sub.</p>
+<h3 id="111-persistence--як-redis-взагалі-не-втрачає-все-при-перезапуску">11.1 Persistence — як Redis взагалі не втрачає все при перезапуску</h3>
+<ul>
+<li><strong>RDB (snapshot)</strong> — періодичний повний дамп усієї бази в файл (<code>save 900 1</code> — зробити снепшот, якщо за 900с змінився хоча б 1 ключ). Швидке відновлення, але можлива втрата змін між снепшотами.</li>
+<li><strong>AOF (Append Only File)</strong> — лог кожної write-команди (схоже на binlog у MySQL). <code>appendfsync everysec</code> (компромісний дефолт) / <code>always</code> (максимальна durability, повільніше) / <code>no</code> (швидко, ризиковано).</li>
+<li>Можна (і часто варто) комбінувати RDB + AOF одночасно.</li>
+</ul>
+<h3 id="112-реплікація-в-redis">11.2 Реплікація в Redis</h3>
+<ul>
+<li><strong>Master-Replica</strong> — асинхронна за замовчуванням, концептуально схожа на MySQL async replication: replica підключається, отримує RDB-снепшот, потім стрімить подальші команди.</li>
+<li><strong>Redis Sentinel</strong> — окремий процес моніторингу для авто-failover у простих master-replica топологіях (аналог ролі orchestrator для MySQL, тільки вбудований у сам Redis-екосистему).</li>
+<li><strong>Redis Cluster</strong> — горизонтальний шардинг (16384 hash slots, розподілені між вузлами), кожен шард має власні репліки. Це вже не просто HA, а й горизонтальне масштабування запису.</li>
+</ul>
+<h3 id="113-найважливіша-практична-різниця-від-mysql">11.3 Найважливіша практична різниця від MySQL</h3>
+<p>Redis — однопотоковий (в основному циклі обробки команд, хоча є I/O threads для мережі в нових версіях) і тримає весь робочий набір <strong>у RAM</strong>. Це дає мікросекундну латентність, але означає: (а) дані обмежені обʼємом RAM, (б) це не заміна транзакційної реляційної бази для складних запитів з JOIN/агрегаціями — Redis оптимізований під O(1)/O(log n) точкові операції зі структурами даних, а не під реляційну аналітику.</p>
+<hr>
+<h2 id="12-каверзні-питання-для-інтервю--з-відповідями">12. Каверзні питання для інтерв&rsquo;ю — з відповідями</h2>
+<p><strong>Питання: Master впав одразу після того, як клієнту повернулась відповідь &ldquo;OK&rdquo; на commit. Чи гарантовано ця транзакція є на репліці?</strong>
+Відповідь: Ні, якщо реплікація асинхронна — &ldquo;OK&rdquo; клієнту повертається відразу після локального commit на master, без очікування підтвердження від реплік. Транзакція могла фізично не встигнути потрапити навіть у binlog dump thread. Це і є фундаментальна причина існування semi-sync і Galera/Group Replication.</p>
+<p><strong>Питання: Чим <code>Seconds_Behind_Master</code>/<code>Seconds_Behind_Source</code> НЕ є?</strong>
+Відповідь: Це не &ldquo;різниця в часі між годинниками серверів&rdquo;, і це не точна метрика затримки мережі. Це різниця між часом останньої події, яку SQL Thread застосував, і поточним часом на репліці. Якщо реплікація просто &ldquo;стоїть&rdquo; (наприклад, IO Thread не може підключитись), ця метрика може показувати <code>NULL</code>, а не зростаюче число — і це окрема пастка для алертів (треба алертити і на <code>NULL</code>/Running=No, не лише на порогове значення секунд).</p>
+<p><strong>Питання: Чому STATEMENT-based реплікація може &ldquo;тихо&rdquo; розсинхронити дані без жодної помилки в логах?</strong>
+Відповідь: Через недетерміновані вирази в SQL — <code>UPDATE t SET x = NOW()</code> або <code>INSERT ... VALUES (UUID())</code> виконані на master і повторно виконані (а не скопійовані як результат) на репліці можуть дати різні значення часу/UUID. Жодної помилки не буде — просто дані розійдуться непомітно, і це виявиться лише через checksums (<code>pt-table-checksum</code>) набагато пізніше.</p>
+<p><strong>Питання: У Galera Cluster клієнт отримав помилку deadlock на простому одиночному <code>UPDATE</code>, без жодних паралельних транзакцій з боку застосунку. Як це можливо?</strong>
+Відповідь: Через certification-based replication конфлікт перевіряється на рівні всього кластера, включно з транзакціями, які прилетіли від реплікації з інших вузлів (а не лише локальні конкурентні запити). Сертифікація може &ldquo;не пройти&rdquo; навіть для одиночного UPDATE, якщо в той самий момент на іншому вузлі комітилась конфліктна транзакція — застосунок повинен мати retry-логіку саме на цей клас помилок як норму роботи з Galera, а не як аномалію.</p>
+<p><strong>Питання: Чи захищає InnoDB REPEATABLE READ від phantom read без явного SERIALIZABLE?</strong>
+Відповідь: Так, на відміну від &ldquo;чистого&rdquo; SQL-стандарту — InnoDB реалізує REPEATABLE READ із gap locks/next-key locks саме для захисту від phantom read, тоді як стандарт ANSI SQL формально допускає phantom read на цьому рівні ізоляції. Це нюанс конкретної реалізації InnoDB, а не загальна властивість РБД.</p>
+<p><strong>Питання: На сервері InnoDB Buffer Pool Hit Ratio показує 99.9%, але запити все одно повільні. Чому буфер тут не допомагає?</strong>
+Відповідь: Hit ratio показує лише ефективність кешування сторінок, а не якість запитів. Повільність може бути через відсутність потрібного індексу (full table scan навіть у пам&rsquo;яті — повільний для великих таблиць), lock contention (запити чекають на row/gap locks, а не на диск), або погану структуру запиту (N+1, відсутність LIMIT, сортування великого набору без індексу). Перший крок діагностики тут — <code>EXPLAIN</code>/<code>EXPLAIN ANALYZE</code>, не buffer pool метрики.</p>
+<p><strong>Питання: Чим відрізняється <code>STOP REPLICA SQL_THREAD</code> від просто <code>STOP REPLICA</code>?</strong>
+Відповідь: Перше лишає IO Thread живим — репліка продовжує тягнути binlog events з master і накопичувати їх у relay log на диску, просто не застосовує. Друге зупиняє обидва треди повністю. Перший варіант корисний, якщо потрібно &ldquo;притримати&rdquo; застосування змін (наприклад, для аналізу стану на конкретний момент), але дані продовжують прибувати і відповідно займати дисковий простір під relay log.</p>
+<p><strong>Питання: GTID-набір на репліці містить транзакцію, якої немає на новому master після failover. Що станеться при спробі підключити цю репліку до нового master?</strong>
+Відповідь: MySQL виявить &ldquo;errant transaction&rdquo; — GTID, виконаний на репліці, але не існуючий в історії нового master, — і реплікація зупиниться з помилкою, замість того, щоб тихо щось зіпсувати. Це власне і є одна з переваг GTID над файл:позиція — явна детекція розбіжності історій замість мовчазного розсинхрону. Виправляється або <code>RESET MASTER</code> на репліці з повним ресинком, або інʼєкцією порожньої транзакції з тим самим GTID (<code>SET GTID_NEXT</code> + порожній <code>BEGIN/COMMIT</code>, як показано вище).</p>
+<p><strong>Питання: Redis Sentinel промоутнув репліку в master під час split-brain мережевого розділення. Що могло піти не так?</strong>
+Відповідь: Якщо мережевий розрив ізолював старий master від Sentinel-кворуму, але клієнти застосунку (з іншого боку розриву) досі можуть писати в старий master — отримуємо два &ldquo;masters&rdquo; одночасно (split-brain), і дані, записані в &ldquo;ізольований&rdquo; master після промоушну нового, будуть втрачені, коли старий master зрештою повернеться і стане replica (full resync затирає його локальні дані). Захист — <code>min-replicas-to-write</code> на master (відмовляти у write, якщо немає достатньої кількості &ldquo;живих&rdquo; реплік) і коректний кворум Sentinel (мінімум 3, нечисле число вузлів-спостерігачів).</p>
+<hr>
+<h2 id="13-траблшутінг-бази-даних--повний-покроковий-гайд-коли-все-погано">13. Траблшутінг бази даних — повний покроковий гайд &ldquo;коли все погано&rdquo;</h2>
+<p>Це окремий найважливіший блок для DevOps/SRE: на інтерв&rsquo;ю питають не лише &ldquo;що таке X&rdquo;, а &ldquo;у тебе продакшн лежить, що ти робиш&rdquo;. Нижче — алгоритм по кожному типовому інциденту, з конкретними командами в порядку, в якому їх реально треба виконувати.</p>
+<h3 id="131-загальний-алгоритм-для-будь-якого-інциденту-з-базою">13.1 Загальний алгоритм для будь-якого інциденту з базою</h3>
+<p>Перш ніж лізти в конкретні симптоми — завжди один і той самий порядок дій:</p>
+<ol>
+<li><strong>Стабілізувати, перш ніж діагностувати.</strong> Якщо є read-репліки і трафік можна перемкнути — перемкни, щоб зняти тиск з проблемного вузла, поки розбираєшся.</li>
+<li><strong>Зняти &ldquo;знімок стану&rdquo; одразу</strong>, перш ніж щось рестартувати — після рестарту <code>SHOW ENGINE INNODB STATUS</code>, <code>SHOW PROCESSLIST</code> і <code>performance_schema</code> дані зникають назавжди, а саме вони потрібні для post-mortem.</li>
+<li><strong>Подивитись логи в хронології, а не вгадувати.</strong> <code>journalctl -u mysql --since &quot;-15 min&quot;</code> + <code>/var/log/mysql/error.log</code> — перше місце, куди дивимось, до будь-яких SQL-команд.</li>
+<li>Тільки після збору даних — приймати рішення: рестарт, kill процесу, failover, тощо.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ШВИДКИЙ ЗНІМОК СТАНУ перед будь-якими діями (зберегти кудись окремо для post-mortem)</span>
+</span></span><span style="display:flex;"><span>mysql -e <span style="color:#e6db74">&#34;SHOW ENGINE INNODB STATUS\G&#34;</span> &gt; /tmp/incident_innodb_status.txt
+</span></span><span style="display:flex;"><span>mysql -e <span style="color:#e6db74">&#34;SHOW FULL PROCESSLIST;&#34;</span> &gt; /tmp/incident_processlist.txt
+</span></span><span style="display:flex;"><span>mysql -e <span style="color:#e6db74">&#34;SHOW REPLICA STATUS\G&#34;</span> &gt; /tmp/incident_replica_status.txt
+</span></span><span style="display:flex;"><span>mysql -e <span style="color:#e6db74">&#34;SHOW GLOBAL STATUS;&#34;</span> &gt; /tmp/incident_global_status.txt
+</span></span><span style="display:flex;"><span>journalctl -u mysql --since <span style="color:#e6db74">&#34;-15 min&#34;</span> --no-pager &gt; /tmp/incident_journal.txt
+</span></span><span style="display:flex;"><span>tail -n <span style="color:#ae81ff">200</span> /var/log/mysql/error.log &gt; /tmp/incident_error_log.txt
+</span></span></code></pre></div><h3 id="132-реплікація-зламалась-replica_io_running-або-replica_sql_running--no">13.2 Реплікація зламалась: <code>Replica_IO_Running</code> або <code>Replica_SQL_Running</code> = No</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SHOW</span> REPLICA STATUS<span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>
+</span></span></code></pre></div><p>Дивимось саме в такому порядку:</p>
+<ol>
+<li>
+<p><strong><code>Replica_IO_Running: No</code></strong> → проблема на рівні мережі/автентифікації, дані не доходять.</p>
+<ul>
+<li><code>Last_IO_Error</code> — текст помилки. Найчастіше: <code>Access denied</code>, <code>Can't connect to MySQL server</code>, <code>error reconnecting to master</code>.</li>
+<li>Перевірка мережі і портів: <code>nc -zv master.internal.lan 3306</code> (або <code>telnet</code> за відсутності <code>nc</code>)</li>
+<li>Перевірка прав: <code>SHOW GRANTS FOR 'repl'@'10.0.%';</code> на master</li>
+<li>Перевірка, чи не зʼїв master binlog, на якому &ldquo;зупинилась&rdquo; репліка: якщо <code>binlog_expire_logs_seconds</code> спрацював раніше, ніж репліка встигла прочитати потрібний файл — IO Thread не знайде потрібну позицію взагалі. <strong>Виправлення тут тільки одне — повний resync (новий snapshot + CHANGE REPLICATION SOURCE з нуля)</strong>, тому це і є головна причина тримати <code>expire_logs</code> достатньо великим відносно максимально допустимого даунтайму репліки.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>Replica_SQL_Running: No</code></strong> → дані дійшли, але apply зламався — це проблема <strong>даних</strong>, не мережі.</p>
+<ul>
+<li><code>Last_SQL_Error</code> — найчастіше: дублікат ключа (<code>Duplicate entry</code>), <code>Table doesn't exist</code>, foreign key violation.</li>
+<li>Типова причина: хтось писав напряму в репліку (репліка мала бути read-only, але не була), і її дані розійшлись з master.</li>
+</ul>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- ОБОВ&#39;ЯЗКОВЕ профілактичне налаштування, щоб уберегтись від п.2 назавжди:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SET</span> <span style="color:#66d9ef">GLOBAL</span> read_only <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SET</span> <span style="color:#66d9ef">GLOBAL</span> super_read_only <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;  <span style="color:#75715e">-- захищає навіть від root-користувача, лишає виключення тільки для самого SQL Thread
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- Аварійний &#34;пропуск&#34; одної помилки (костиль, не звичка):
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>STOP REPLICA;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SET</span> <span style="color:#66d9ef">GLOBAL</span> sql_replica_skip_counter <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;  <span style="color:#75715e">-- для legacy не-GTID реплікації
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">START</span> REPLICA;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Для GTID-реплікації — інʼєкція порожньої транзакції з тим самим GTID (показано в розділі 4.1)
+</span></span></span></code></pre></div><blockquote>
+<p><strong>WARNING:</strong> пропуск помилки (<code>skip_counter</code> або порожня GTID-транзакція) означає, що репліка <strong>свідомо</strong> розійшлась з master на цьому рядку. Завжди після такого фіксу запускати <code>pt-table-checksum</code>, щоб знати масштаб розбіжності, і планувати повний resync, якщо розбіжностей багато.</p>
+</blockquote>
+<h3 id="133-реплікація-відстає-lag-росте-треди-живі">13.3 Реплікація відстає (lag росте, треди живі)</h3>
+<p>Якщо <code>Replica_IO_Running</code>/<code>Replica_SQL_Running</code> обидва <code>Yes</code>, а <code>Seconds_Behind_Source</code> росте — шукаємо бутылочне горлечко окремо на кожній фазі:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- Фаза 1: чи встигає IO Thread тягнути дані з мережі?
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- Порівняй позицію, яку РЕПЛІКА вже ОТРИМАЛА (Retrieved_Gtid_Set) з позицією на MASTER (SHOW MASTER STATUS).
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- Якщо розрив тут — проблема мережі/bandwidth, не диска репліки.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SHOW</span> REPLICA STATUS<span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>   <span style="color:#75715e">-- дивимось Retrieved_Gtid_Set vs Executed_Gtid_Set
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Фаза 2: чи встигає SQL Thread застосовувати relay log?
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- Якщо Retrieved ≈ Master, але Executed сильно позаду Retrieved — проблема саме в apply (диск/locks/одна гаряча таблиця)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SHOW</span> PROCESSLIST;  <span style="color:#75715e">-- шукаємо state системних SQL/worker тредів (System Lock, Waiting for table flush і т.д.)
+</span></span></span></code></pre></div><p>Найчастіші причини повільного apply:</p>
+<ul>
+<li><strong>Single-threaded apply</strong> на гарячу таблицю навіть з увімкненим MTS (всі транзакції йдуть в одну таблицю → паралелити нема чим, дивись 2.3).</li>
+<li><strong>Повільний диск на репліці</strong> — <code>iostat -x 1</code> під час лагу: високий <code>%util</code>, високий <code>await</code>.</li>
+<li><strong>Великі неіндексовані UPDATE/DELETE</strong> на master, що в ROW-форматі генерують величезні binlog events (наприклад, <code>DELETE FROM big_table WHERE old_date &lt; ...</code> без індексу — на master теж повільно, а на репліці ще й однопотоково накатується).</li>
+<li><strong>Конкурентний read-навантаження на самій репліці</strong> (важкі звітні SELECT займають CPU/I/O, який потрібен SQL Thread).</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Diск — головний підозрюваний при apply lag</span>
+</span></span><span style="display:flex;"><span>iostat -x <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>iotop -o
+</span></span></code></pre></div><h3 id="134-база-висить--усі-запити-повільні">13.4 База &ldquo;висить&rdquo; / усі запити повільні</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- Крок 1: скільки активних з&#39;єднань і що вони роблять ПРЯМО ЗАРАЗ
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SHOW</span> <span style="color:#66d9ef">FULL</span> PROCESSLIST;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- або зручніше через sys schema:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> sys.<span style="color:#66d9ef">session</span> <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> time <span style="color:#66d9ef">DESC</span> <span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">20</span>;
+</span></span></code></pre></div><p>Дивимось на колонку <code>State</code> — це і дає напрямок:</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Що означає</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Waiting for table metadata lock</code></td>
+<td>хтось тримає DDL-лок (ALTER TABLE), всі інші чекають</td>
+</tr>
+<tr>
+<td><code>Sending data</code></td>
+<td>повільний full scan / сортування великого набору без індексу</td>
+</tr>
+<tr>
+<td><code>Locked</code> / <code>Waiting for row lock</code></td>
+<td>row-level lock contention</td>
+</tr>
+<tr>
+<td><code>Copying to tmp table</code></td>
+<td>сортування/groupby не вкладається в <code>tmp_table_size</code>, пишеться на диск</td>
+</tr>
+<tr>
+<td><code>Waiting for table flush</code></td>
+<td>хтось зробив <code>FLUSH TABLES</code> / бекап і тримає глобальний лок</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- Крок 2: хто кого блокує (актуальні запити для сучасних версій MySQL)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> performance_schema.data_lock_waits;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> sys.innodb_lock_waits;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Крок 3: InnoDB-специфічна секція — транзакції, що довго не комітяться, і поточні деадлоки
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SHOW</span> ENGINE INNODB STATUS<span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- дивимось секції TRANSACTIONS і LATEST DETECTED DEADLOCK
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- Аварійна дія: вбити конкретний &#34;зависший&#34; запит/транзакцію (за Id з PROCESSLIST)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>KILL QUERY <span style="color:#ae81ff">12345</span>;     <span style="color:#75715e">-- вбити тільки запит, з&#39;єднання лишається
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>KILL <span style="color:#ae81ff">12345</span>;           <span style="color:#75715e">-- вбити все з&#39;єднання повністю
+</span></span></span></code></pre></div><blockquote>
+<p><strong>WARNING:</strong> <code>KILL</code> на транзакції, що вже частково записала зміни — викликає <strong>rollback</strong>, який сам може зайняти значний час і додатково навантажити сервер. Не панікувати, якщо після <code>KILL</code> навантаження ще кілька секунд/хвилин лишається високим.</p>
+</blockquote>
+<h3 id="135-too-many-connections--неможливо-підключитись">13.5 &ldquo;Too many connections&rdquo; / неможливо підключитись</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SHOW</span> VARIABLES <span style="color:#66d9ef">LIKE</span> <span style="color:#e6db74">&#39;max_connections&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SHOW</span> STATUS <span style="color:#66d9ef">LIKE</span> <span style="color:#e6db74">&#39;Threads_connected&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SHOW</span> PROCESSLIST;   <span style="color:#75715e">-- шукати, чи це один застосунок &#34;зʼїв&#34; усі конекшени (connection leak)
+</span></span></span></code></pre></div><p>Швидкий рятувальний доступ, якщо ліміт зайнятий повністю і навіть адмін не може зайти:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- MySQL резервує окремий слот понад max_connections саме для SUPER-користувача
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SET</span> <span style="color:#66d9ef">GLOBAL</span> max_connections <span style="color:#f92672">=</span> <span style="color:#ae81ff">500</span>;   <span style="color:#75715e">-- runtime-зміна без рестарту, якщо вистачає пам&#39;яті на нові буфери з&#39;єднань
+</span></span></span></code></pre></div><p>Корінна причина майже завжди — або connection leak у застосунку (немає <code>close()</code>/pool не повертає конекшени), або відсутність connection pooling (ProxySQL/ProxySQL pooling саме для цього і існує — розділ 5.2).</p>
+<h3 id="136-диск-заповнюється">13.6 Диск заповнюється</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Що саме їсть місце — перші підозрювані:</span>
+</span></span><span style="display:flex;"><span>du -sh /var/lib/mysql/*           <span style="color:#75715e"># binlog файли, ibdata1, окремі .ibd таблиці</span>
+</span></span><span style="display:flex;"><span>du -sh /var/lib/mysql/binlog.*    <span style="color:#75715e"># якщо binlog_expire_logs_seconds не налаштований/реплікація відстає</span>
+</span></span></code></pre></div><ul>
+<li><strong>binlog накопичився</strong> — якщо є відстаюча репліка, MySQL <strong>не видалить</strong> binlog файли, які ще потрібні цій репліці, навіть якщо <code>expire_logs_seconds</code> минув. Перевір <code>SHOW REPLICA STATUS</code> на всіх репліках, перш ніж форсити видалення.</li>
+<li><strong>ibdata1 росте і не зменшується після DELETE</strong> — це нормальна поведінка InnoDB за замовчуванням (<code>innodb_file_per_table</code> зазвичай ON у сучасних версіях, але старий <code>ibdata1</code> міг накопичити &ldquo;сміття&rdquo; роками; зменшити можна лише повним <code>mysqldump</code> + перестворенням instance).</li>
+<li><strong>tmp-таблиці на диску</strong> — <code>tmp_table_size</code>/<code>max_heap_table_size</code> замалі для важких GROUP BY/ORDER BY → MySQL переключається на дискові temp-таблиці в <code>tmpdir</code>.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- Безпечне видалення старих binlog (перевір спочатку, що жодна репліка їх не потребує!)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>PURGE BINARY LOGS <span style="color:#66d9ef">BEFORE</span> <span style="color:#e6db74">&#39;2026-06-10 00:00:00&#39;</span>;
+</span></span></code></pre></div><h3 id="137-деадлоки-повторюються-постійно">13.7 Деадлоки повторюються постійно</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SHOW</span> ENGINE INNODB STATUS<span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>   <span style="color:#75715e">-- секція LATEST DETECTED DEADLOCK — показує ОБИДВІ транзакції, їх запити і локи
+</span></span></span></code></pre></div><p>Типові причини й фікси:</p>
+<ul>
+<li><strong>Різний порядок блокування рядків</strong> у різних частинах застосунку (transaction A блокує rows у порядку 1→2, transaction B — 2→1) → завжди уніфікувати порядок (наприклад, сортувати ID перед UPDATE).</li>
+<li><strong>Відсутність індексу</strong> на колонці в WHERE → InnoDB блокує більше рядків/gaps, ніж насправді потрібно, через full scan з локами.</li>
+<li><strong>Довгі транзакції</strong>, що тримають локи довше необхідного (забутий <code>autocommit=0</code> без явного commit) → перевірка <code>information_schema.innodb_trx</code> на &ldquo;старі&rdquo; транзакції.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- Знайти транзакції, що відкриті довше, ніж розумно (потенційні джерела deadlock/lock contention)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> trx_id, trx_started, trx_mysql_thread_id, trx_query
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> information_schema.innodb_trx
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> trx_started <span style="color:#f92672">&lt;</span> NOW() <span style="color:#f92672">-</span> INTERVAL <span style="color:#ae81ff">60</span> <span style="color:#66d9ef">SECOND</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> trx_started;
+</span></span></code></pre></div><h3 id="138-mysql-не-стартує-після-краху">13.8 MySQL не стартує після краху</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Перше місце для діагностики — error log, не намагатись щось &#34;фіксити&#34; наосліп</span>
+</span></span><span style="display:flex;"><span>tail -n <span style="color:#ae81ff">100</span> /var/log/mysql/error.log
+</span></span><span style="display:flex;"><span>journalctl -u mysql -n <span style="color:#ae81ff">100</span> --no-pager
+</span></span></code></pre></div><ul>
+<li>Якщо в логах <code>InnoDB: Database was not shutdown normally</code> — це нормально, InnoDB сам запускає <strong>crash recovery</strong> через redo log при старті; просто дай йому час (на великих базах може зайняти хвилини).</li>
+<li>Якщо crash recovery сам падає (рідко, але буває при пошкодженому диску) — <code>innodb_force_recovery</code> (від 1 до 6, зростаюча &ldquo;агресивність&rdquo; відмови від частини функціоналу заради можливості хоча б підняти сервер і витягти дамп):</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[mysqld]</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">innodb_force_recovery</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1   # почати з 1, піднімати поступово ТІЛЬКИ якщо менше значення не допомогло</span>
+</span></span></code></pre></div><blockquote>
+<p><strong>WARNING:</strong> <code>innodb_force_recovery &gt;= 4</code> забороняє будь-який запис у базу — використовується ВИКЛЮЧНО для того, щоб встигнути зробити <code>mysqldump</code> і перенести дані на чисту нову інсталяцію. Це режим &ldquo;врятувати дані&rdquo;, не режим &ldquo;продовжити роботу&rdquo;.</p>
+</blockquote>
+<h3 id="139-oom-killer-вбив-mysqld">13.9 OOM killer вбив mysqld</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Підтвердження, що це саме OOM, а не crash самого MySQL</span>
+</span></span><span style="display:flex;"><span>dmesg -T | grep -i <span style="color:#e6db74">&#34;killed process&#34;</span>
+</span></span><span style="display:flex;"><span>journalctl -k --since <span style="color:#e6db74">&#34;-1 hour&#34;</span> | grep -i oom
+</span></span></code></pre></div><p>Найчастіша причина — <code>innodb_buffer_pool_size</code> виставлений занадто близько до фізичної RAM без запасу на OS, connection-буфери (<code>max_connections × per-connection буфери</code>), і файлову кеш-пам&rsquo;ять. Класична математика, яку перевіряють на інтерв&rsquo;ю:</p>
+<pre tabindex="0"><code>RAM на mysqld ≈ innodb_buffer_pool_size
+            + (max_connections × (sort_buffer_size + join_buffer_size + read_buffer_size + ...))
+            + innodb_log_buffer_size
+            + запас для ОС (мінімум 10-20%)
+</code></pre><p>Якщо сервер ще й хостить інші процеси (як у твоєму випадку з HAProxy/Squid поряд) — <code>innodb_buffer_pool_size</code> треба рахувати з урахуванням <strong>усієй</strong> машини, не лише MySQL. Профілактика — <code>MemoryHigh</code>/<code>MemoryMax</code> через systemd drop-in (той самий підхід, що ти вже застосовував для Squid при OOM-інциденті), щоб MySQL не зʼїдав RAM в інших процесів, а отримував контрольовану відмову раніше.</p>
+<h3 id="1310-galera-специфічний-траблшутінг">13.10 Galera-специфічний траблшутінг</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SHOW</span> STATUS <span style="color:#66d9ef">LIKE</span> <span style="color:#e6db74">&#39;wsrep_%&#39;</span>;
+</span></span></code></pre></div><ul>
+<li><strong><code>wsrep_local_state_comment: Donor/Desynced</code></strong> — вузол зараз віддає <strong>SST (State Snapshot Transfer)</strong> новому вузлу (повна копія даних) і тимчасово не приймає трафік на повну. Нормально під час додавання нового вузла, проблема — якщо це триває годинами на проді.</li>
+<li><strong><code>wsrep_flow_control_paused</code> зростає до 1</strong> — кластер штучно гальмує запис, бо один з вузлів не встигає (слабший диск/мережа). Шукати &ldquo;найслабшу ланку&rdquo; саме там, а не на тому вузлі, куди прийшов запит.</li>
+<li><strong>SST провалився</strong> (<code>rsync</code>/<code>xtrabackup</code>-based) — найчастіше через firewall між вузлами (SST йде по окремому порту, не 3306) або недостатньо місця на диску приймаючого вузла.</li>
+<li><strong>Split-brain / кластер втратив кворум</strong> (<code>wsrep_cluster_status: non-Primary</code>) — кластер сам себе переводить у read-only, щоб не допустити розбіжності даних без кворуму; ручне втручання <code>SET GLOBAL wsrep_provider_options='pc.bootstrap=true';</code> потрібне <strong>лише</strong> на ОДНОМУ вузлі, обраному як джерело істини, і тільки після того, як підтверджено, що інші вузли реально мертві (а не просто мережево недосяжні — інакше отримаєш справжній split-brain).</li>
+</ul>
+<h3 id="1311-швидка-шпаргалка-команд-для-інциденту-порядок-виконання">13.11 Швидка шпаргалка команд для інциденту (порядок виконання)</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SHOW</span> REPLICA STATUS<span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>                                  <span style="color:#75715e">-- 1. реплікація жива?
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SHOW</span> <span style="color:#66d9ef">FULL</span> PROCESSLIST;                                 <span style="color:#75715e">-- 2. що зараз виконується
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SHOW</span> ENGINE INNODB STATUS<span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>                             <span style="color:#75715e">-- 3. транзакції, локи, деадлоки
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> information_schema.innodb_trx;            <span style="color:#75715e">-- 4. довгі/підозрілі транзакції
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> sys.innodb_lock_waits;                     <span style="color:#75715e">-- 5. хто кого блокує
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SHOW</span> <span style="color:#66d9ef">GLOBAL</span> STATUS <span style="color:#66d9ef">LIKE</span> <span style="color:#e6db74">&#39;Threads_%&#39;</span>;                      <span style="color:#75715e">-- 6. навантаження по тредах
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SHOW</span> VARIABLES <span style="color:#66d9ef">LIKE</span> <span style="color:#e6db74">&#39;%timeout%&#39;</span>;                           <span style="color:#75715e">-- 7. перевірка таймаутів, якщо щось &#34;висить&#34; довго
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>iostat -x <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">5</span>           <span style="color:#75715e"># 8. диск — bottleneck чи ні</span>
+</span></span><span style="display:flex;"><span>free -h                  <span style="color:#75715e"># 9. памʼять — чи близько до OOM</span>
+</span></span><span style="display:flex;"><span>dmesg -T | tail -50      <span style="color:#75715e"># 10. чи був OOM-кілл нещодавно</span>
+</span></span><span style="display:flex;"><span>journalctl -u mysql -n <span style="color:#ae81ff">200</span> --no-pager   <span style="color:#75715e"># 11. хронологія подій на рівні systemd/ОС</span>
+</span></span></code></pre></div><hr>
+<h2 id="14-чек-лист-що-треба-знати-щоб-впевнено-пройти-dbadevops-інтервю-по-mysql">14. Чек-лист &ldquo;що треба знати, щоб впевнено пройти DBA/DevOps інтерв&rsquo;ю по MySQL&rdquo;</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Пояснити різницю async / semi-sync / sync (Galera, Group Replication) і ціну кожного варіанту</li>
+<li><input disabled="" type="checkbox"> Намалювати на дошці шлях binlog → IO Thread → relay log → SQL Thread</li>
+<li><input disabled="" type="checkbox"> Пояснити, чому MTS (multi-threaded replication) з&rsquo;явився і яку проблему вирішує</li>
+<li><input disabled="" type="checkbox"> GTID vs binlog file:position — переваги при failover</li>
+<li><input disabled="" type="checkbox"> STATEMENT vs ROW vs MIXED binlog format — і конкретний приклад, де STATEMENT ламається</li>
+<li><input disabled="" type="checkbox"> InnoDB: buffer pool, redo log, undo log, doublewrite — навіщо кожен</li>
+<li><input disabled="" type="checkbox"> ACID — як саме кожна буква забезпечується механізмами InnoDB</li>
+<li><input disabled="" type="checkbox"> Isolation levels + чому InnoDB REPEATABLE READ &ldquo;сильніший&rdquo; за стандарт SQL</li>
+<li><input disabled="" type="checkbox"> Row lock vs gap lock vs next-key lock, і що таке deadlock detection</li>
+<li><input disabled="" type="checkbox"> Як читати <code>SHOW REPLICA STATUS</code> і <code>SHOW ENGINE INNODB STATUS</code></li>
+<li><input disabled="" type="checkbox"> Які метрики виносити в Prometheus/Grafana і на що ставити алерти (lag, threads_running, lock waits, hit ratio)</li>
+<li><input disabled="" type="checkbox"> PITR через binlog + бекап, правило 3-2-1</li>
+<li><input disabled="" type="checkbox"> Коли вибрати ProxySQL, коли Vitess, коли просто orchestrator</li>
+<li><input disabled="" type="checkbox"> Базові відмінності MySQL/PostgreSQL/MongoDB/Redis на рівні моделі даних і consistency-гарантій</li>
+<li><input disabled="" type="checkbox"> Знати алгоритм дій при інциденті: знімок стану ДО рестарту → логи → SHOW PROCESSLIST/INNODB STATUS → рішення</li>
+<li><input disabled="" type="checkbox"> Вміти діагностувати: зламана реплікація (IO vs SQL thread), lag, &ldquo;база висить&rdquo;, too many connections, диск заповнюється, повторювані деадлоки, краш-рекавері, OOM, Galera split-brain</li>
+</ul>
+<hr>
+
+</content>
+
+
+
+<p>
+  
+  <a href="//localhost:1313/tags/mysql/">#Mysql</a>
+  
+  <a href="//localhost:1313/tags/dba/">#Dba</a>
+  
+  <a href="//localhost:1313/tags/replication/">#Replication</a>
+  
+  <a href="//localhost:1313/tags/innodb/">#Innodb</a>
+  
+  <a href="//localhost:1313/tags/redis/">#Redis</a>
+  
+  <a href="//localhost:1313/tags/databases/">#Databases</a>
+  
+  <a href="//localhost:1313/tags/devops/">#DevOps</a>
+  
+  <a href="//localhost:1313/tags/interview/">#Interview</a>
+  
+  <a href="//localhost:1313/tags/monitoring/">#Monitoring</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>
