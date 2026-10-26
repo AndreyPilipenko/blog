@@ -21,7 +21,8 @@ description: "Від базових концепцій до підступних
 8. [Rollback і disaster recovery](#rollback)
 9. [Моніторинг і observability пайплайну](#моніторинг-пайплайну)
 10. [GitOps і CD у Kubernetes](#gitops)
-11. [Каверзні питання на співбесіді](#каверзні-питання)
+11. [CI/CD на практиці: середні проєкти](#на-практиці)
+12. [Каверзні питання на співбесіді](#каверзні-питання)
 
 
 ## Що таке CI/CD {#що-таке-cicd}
@@ -63,37 +64,72 @@ Developer push
 - Дає **fast feedback loop**: розробник дізнається про зламаний тест за хвилини, а не на code review через день
 - Зменшує **deployment fear**: якщо деплоїти часто, кожен деплой — дрібна і зрозуміла зміна
 
-###
-```
-Unit тести (модульні) - Що перевіряють? > Один маленький шматок коду в ізоляції.
-Integration тести (інтеграційні) - Що перевіряють? > Що кілька компонентів правильно працюють разом.
-Functional / End-to-End (E2E) тести > Всю систему так, як її бачить користувач.
-Smoke тести > Це маленький набір найважливіших перевірок після деплою.
+### Що саме перевіряється на кожному етапі
 
-Як це зазвичай стоїть в CI/CD
+Перш ніж заглиблюватись у конкретні інструменти, варто розрізнити два шари: **типи тестів** (що саме перевіряється) і **стадії пайплайну** (коли саме це відбувається).
+
+#### Типи тестів
+
+| Тип | Що перевіряє | Швидкість | Де запускається |
+|---|---|---|---|
+| **Unit** (модульні) | Один маленький шматок коду в ізоляції (функція, клас) | Секунди | CI, на кожен push |
+| **Integration** (інтеграційні) | Чи кілька компонентів коректно працюють разом (код + БД, код + зовнішнє API) | Хвилини | CI, часто з тестовою БД у Docker |
+| **E2E / Functional** | Всю систему так, як її бачить користувач (браузер, кліки по кнопках) | Хвилини—десятки хвилин | Staging, після деплою |
+| **Smoke** | Мінімальний набір найважливіших перевірок одразу після деплою | Секунди | Production, одразу після rollout |
+
+#### Lint
+
+Статичний аналіз коду **без його виконання**: стиль, невикористані змінні, очевидні небезпечні патерни. Лінтер не знає, чи код працює правильно, — він знає, чи код написаний акуратно і без типових граблів.
+
+Навіщо це в CI, а не лише в редакторі: щоб жоден код зі стильовими проблемами чи банальними помилками не доходив до рев'ю — рев'юєр витрачає час на логіку, а не на пропущену крапку з комою. Типові інструменти: ESLint / Biome (JS/TS), Ruff (Python, написаний на Rust, дуже швидкий), golangci-lint (Go), RuboCop (Ruby), tflint (Terraform), hadolint (Dockerfile). Lint — найшвидший етап пайплайну (секунди), тому його запускають першим: немає сенсу чекати 10 хвилин на build, якщо впаде тривіальна lint-помилка.
+
+#### Build
+
+Перетворення вихідного коду на артефакт, який реально можна запустити: компіляція (Go, Java, Rust), транспіляція і бандлінг (TypeScript → JS, Webpack/Vite) або збірка Docker image. У строго типізованих мовах сам build вже ловить цілий клас помилок (типи, що не збігаються) ще до жодного тесту.
+
+Build — природний checkpoint: якщо код навіть не компілюється чи не збирається в image, тестувати його немає сенсу.
+
+#### Security scans
+
+Це не один інструмент, а кілька незалежних шарів перевірки:
+
+- **SAST** (статичний аналіз коду на вразливості) — Semgrep, CodeQL, SonarQube. Шукає патерни на кшталт SQL-ін'єкцій чи небезпечної десеріалізації прямо у вихідному коді.
+- **SCA / dependency scanning** (відомі CVE в залежностях) — Dependabot, Snyk, `npm audit`, `pip-audit`. Більшість реальних вразливостей у проді приходить не з вашого коду, а з transitive-залежностей.
+- **Secret scanning** — gitleaks, TruffleHog, вбудоване GitHub secret scanning. Ловить закомічені API-ключі й паролі ще до того, як вони назавжди осядуть в історії Git.
+- **Container/image scanning** — Trivy, Grype, Docker Scout. Сканує вже зібраний image на вразливі системні пакети (openssl, glibc тощо).
+- **IaC scanning** — Checkov, `trivy config` (Aqua Security поступово переносить функціонал окремого tfsec саме сюди). Те саме, але для Terraform/Kubernetes-маніфестів (наприклад, security group відкрита на `0.0.0.0/0`).
+
+На практиці critical/high знахідки зазвичай ламають пайплайн (`exit-code: 1`), а low/medium — лише попереджають, щоб не блокувати розробку через кожну дрібницю.
+
+#### Smoke tests
+
+Найменший можливий набір перевірок одразу після деплою: «застосунок взагалі піднявся?» — `/healthz` повертає 200, застосунок конектиться до БД, ключова сторінка віддається. Це навмисно вузько і швидко (секунди, не хвилини), бо smoke-тести часто є частиною автоматичного рішення про rollback: впав smoke-тест — CD-система одразу відкочує деплой, не чекаючи, поки це помітить людина.
+
+Головна відмінність від E2E: E2E глибоко перевіряє бізнес-логіку, smoke-тест перевіряє лише «сервіс живий і не впав одразу після рестарту».
+
+```
 Developer push
-       |
-       V
+      │
+      ▼
 CI
- ├── Lint
+ ├── Lint                       (секунди)
  ├── Build
- ├── Unit tests (секунди)
- ├── Integration tests (хвилини)
+ ├── Unit tests                 (секунди)
+ ├── Integration tests          (хвилини)
  └── Artifact (Docker image)
-       |
-       V
+      │
+      ▼
 CD
  ├── Deploy Staging
  ├── E2E / Functional tests
  ├── Security scans
- ├── Performance tests (інколи)
- ├── Manual approval (Delivery)
-       |
-       V
+ ├── Manual approval            ← Continuous Delivery
+      │
+      ▼
 Production
-       |
-       V
-Smoke tests
+      │
+      ▼
+Smoke tests → fail = автоматичний rollback
 ```
 
 ## Ключові концепції {#ключові-концепції}
@@ -138,176 +174,77 @@ lint → test → build → security-scan → publish → deploy-staging → smo
 
 ### Анатомія workflow-файлу
 
+Нижче — типовий workflow з трьома послідовними jobs (`lint` → `test` → `build-and-push`). Кілька рішень тут варто помітити окремо, бо саме вони — типові питання на співбесіді:
+
+- **`needs: lint` і `needs: test`** — явний ланцюжок залежностей: немає сенсу гаяти runner-хвилини на build, якщо lint уже впав.
+- **`strategy.matrix`** у job `test` — один набір steps виконується паралельно для кількох версій Python; GitHub створює по одному job на кожну комбінацію.
+- **`actions/cache@v4`** з ключем на основі хешу `requirements.txt` — якщо залежності не змінились, `pip install` бере пакети з кешу замість повторного завантаження з PyPI (економить 2-3 хвилини на кожен run).
+- **`permissions: packages: write`** — явне мінімально необхідне право замість дефолтного токена з широким доступом.
+- **Тег image — `github.sha`, а не `latest`**: SHA незмінний, завжди можна знайти, який саме коміт лежить у якому image; `latest` постійно перезаписується і ускладнює rollback.
+- **`push: ${{ github.ref == 'refs/heads/main' }}`** — image збирається завжди (перевіряємо, що Dockerfile валідний), але пушиться в registry тільки з main, щоб не засмічувати його тимчасовими образами з PR.
+
 ```yaml
-# .github/workflows/ci.yml          # шлях до файлу — GitHub шукає workflows саме тут
+# .github/workflows/ci.yml
+name: CI Pipeline
 
-name: CI Pipeline                   # назва, відображається в UI вкладки Actions
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
-# ─── ТРИГЕРИ ──────────────────────────────────────────────────────────────────
-on:                                 # блок "коли запускати цей workflow"
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
-  push:                             # тригер: хтось зробив git push
-    branches: [main, develop]       # але тільки якщо push йде в ці гілки
-                                    # push у feature/xyz — НЕ запустить workflow
-
-  pull_request:                     # тригер: відкрили / оновили PR
-    branches: [main]                # тільки якщо PR цілиться в main
-                                    # це запускає CI на кожен новий коміт у PR
-
-  workflow_dispatch:                # тригер: ручний запуск через UI або API
-                                    # без параметрів — просто кнопка "Run workflow"
-
-# ─── ГЛОБАЛЬНІ ЗМІННІ ─────────────────────────────────────────────────────────
-env:                                # змінні доступні у ВСІХ jobs цього workflow
-  REGISTRY: ghcr.io                 # адреса GitHub Container Registry
-                                    # ghcr.io — вбудований в GitHub, не треба
-                                    # платити за DockerHub або піднімати свій
-
-  IMAGE_NAME: ${{ github.repository }}  # контекст github.repository повертає
-                                        # "owner/repo-name", наприклад "andrii/myapp"
-                                        # буде використано як частина тегу image
-
-# ─── JOBS ─────────────────────────────────────────────────────────────────────
-jobs:                               # список jobs; за замовчуванням виконуються
-                                    # ПАРАЛЕЛЬНО, якщо не вказано needs
-
-# ══════════════════════════════════════════════════════════════════════════════
-# JOB 1: LINT
-# ══════════════════════════════════════════════════════════════════════════════
-  lint:                             # ім'я job (довільне, але унікальне в межах workflow)
-    runs-on: ubuntu-latest          # тип runner'а; ubuntu-latest = свіжа Ubuntu VM
-                                    # GitHub підіймає чисту VM під кожен run
-                                    # альтернативи: windows-latest, macos-latest,
-                                    # або self-hosted для власних машин
-
-    steps:                          # кроки виконуються ПОСЛІДОВНО зверху вниз
-
-      - uses: actions/checkout@v4   # крок 1: клонує репо в робочу директорію VM
-                                    # без цього кроку — файлів коду немає взагалі
-                                    # @v4 — закріплена мажорна версія action
-                                    # НІКОЛИ не пишіть @latest — сьогодні може
-                                    # зламати пайплайн без жодних змін з вашого боку
-
-      - uses: actions/setup-python@v5   # крок 2: встановлює Python на runner
-        with:                           # блок параметрів для цього action
-          python-version: '3.12'        # яку версію Python встановити
-                                        # без цього кроку — береться системний Python
-                                        # VM (може бути 3.10 або будь-який інший)
-
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - run: pip install ruff && ruff check .
-        # крок 3: shell команда (bash за замовчуванням)
-        # pip install ruff      — встановлює ruff (швидкий Python лінтер на Rust)
-        # && ruff check .       — запускає лінтер по всіх .py файлах
-        # якщо ruff знайде помилки — повертає exit code != 0
-        # ненульовий exit code = крок вважається failed = весь job failed
 
-# ══════════════════════════════════════════════════════════════════════════════
-# JOB 2: TEST
-# ══════════════════════════════════════════════════════════════════════════════
   test:
     runs-on: ubuntu-latest
-
-    needs: lint                     # ЗАЛЕЖНІСТЬ: цей job стартує тільки після того,
-                                    # як job "lint" завершився УСПІШНО
-                                    # якщо lint впав — test навіть не стартує
-                                    # це заощаджує хвилини runner-часу
-
-    strategy:                       # блок стратегії запуску job
-      matrix:                       # matrix = запустити job кілька разів
-                                    # з різними комбінаціями змінних
+    needs: lint
+    strategy:
+      matrix:
         python-version: ['3.11', '3.12']
-        # результат: GitHub створить 2 паралельних job:
-        #   test (3.11)
-        #   test (3.12)
-        # якщо додати ще одну вісь — буде декартовий добуток:
-        #   os: [ubuntu, windows] + python: [3.11, 3.12] = 4 jobs
-
     steps:
-      - uses: actions/checkout@v4   # знову клонуємо — кожен matrix job це окрема VM
-                                    # стан між jobs НЕ зберігається автоматично
-
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          # ${{ matrix.python-version }} — підставляє поточне значення з matrix
-          # для першого job = '3.11', для другого = '3.12'
-          # так один набір steps працює для всіх версій
-
-      - name: Cache pip              # name — людська назва кроку в UI (опціонально,
-                                    # але рятує коли треба знайти де впало)
-        uses: actions/cache@v4      # action для кешування директорій між runs
+      - name: Cache pip
+        uses: actions/cache@v4
         with:
-          path: ~/.cache/pip        # що кешувати: директорія pip cache
-                                    # pip завантажені пакети зберігає саме тут
-
+          path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          # ключ кешу — рядок який ідентифікує цей конкретний кеш
-          # runner.os       → "Linux" (щоб не мікшувати кеші різних ОС)
-          # hashFiles(...)  → SHA256 хеш файлу requirements.txt
-          # якщо requirements.txt не змінився — хеш той самий → кеш HIT
-          # якщо додали нову залежність → хеш інший → кеш MISS → pip качає заново
-          # без кешу: pip install може займати 2-3 хв на кожен run
-
       - run: pip install -r requirements.txt && pytest --cov
-        # pip install -r requirements.txt  — встановлює залежності з файлу
-        #   якщо кеш HIT — pip не качає з інтернету, бере локально (секунди)
-        #   якщо кеш MISS — качає з PyPI (хвилини)
-        # pytest --cov                     — запускає тести з coverage
-        #   --cov генерує звіт покриття коду
-        #   падіння будь-якого тесту = exit code 1 = job failed
 
-# ══════════════════════════════════════════════════════════════════════════════
-# JOB 3: BUILD AND PUSH
-# ══════════════════════════════════════════════════════════════════════════════
   build-and-push:
     runs-on: ubuntu-latest
-
-    needs: test                     # стартує тільки після ВСІХ matrix jobs "test"
-                                    # тобто і 3.11, і 3.12 мають пройти успішно
-
-    permissions:                    # явне обмеження прав GITHUB_TOKEN для цього job
-                                    # за замовчуванням токен може все — це небезпечно
-      contents: read                # дозвіл читати код репозиторію (для checkout)
-      packages: write               # дозвіл писати в GitHub Packages (ghcr.io)
-                                    # без цього рядка docker push поверне 403
-
+    needs: test
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - uses: actions/checkout@v4   # клонуємо код — потрібен Dockerfile
-
-      - name: Log in to GHCR        # логінимось у container registry
+      - uses: actions/checkout@v4
+      - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}    # ghcr.io (з глобального env вгорі)
-          username: ${{ github.actor }}    # github.actor = логін того, хто зробив push
-                                           # наприклад "andrii"
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          # GITHUB_TOKEN — спеціальний секрет, який GitHub АВТОМАТИЧНО генерує
-          # для кожного workflow run і видаляє після його завершення
-          # не треба створювати вручну — він завжди є
-          # scope обмежений правами з блоку permissions вище
-          # тому packages: write і дає нам право пушити в ghcr.io
-
       - name: Build and push
-        uses: docker/build-push-action@v5  # action для build + push в одному кроці
+        uses: docker/build-push-action@v5
         with:
           push: ${{ github.ref == 'refs/heads/main' }}
-          # умовний push: будуємо image завжди, але пушимо ТІЛЬКИ якщо
-          # це push у гілку main (refs/heads/main)
-          # якщо це PR або push у develop — push: false
-          # навіщо: в PR хочемо перевірити що image будується без помилок,
-          # але не забруднювати registry тимчасовими образами
-
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          # фінальний тег image, наприклад:
-          # ghcr.io/andrii/myapp:a3f8c91d...
-          #
-          # env.REGISTRY    → ghcr.io
-          # env.IMAGE_NAME  → andrii/myapp
-          # github.sha      → повний SHA коміту (40 символів)
-          #
-          # чому SHA, а не latest?
-          # SHA незмінний — завжди можна знайти який коміт в якому image
-          # latest постійно перезаписується — важко відкотити і дебажити
 ```
 
 ### Важливі особливості GitHub Actions
@@ -413,7 +350,7 @@ pipeline {
                     post {
                         always {
                             junit 'test-results/**/*.xml'
-                            publishCoverage adapters: [coberturaAdapter('coverage/cobertura-coverage.xml')]
+                            recordCoverage tools: [[parser: 'COBERTURA', pattern: 'coverage/cobertura-coverage.xml']]
                         }
                     }
                 }
@@ -558,8 +495,9 @@ pipeline {
   with:
     path: ~/.npm
     key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+    # fallback, якщо точного ключа немає — береться найближчий застарілий кеш
     restore-keys: |
-      ${{ runner.os }}-npm-   # fallback: використовуємо застарілий кеш
+      ${{ runner.os }}-npm-
 ```
 
 **Підводний камінь**: якщо ключ містить хеш файлу залежностей — при оновленні `package-lock.json` новий кеш будується з нуля. `restore-keys` дозволяє взяти найближчий старий кеш і зекономити час.
@@ -635,7 +573,7 @@ GitHub автоматично маскує значення секретів у 
 ### Least privilege у pipeline
 
 - Кожен job повинен мати тільки ті permissions, які йому потрібні
-- GITHUB_TOKEN за замовчуванням тепер `read-only` (можна змінити в налаштуваннях репо)
+- GITHUB_TOKEN має дефолт `read-only` для репозиторіїв і організацій, створених після 2 лютого 2023 року; старіші репо успадкували попередній дефолт `read-write`, якщо адмін не змінив це вручну
 - Self-hosted runners не запускають код з fork PR без explicit approval
 
 ---
@@ -681,7 +619,7 @@ spec:
 
 ### Rolling Update
 
-Поступова заміна старих інстансів новими. Kubernetes rolling update за замовчуванням:
+Поступова заміна старих інстансів новими. Дефолт Kubernetes Deployment — `maxSurge: 25%`, `maxUnavailable: 25%`; для сервісів, де недоступність критична, це варто затягнути вручну:
 
 ```yaml
 spec:
@@ -689,7 +627,7 @@ spec:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 1         # max нових pods понад desired
-      maxUnavailable: 0   # жоден pod не може бути недоступний
+      maxUnavailable: 0   # жоден pod не може бути недоступний під час rollout
 ```
 
 ### Feature Flags
@@ -719,7 +657,7 @@ kubectl rollout undo deployment/my-app --to-revision=3
 
 **2. Revert commit + re-deploy**
 ```bash
-git revert HEAD~1 --no-edit
+git revert HEAD --no-edit
 git push origin main   # тригерить CI/CD
 ```
 
@@ -746,7 +684,7 @@ git push origin main   # тригерить CI/CD
 |---------|-----------|-----------------|
 | **Deployment Frequency** | Як часто деплоїте в прод | Кілька разів на день |
 | **Lead Time for Changes** | Від коміту до прод | < 1 години |
-| **Change Failure Rate** | % деплоїв, що спричинили інцидент | < 5% |
+| **Change Failure Rate** | % деплоїв, що спричинили інцидент | 0–15% (у різних звітах DORA поріг трохи відрізняється рік до року) |
 | **Time to Restore** | Час відновлення після інциденту | < 1 години |
 
 ### Сповіщення
@@ -818,6 +756,43 @@ spec:
 ```
 
 **Image Updater** — ArgoCD Image Updater стежить за новими тегами в registry і автоматично оновлює маніфести в Git при появі нового image.
+
+---
+
+## CI/CD на практиці: середні проєкти {#на-практиці}
+
+На співбесідах і в документації CI/CD виглядає як ідеальна лінійна схема. У реальній команді на 10-50 інженерів усе трохи приземленіше — ось кілька патернів, які справді використовують зараз.
+
+### Типовий робочий цикл
+
+- **Trunk-based development** з короткоживучими feature-гілками (1-2 дні максимум) замість довгих release-гілок — менше merge-конфліктів і менше «інтеграційного пекла» наприкінці спринту.
+- PR відкрили → CI прогнав lint + unit-тести + build за кілька хвилин, розробник побачив результат, не виходячи з циклу розробки.
+- Merge в main → автодеплой на staging. Продакшн — за ручним апрувом, або автоматично, якщо продукт і покриття тестами це дозволяють (Continuous Deployment).
+- **Feature flags** (LaunchDarkly, Unleash або власна реалізація на Redis) розділяють «задеплоїти» і «показати користувачам» — код може лежати в проді вимкненим тижнями, поки фіча не готова.
+
+### Приклад 1: preview-середовище на кожен PR
+
+Один з найпопулярніших патернів останніх років у фронтенд- і fullstack-командах: кожен відкритий PR автоматично отримує власну тимчасову URL-адресу із задеплоєною версією коду саме з цієї гілки. Vercel, Netlify чи Railway роблять це з коробки; для Kubernetes-стеку — через ArgoCD ApplicationSets або спеціалізовані інструменти на кшталт Uffizzi. Дизайнер чи продакт-менеджер клікає по лінку прямо в PR і бачить результат наживо, без локального запуску проєкту. Коли PR закривається — середовище видаляється автоматично.
+
+### Приклад 2: progressive delivery з автоматичним rollback за метриками
+
+Canary-деплой (див. [розділ про стратегії деплою](#стратегії-деплою)) можна зробити ще на крок розумнішим: Flagger або Argo Rollouts самі опитують Prometheus під час canary-фази і автоматично відкочують деплой, якщо error rate чи latency нової версії перевищує заданий поріг, — без жодного ручного рішення. Про проблему дізнаються вже постфактум зі Slack-сповіщення «canary rolled back automatically», а не серед ночі з пейджера.
+
+### Приклад 3: автоматичне рев'ю інфраструктурних змін
+
+Для Terraform-коду типовий патерн — Atlantis або вбудована VCS-інтеграція Terraform Cloud: при відкритті PR зі змінами в `.tf`-файлах бот автоматично прогонює `terraform plan` і публікує результат прямо в коментар до PR. Ревʼювер бачить, що саме зміниться в інфраструктурі, ще до апруву — а не дізнається про це вже після `terraform apply`.
+
+### Приклад 4: один шаблон workflow на всі репозиторії
+
+У команді з 20+ мікросервісами ніхто не підтримує 20 копій однакового YAML. Натомість — один **reusable workflow** (див. [розділ GitHub Actions](#github-actions)) у спільному репозиторії, який кожен сервіс викликає з парою параметрів. Оновити логіку security-сканування для всієї компанії — це один PR в один файл, а не 20 окремих.
+
+### Автоматизація залежностей
+
+Renovate або Dependabot самостійно відкривають PR-и на оновлення залежностей, і цей PR проходить той самий CI, що й PR від людини. Патчі й мінорні оновлення з зеленим CI часто auto-merge'яться без участі людини — це знімає левову частку рутинного «security patch» навантаження, яке раніше робили вручну раз на квартал.
+
+### Чому так, а не «ідеальний» пайплайн з книжки
+
+Для медіанної продуктової команди швидкість фідбеку важливіша за повноту покриття: PR-пайплайн, що триває 15+ хвилин, розробники починають обходити (`--no-verify`, merge без очікування CI). Тому на практиці важкі перевірки (повний E2E-сьют, performance-тести) частіше ганяють не на кожен PR, а на merge в main або за розкладом (nightly), а сам PR-пайплайн тримають максимально тонким: lint, unit-тести, build.
 
 ---
 
@@ -957,7 +932,7 @@ jobs:
 A: Флакі тести — окремий клас проблем. Підходи:
 
 1. **Quarantine** — позначити флакі тести окремим тегом, запускати в окремому job з `continue-on-error: true`, не блокувати merge
-2. **Retry** — перезапускати тільки флакі тести (pytest-rerunfailures, jest --testRetrys)
+2. **Retry** — перезапускати тільки флакі тести (pytest-rerunfailures для pytest, `jest.retryTimes(n)` для Jest на раннері jest-circus)
 3. **Tracking** — вести метрики по флакі (тест A падає в 15% runs) і фіксити найгірших
 4. **Root cause** — флакість зазвичай від: race conditions, залежності від часу, спільного стану між тестами, зовнішніх HTTP-запитів (мокати їх)
 
@@ -1043,7 +1018,7 @@ lifecycle:
     exec:
       command: ["/bin/sh", "-c", "sleep 15"]
 ```
-4. **PodDisruptionBudget** — гарантує, що мінімум N pods доступні під час rolling update:
+4. **PodDisruptionBudget** — захищає від *voluntary disruptions* через Eviction API (`kubectl drain`, оновлення вузлів, cluster-autoscaler), гарантуючи мінімум N доступних pods. На сам rolling update від Deployment-контролера PDB не впливає — той керується `maxSurge`/`maxUnavailable`, але PDB критичний, якщо вузол із вашим подом «зноситься» саме в момент деплою:
 ```yaml
 spec:
   minAvailable: 2

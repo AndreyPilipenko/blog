@@ -1,502 +1,76 @@
-<!DOCTYPE html>
-<html lang="en-us">
-
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
-  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Blog | Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</title>
-<meta name="title" content="Blog" />
-<meta name="description" content="" />
-<meta name="keywords" content="career,cloud,databases,devops,infrastructure,interview-prep,linux,monitoring,ai,alertmanager,aws,bash,ci/cd,corosync,databases,dba,debug,devops,git,github-actions,grafana,ha,infrastructure,innodb,interview,jenkins,kernel,leetcode,linux,ml,monitoring,mysql,observability,programming,prometheus,proxmox,python,redis,replication,sre,sysadmin,udev,virtualization,алгоритми," />
-
-
-<meta property="og:title" content="Blog" />
-<meta property="og:description" content="" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="//localhost:1313/blog/" />
-
-
-
-
-<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Blog"/>
-<meta name="twitter:description" content=""/>
-
-
-
-<meta itemprop="name" content="Blog">
-<meta itemprop="description" content="">
-<meta name="referrer" content="no-referrer-when-downgrade" />
-
-  <link rel="alternate" type="application/rss+xml" href="//localhost:1313/blog/index.xml" title="Practical SRE & DevOps guides. Linux debugging. Lifestyle" />
-  <style>
-  :root {
-    --width: 720px;
-    --font-main: Verdana, sans-serif;
-    --font-secondary: Verdana, sans-serif;
-    --font-scale: 1em;
-    --background-color: #fff;
-    --heading-color: #222;
-    --text-color: #444;
-    --link-color: #3273dc;
-    --visited-color: #8b6fcb;
-    --blockquote-color: #222;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background-color: #01242e;
-      --heading-color: #eee;
-      --text-color: #ddd;
-      --link-color: #8cc2dd;
-      --visited-color: #8b6fcb;
-      --blockquote-color: #ccc;
-    }
-  }
-
-  body {
-    font-family: var(--font-secondary);
-    font-size: var(--font-scale);
-    margin: auto;
-    padding: 20px;
-    max-width: var(--width);
-    text-align: left;
-    background-color: var(--background-color);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.5;
-    color: var(--text-color);
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-main);
-    color: var(--heading-color);
-  }
-
-  a {
-    color: var(--link-color);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  nav a {
-    margin-right: 8px;
-  }
-
-  strong,
-  b {
-    color: var(--heading-color);
-  }
-
-  button {
-    margin: 0;
-    cursor: pointer;
-  }
-
-  time {
-    font-family: monospace;
-    font-style: normal;
-    font-size: 15px;
-  }
-
-  main {
-    line-height: 1.6;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  hr {
-    border: 0;
-    border-top: 1px dashed;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  code {
-    font-family: monospace;
-    padding: 2px;
-    border-radius: 3px;
-  }
-
-  blockquote {
-    border-left: 1px solid #999;
-    color: var(--blockquote-color);
-    padding-left: 20px;
-    font-style: italic;
-  }
-
-  footer {
-    padding: 25px 0;
-    text-align: center;
-  }
-
-  .title:hover {
-    text-decoration: none;
-  }
-
-  .title h1 {
-    font-size: 1.5em;
-  }
-
-  .inline {
-    width: auto !important;
-  }
-
-  .highlight,
-  .code {
-    border-radius: 3px;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    overflow-x: auto;
-  }
-
-   
-  ul.blog-posts {
-    list-style-type: none;
-    padding: unset;
-  }
-
-  ul.blog-posts li {
-    display: flex;
-  }
-
-  ul.blog-posts li span {
-    flex: 0 0 130px;
-  }
-
-  ul.blog-posts li a:visited {
-    color: var(--visited-color);
-  }
-
-</style>
-
-</head>
-
-<body>
-  <header><a href="/" class="title">
-  <h2>Practical SRE &amp; DevOps guides. Linux debugging. Lifestyle</h2>
-</a>
-<nav>
-<a href="/">Home</a>
-
-<a href="/blog/">Blog</a>
-
-</nav>
-</header>
-  <main>
-<content>
-  
-  <ul class="blog-posts">
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2026-06-18'>
-            18 Jun, 2026
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/mysql-replication-dba-guide/">MySQL Replication і DBA: повний гайд для DevOps — типи реплікації, InnoDB, моніторинг, Redis</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2026-06-18'>
-            18 Jun, 2026
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/ai-pazl/">AI як великий пазл: нейромережі, CUDA-ядра, трансформери.</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2026-06-16'>
-            16 Jun, 2026
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/linux-virtual-filesystems/">Linux inside: what&#39;s /dev, /proc, /sys</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2026-06-14'>
-            14 Jun, 2026
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/ci-cd/">CI/CD: guide</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2026-06-14'>
-            14 Jun, 2026
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/bash/">eBash</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2026-06-14'>
-            14 Jun, 2026
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/algoritmy/">Алгоритми та структури даних</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2026-06-04'>
-            04 Jun, 2026
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/proxmox-cluster-guide/">Proxmox VE Cluster: від теорії до продакшену</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2026-05-29'>
-            29 May, 2026
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/linux-distros-comparison/">Linux Distros Comparison</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2026-05-02'>
-            02 May, 2026
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/four-golden-signals/">Four Golden Signals</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2026-01-04'>
-            04 Jan, 2026
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/kubernetes-cheatsheet/">Kubernetes Cheatsheet</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2025-07-01'>
-            01 Jul, 2025
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/raid-deep-dive/">RAID від A до Z: рівні, парність, mdadm, silent corruption і ZFS</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2025-06-16'>
-            16 Jun, 2025
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/aws-guide/">AWS для DevOps</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2025-06-16'>
-            16 Jun, 2025
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/docker-deep-dive/">Docker зсередини: containerd, runc, образи, мережі</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2025-06-14'>
-            14 Jun, 2025
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/interview/">Підготовка до співбесід: глибоке розуміння алгоритмів, структур даних та архітектури</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2025-02-01'>
-            01 Feb, 2025
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/top-linux-commands/">Top Linux Commands</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2023-06-16'>
-            16 Jun, 2023
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/python/">Python з поясненнями та прикладами</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2022-06-14'>
-            14 Jun, 2022
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/git-workflow/">Git зсередини: GitOps, Git Flow, Cherry-pick, Trunk-based</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='1993-02-17'>
-            17 Feb, 1993
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/premetheus-grafana/">Prometheus &#43; Grafana &#43; Alertmanager</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='0001-01-01'>
-            01 Jan, 0001
-          </time>
-        </i>
-      </span>
-      <a href="//localhost:1313/blog/linux-load/">Top commands to diagnose Linux system load</a>
-    </li>
-    
-  </ul>
-  
-  <small>
-    <div>
-      
-      <a href="//localhost:1313/tags/ai/">#Ai</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/alertmanager/">#Alertmanager</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/aws/">#Aws</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/bash/">#Bash</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/ci/cd/">#Ci/Cd</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/corosync/">#Corosync</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/databases/">#Databases</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/dba/">#Dba</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/debug/">#Debug</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/devops/">#DevOps</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/git/">#Git</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/github-actions/">#Github-Actions</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/grafana/">#Grafana</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/ha/">#HA</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/infrastructure/">#Infrastructure</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/innodb/">#Innodb</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/interview/">#Interview</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/jenkins/">#Jenkins</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/kernel/">#Kernel</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/leetcode/">#Leetcode</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/linux/">#Linux</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/ml/">#Ml</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/monitoring/">#Monitoring</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/mysql/">#Mysql</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/observability/">#Observability</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/programming/">#Programming</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/prometheus/">#Prometheus</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/proxmox/">#Proxmox</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/python/">#Python</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/redis/">#Redis</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/replication/">#Replication</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/sre/">#Sre</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/sysadmin/">#Sysadmin</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/udev/">#Udev</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/virtualization/">#Virtualization</a>&nbsp;
-      
-      <a href="//localhost:1313/tags/%D0%B0%D0%BB%D0%B3%D0%BE%D1%80%D0%B8%D1%82%D0%BC%D0%B8/">#Алгоритми</a>&nbsp;
-      
-    </div>
-  </small>
-  
-</content>
-
-  </main>
-  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
-</footer>
-
-  
-</body>
-
-</html>
+<!doctype html><html lang=en-us><head><meta http-equiv=X-Clacks-Overhead content="GNU Terry Pratchett"><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Blog | Practical SRE & DevOps guides. Linux debugging. Lifestyle</title>
+<meta name=title content="Blog"><meta name=description content><meta name=keywords content="architecture,career,cloud,databases,devops,infrastructure,interview-prep,linux,monitoring,ai,alertmanager,apache,architecture,aws,bash,cache,ci/cd,corosync,databases,dba,debug,devops,git,github-actions,grafana,ha,iac,infrastructure,innodb,interview,jenkins,k8s,kernel,kubernetes,leetcode,linux,microservices,ml,monitoring,mysql,networking,nginx,observability,programming,prometheus,proxmox,python,redis,replication,soa,sre,sysadmin,system design,terraform,udev,valkey,virtualization,алгоритми,"><meta property="og:title" content="Blog"><meta property="og:description" content><meta property="og:type" content="website"><meta property="og:url" content="/blog/"><meta name=twitter:card content="summary"><meta name=twitter:title content="Blog"><meta name=twitter:description content><meta itemprop=name content="Blog"><meta itemprop=description content><meta name=referrer content="no-referrer-when-downgrade"><link rel=alternate type=application/rss+xml href=/blog/index.xml title="Practical SRE & DevOps guides. Linux debugging. Lifestyle"><style>:root{--width:720px;--font-main:Verdana, sans-serif;--font-secondary:Verdana, sans-serif;--font-scale:1em;--background-color:#fff;--heading-color:#222;--text-color:#444;--link-color:#3273dc;--visited-color:#8b6fcb;--blockquote-color:#222}@media(prefers-color-scheme:dark){:root{--background-color:#01242e;--heading-color:#eee;--text-color:#ddd;--link-color:#8cc2dd;--visited-color:#8b6fcb;--blockquote-color:#ccc}}body{font-family:var(--font-secondary);font-size:var(--font-scale);margin:auto;padding:20px;max-width:var(--width);text-align:left;background-color:var(--background-color);word-wrap:break-word;overflow-wrap:break-word;line-height:1.5;color:var(--text-color)}h1,h2,h3,h4,h5,h6{font-family:var(--font-main);color:var(--heading-color)}a{color:var(--link-color);cursor:pointer;text-decoration:none}a:hover{text-decoration:underline}nav a{margin-right:8px}strong,b{color:var(--heading-color)}button{margin:0;cursor:pointer}time{font-family:monospace;font-style:normal;font-size:15px}main{line-height:1.6}table{width:100%}hr{border:0;border-top:1px dashed}img{max-width:100%}code{font-family:monospace;padding:2px;border-radius:3px}blockquote{border-left:1px solid #999;color:var(--blockquote-color);padding-left:20px;font-style:italic}footer{padding:25px 0;text-align:center}.title:hover{text-decoration:none}.title h1{font-size:1.5em}.inline{width:auto!important}.highlight,.code{border-radius:3px;margin-block-start:1em;margin-block-end:1em;overflow-x:auto}ul.blog-posts{list-style-type:none;padding:unset}ul.blog-posts li{display:flex}ul.blog-posts li span{flex:0 0 130px}ul.blog-posts li a:visited{color:var(--visited-color)}</style></head><body><header><a href=/ class=title><h2>Practical SRE & DevOps guides. Linux debugging. Lifestyle</h2></a><nav><a href=/>Home</a>
+<a href=/blog/>Blog</a></nav></header><main><content><ul class=blog-posts><li><span><i><time datetime=2026-10-25>25 Oct, 2026
+</time></i></span><a href=/blog/system-design-architecture-styles/>Моноліт, мікросервіси, SOA та інші архітектурні стилі простими словами</a></li><li><span><i><time datetime=2026-10-20>20 Oct, 2026
+</time></i></span><a href=/blog/kubernetes-glossary/>Kubernetes словник: усі ключові визначення від Pod до Gateway API</a></li><li><span><i><time datetime=2026-10-17>17 Oct, 2026
+</time></i></span><a href=/blog/redis-guide/>Redis від А до Я: як він працює, пам'ять, persistence, реплікація, Cluster і каверзні питання на співбесіді</a></li><li><span><i><time datetime=2026-10-16>16 Oct, 2026
+</time></i></span><a href=/blog/terraform-guide/>Terraform від А до Я: як він працює, state, модулі, best practices і каверзні питання на співбесіді</a></li><li><span><i><time datetime=2026-10-16>16 Oct, 2026
+</time></i></span><a href=/blog/vlan-vxlan/>VLAN і VXLAN простими словами (і до чого тут MTU)</a></li><li><span><i><time datetime=2026-10-10>10 Oct, 2026
+</time></i></span><a href=/blog/nginx-guide/>Nginx від А до Я: архітектура, різниця з Apache, location, proxy, балансування, TLS і траблшутінг</a></li><li><span><i><time datetime=2026-06-18>18 Jun, 2026
+</time></i></span><a href=/blog/mysql-replication-dba-guide/>MySQL Replication і DBA: повний гайд для DevOps — типи реплікації, InnoDB, моніторинг, Redis</a></li><li><span><i><time datetime=2026-06-18>18 Jun, 2026
+</time></i></span><a href=/blog/ai-pazl/>AI як великий пазл: нейромережі, CUDA-ядра, трансформери.</a></li><li><span><i><time datetime=2026-06-16>16 Jun, 2026
+</time></i></span><a href=/blog/linux-virtual-filesystems/>Linux inside: what's /dev, /proc, /sys</a></li><li><span><i><time datetime=2026-06-14>14 Jun, 2026
+</time></i></span><a href=/blog/ci-cd/>CI/CD: guide</a></li><li><span><i><time datetime=2026-06-14>14 Jun, 2026
+</time></i></span><a href=/blog/bash/>eBash</a></li><li><span><i><time datetime=2026-06-14>14 Jun, 2026
+</time></i></span><a href=/blog/algoritmy/>Алгоритми та структури даних</a></li><li><span><i><time datetime=2026-06-04>04 Jun, 2026
+</time></i></span><a href=/blog/proxmox-cluster-guide/>Proxmox VE Cluster: від теорії до продакшену</a></li><li><span><i><time datetime=2026-05-29>29 May, 2026
+</time></i></span><a href=/blog/linux-distros-comparison/>Linux Distros Comparison</a></li><li><span><i><time datetime=2026-05-02>02 May, 2026
+</time></i></span><a href=/blog/four-golden-signals/>Four Golden Signals</a></li><li><span><i><time datetime=2026-01-04>04 Jan, 2026
+</time></i></span><a href=/blog/kubernetes-cheatsheet/>Kubernetes Cheatsheet</a></li><li><span><i><time datetime=2025-07-01>01 Jul, 2025
+</time></i></span><a href=/blog/raid-deep-dive/>RAID від A до Z: рівні, парність, mdadm, silent corruption і ZFS</a></li><li><span><i><time datetime=2025-06-16>16 Jun, 2025
+</time></i></span><a href=/blog/aws-guide/>AWS для DevOps</a></li><li><span><i><time datetime=2025-06-16>16 Jun, 2025
+</time></i></span><a href=/blog/docker-deep-dive/>Docker зсередини: containerd, runc, образи, мережі</a></li><li><span><i><time datetime=2025-06-14>14 Jun, 2025
+</time></i></span><a href=/blog/interview/>Підготовка до співбесід: глибоке розуміння алгоритмів, структур даних та архітектури</a></li><li><span><i><time datetime=2025-02-01>01 Feb, 2025
+</time></i></span><a href=/blog/top-linux-commands/>Top Linux Commands</a></li><li><span><i><time datetime=2023-06-16>16 Jun, 2023
+</time></i></span><a href=/blog/python/>Python з поясненнями та прикладами</a></li><li><span><i><time datetime=2022-06-14>14 Jun, 2022
+</time></i></span><a href=/blog/git-workflow/>Git зсередини: GitOps, Git Flow, Cherry-pick, Trunk-based</a></li><li><span><i><time datetime=1993-02-17>17 Feb, 1993
+</time></i></span><a href=/blog/premetheus-grafana/>Prometheus + Grafana + Alertmanager</a></li><li><span><i><time datetime=0001-01-01>01 Jan, 0001
+</time></i></span><a href=/blog/linux-load/>Top commands to diagnose Linux system load</a></li></ul><small><div><a href=/tags/ai/>#Ai</a>&nbsp;
+<a href=/tags/alertmanager/>#Alertmanager</a>&nbsp;
+<a href=/tags/apache/>#Apache</a>&nbsp;
+<a href=/tags/architecture/>#Architecture</a>&nbsp;
+<a href=/tags/aws/>#Aws</a>&nbsp;
+<a href=/tags/bash/>#Bash</a>&nbsp;
+<a href=/tags/cache/>#Cache</a>&nbsp;
+<a href=/tags/ci/cd/>#Ci/Cd</a>&nbsp;
+<a href=/tags/corosync/>#Corosync</a>&nbsp;
+<a href=/tags/databases/>#Databases</a>&nbsp;
+<a href=/tags/dba/>#Dba</a>&nbsp;
+<a href=/tags/debug/>#Debug</a>&nbsp;
+<a href=/tags/devops/>#Devops</a>&nbsp;
+<a href=/tags/git/>#Git</a>&nbsp;
+<a href=/tags/github-actions/>#Github-Actions</a>&nbsp;
+<a href=/tags/grafana/>#Grafana</a>&nbsp;
+<a href=/tags/ha/>#HA</a>&nbsp;
+<a href=/tags/iac/>#Iac</a>&nbsp;
+<a href=/tags/infrastructure/>#Infrastructure</a>&nbsp;
+<a href=/tags/innodb/>#Innodb</a>&nbsp;
+<a href=/tags/interview/>#Interview</a>&nbsp;
+<a href=/tags/jenkins/>#Jenkins</a>&nbsp;
+<a href=/tags/k8s/>#K8s</a>&nbsp;
+<a href=/tags/kernel/>#Kernel</a>&nbsp;
+<a href=/tags/kubernetes/>#Kubernetes</a>&nbsp;
+<a href=/tags/leetcode/>#Leetcode</a>&nbsp;
+<a href=/tags/linux/>#Linux</a>&nbsp;
+<a href=/tags/microservices/>#Microservices</a>&nbsp;
+<a href=/tags/ml/>#Ml</a>&nbsp;
+<a href=/tags/monitoring/>#Monitoring</a>&nbsp;
+<a href=/tags/mysql/>#Mysql</a>&nbsp;
+<a href=/tags/networking/>#Networking</a>&nbsp;
+<a href=/tags/nginx/>#Nginx</a>&nbsp;
+<a href=/tags/observability/>#Observability</a>&nbsp;
+<a href=/tags/programming/>#Programming</a>&nbsp;
+<a href=/tags/prometheus/>#Prometheus</a>&nbsp;
+<a href=/tags/proxmox/>#Proxmox</a>&nbsp;
+<a href=/tags/python/>#Python</a>&nbsp;
+<a href=/tags/redis/>#Redis</a>&nbsp;
+<a href=/tags/replication/>#Replication</a>&nbsp;
+<a href=/tags/soa/>#Soa</a>&nbsp;
+<a href=/tags/sre/>#Sre</a>&nbsp;
+<a href=/tags/sysadmin/>#Sysadmin</a>&nbsp;
+<a href=/tags/system-design/>#System Design</a>&nbsp;
+<a href=/tags/terraform/>#Terraform</a>&nbsp;
+<a href=/tags/udev/>#Udev</a>&nbsp;
+<a href=/tags/valkey/>#Valkey</a>&nbsp;
+<a href=/tags/virtualization/>#Virtualization</a>&nbsp;
+<a href=/tags/%D0%B0%D0%BB%D0%B3%D0%BE%D1%80%D0%B8%D1%82%D0%BC%D0%B8/>#Алгоритми</a>&nbsp;</div></small></content></main><footer>Made with <a href=https://github.com/janraasch/hugo-bearblog/>Hugo ʕ•ᴥ•ʔ Bear</a></footer></body></html>
